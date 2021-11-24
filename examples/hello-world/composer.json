@@ -1,0 +1,16 @@
+{
+    "description": "DevCycle PHP Example App",
+    "require": {
+        "php": "^7.3 || ^8.0",
+        "devcycle/server-sdk": "dev-main"
+    },
+    "autoload": {
+        "psr-4": { "DevCycle\\" : "lib/" }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../"
+        }
+    ]
+}

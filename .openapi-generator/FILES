@@ -4,7 +4,7 @@
 .travis.yml
 README.md
 composer.json
-docs/Api/DevcycleApi.md
+docs/Api/DVCClient.md
 docs/Model/ErrorResponse.md
 docs/Model/Event.md
 docs/Model/Feature.md
@@ -13,7 +13,7 @@ docs/Model/UserData.md
 docs/Model/UserDataAndEventsBody.md
 docs/Model/Variable.md
 git_push.sh
-lib/Api/DevcycleApi.php
+lib/Api/DVCClient.php
 lib/ApiException.php
 lib/Configuration.php
 lib/HeaderSelector.php
@@ -27,7 +27,7 @@ lib/Model/UserDataAndEventsBody.php
 lib/Model/Variable.php
 lib/ObjectSerializer.php
 phpunit.xml.dist
-test/Api/DevcycleApiTest.php
+test/Api/DVCClientTest.php
 test/Model/ErrorResponseTest.php
 test/Model/EventTest.php
 test/Model/FeatureTest.php

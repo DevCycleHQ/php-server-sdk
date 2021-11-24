@@ -1,6 +1,6 @@
 <?php
 /**
- * DevcycleApi
+ * DVCClient
  * PHP version 7.3
  *
  * @category Class
@@ -40,14 +40,14 @@ use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
 
 /**
- * DevcycleApi Class Doc Comment
+ * DVCClient Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class DevcycleApi
+class DVCClient
 {
     /**
      * @var ClientInterface
@@ -70,14 +70,14 @@ class DevcycleApi
     protected $hostIndex;
 
     /**
-     * @param ClientInterface $client
      * @param Configuration   $config
+     * @param ClientInterface $client
      * @param HeaderSelector  $selector
      * @param int             $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
-        ClientInterface $client = null,
         Configuration $config = null,
+        ClientInterface $client = null,
         HeaderSelector $selector = null,
         $hostIndex = 0
     ) {
@@ -116,7 +116,42 @@ class DevcycleApi
     }
 
     /**
-     * Operation getFeatures
+     * Validate user data exists and has valid data
+     * @param \DevCycle\Model\UserData $user_data user_data (required)
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function validateUserData($user_data) {
+        if (!($user_data instanceof \DevCycle\Model\UserData)) {
+            throw new \InvalidArgumentException('User data must be an instance of UserData');
+        }
+
+        if (!$user_data -> valid()) {
+            $errors = $user_data->listInvalidProperties();
+            throw new \InvalidArgumentException("User data is invalid: $errors");
+        }
+    }
+
+
+    /**
+     * Validate user data exists and has valid data
+     * @param \DevCycle\Model\Event $event_data event_data (required)
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function validateEventData($event_data) {
+        if (!($event_data instanceof \DevCycle\Model\Event)) {
+            throw new \InvalidArgumentException('Event data must be an instance of Event');
+        }
+
+        if (!$event_data -> valid()) {
+            $errors = $event_data->listInvalidProperties();
+            throw new \InvalidArgumentException("Event data is invalid: $errors");
+        }
+    }
+
+    /**
+     * Operation allFeatures
      *
      * Get all features by key for user data
      *
@@ -126,14 +161,16 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      */
-    public function getFeatures($user_data)
+    public function allFeatures($user_data)
     {
-        list($response) = $this->getFeaturesWithHttpInfo($user_data);
+        $this->validateUserData($user_data);
+
+        list($response) = $this->allFeaturesWithHttpInfo($user_data);
         return $response;
     }
 
     /**
-     * Operation getFeaturesWithHttpInfo
+     * Operation allFeaturesWithHttpInfo
      *
      * Get all features by key for user data
      *
@@ -143,9 +180,9 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return array of array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getFeaturesWithHttpInfo($user_data)
+    public function allFeaturesWithHttpInfo($user_data)
     {
-        $request = $this->getFeaturesRequest($user_data);
+        $request = $this->allFeaturesRequest($user_data);
 
         try {
             $options = $this->createHttpClientOption();
@@ -306,7 +343,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getFeaturesAsync
+     * Operation allFeaturesAsync
      *
      * Get all features by key for user data
      *
@@ -315,18 +352,20 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFeaturesAsync($user_data)
+    public function allFeaturesAsync($user_data)
     {
-        return $this->getFeaturesAsyncWithHttpInfo($user_data)
+        $this->validateUserData($user_data);
+
+        return $this->allFeaturesAsyncWithHttpInfo($user_data)
             ->then(
                 function ($response) {
-                    return $response[0];
+                    return $response;
                 }
             );
     }
 
     /**
-     * Operation getFeaturesAsyncWithHttpInfo
+     * Operation allFeaturesAsyncWithHttpInfo
      *
      * Get all features by key for user data
      *
@@ -335,10 +374,10 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getFeaturesAsyncWithHttpInfo($user_data)
+    public function allFeaturesAsyncWithHttpInfo($user_data)
     {
         $returnType = 'array<string,\DevCycle\Model\Feature>';
-        $request = $this->getFeaturesRequest($user_data);
+        $request = $this->allFeaturesRequest($user_data);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -374,19 +413,19 @@ class DevcycleApi
     }
 
     /**
-     * Create request for operation 'getFeatures'
+     * Create request for operation 'allFeatures'
      *
      * @param  \DevCycle\Model\UserData $user_data (required)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getFeaturesRequest($user_data)
+    public function allFeaturesRequest($user_data)
     {
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $user_data when calling getFeatures'
+                'Missing the required parameter $user_data when calling allFeatures'
             );
         }
 
@@ -470,7 +509,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getVariableByKey
+     * Operation variable
      *
      * Get variable by key for user data
      *
@@ -481,14 +520,23 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      */
-    public function getVariableByKey($key, $user_data)
+    public function variable($user_data, $key, $default)
     {
-        list($response) = $this->getVariableByKeyWithHttpInfo($key, $user_data);
-        return $response;
+        $this->validateUserData($user_data);
+
+        try {
+            list($response) = $this->variableWithHttpInfo($user_data, $key, $default);
+            return $response[0];
+        } catch (ApiException $e) {
+            if ($e->getCode() != 404) {
+                error_log("Failed to get variable value for key $key, $e");
+            }
+            return new \DevCycle\Model\Variable(array("key"=>$key,"value"=>$default));
+        }
     }
 
     /**
-     * Operation getVariableByKeyWithHttpInfo
+     * Operation variableWithHttpInfo
      *
      * Get variable by key for user data
      *
@@ -499,9 +547,9 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return array of \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVariableByKeyWithHttpInfo($key, $user_data)
+    public function variableWithHttpInfo($user_data, $key)
     {
-        $request = $this->getVariableByKeyRequest($key, $user_data);
+        $request = $this->variableRequest($key, $user_data);
 
         try {
             $options = $this->createHttpClientOption();
@@ -662,7 +710,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getVariableByKeyAsync
+     * Operation variableAsync
      *
      * Get variable by key for user data
      *
@@ -672,18 +720,30 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVariableByKeyAsync($key, $user_data)
+    public function variableAsync($user_data, $key, $default)
     {
-        return $this->getVariableByKeyAsyncWithHttpInfo($key, $user_data)
+        $this->validateUserData($user_data);
+
+        return $this->variableAsyncWithHttpInfo($key, $user_data)
             ->then(
                 function ($response) {
                     return $response[0];
+                },
+                function($e) use ($default, $key){
+                    if ($e->getCode() != 404) {
+                        error_log("Failed to get variable value for key $key, $e");
+                    }
+                    
+                    return new \DevCycle\Model\Variable(array(
+                        "value"=>$default,
+                        "key"=>$key
+                    ));
                 }
             );
     }
 
     /**
-     * Operation getVariableByKeyAsyncWithHttpInfo
+     * Operation variableAsyncWithHttpInfo
      *
      * Get variable by key for user data
      *
@@ -693,10 +753,10 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVariableByKeyAsyncWithHttpInfo($key, $user_data)
+    public function variableAsyncWithHttpInfo($key, $user_data)
     {
         $returnType = '\DevCycle\Model\Variable';
-        $request = $this->getVariableByKeyRequest($key, $user_data);
+        $request = $this->variableRequest($key, $user_data);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -732,7 +792,7 @@ class DevcycleApi
     }
 
     /**
-     * Create request for operation 'getVariableByKey'
+     * Create request for operation 'variable'
      *
      * @param  string $key Variable key (required)
      * @param  \DevCycle\Model\UserData $user_data (required)
@@ -740,18 +800,18 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVariableByKeyRequest($key, $user_data)
+    public function variableRequest($key, $user_data)
     {
         // verify the required parameter 'key' is set
         if ($key === null || (is_array($key) && count($key) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $key when calling getVariableByKey'
+                'Missing the required parameter $key when calling variable'
             );
         }
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $user_data when calling getVariableByKey'
+                'Missing the required parameter $user_data when calling variable'
             );
         }
 
@@ -843,7 +903,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getVariables
+     * Operation allVariables
      *
      * Get all variables by key for user data
      *
@@ -853,14 +913,16 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      */
-    public function getVariables($user_data)
+    public function allVariables($user_data)
     {
-        list($response) = $this->getVariablesWithHttpInfo($user_data);
+        $this->validateUserData($user_data);
+
+        list($response) = $this->allVariablesWithHttpInfo($user_data);
         return $response;
     }
 
     /**
-     * Operation getVariablesWithHttpInfo
+     * Operation allVariablesWithHttpInfo
      *
      * Get all variables by key for user data
      *
@@ -870,9 +932,9 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return array of array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      */
-    public function getVariablesWithHttpInfo($user_data)
+    public function allVariablesWithHttpInfo($user_data)
     {
-        $request = $this->getVariablesRequest($user_data);
+        $request = $this->allVariablesRequest($user_data);
 
         try {
             $options = $this->createHttpClientOption();
@@ -1033,7 +1095,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getVariablesAsync
+     * Operation allVariablesAsync
      *
      * Get all variables by key for user data
      *
@@ -1042,9 +1104,11 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVariablesAsync($user_data)
+    public function allVariablesAsync($user_data)
     {
-        return $this->getVariablesAsyncWithHttpInfo($user_data)
+        $this->validateUserData($user_data);
+
+        return $this->allVariablesAsyncWithHttpInfo($user_data)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -1053,7 +1117,7 @@ class DevcycleApi
     }
 
     /**
-     * Operation getVariablesAsyncWithHttpInfo
+     * Operation allVariablesAsyncWithHttpInfo
      *
      * Get all variables by key for user data
      *
@@ -1062,10 +1126,10 @@ class DevcycleApi
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function getVariablesAsyncWithHttpInfo($user_data)
+    public function allVariablesAsyncWithHttpInfo($user_data)
     {
         $returnType = 'array<string,\DevCycle\Model\Variable>';
-        $request = $this->getVariablesRequest($user_data);
+        $request = $this->allVariablesRequest($user_data);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1101,19 +1165,19 @@ class DevcycleApi
     }
 
     /**
-     * Create request for operation 'getVariables'
+     * Create request for operation 'allVariables'
      *
      * @param  \DevCycle\Model\UserData $user_data (required)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getVariablesRequest($user_data)
+    public function allVariablesRequest($user_data)
     {
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
             throw new \InvalidArgumentException(
-                'Missing the required parameter $user_data when calling getVariables'
+                'Missing the required parameter $user_data when calling allVariables'
             );
         }
 
@@ -1201,14 +1265,23 @@ class DevcycleApi
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserDataAndEventsBody $user_data_and_events_body user_data_and_events_body (required)
-     *
+     * @param  \DevCycle\Model\UserData $user_data user_data (required)
+     * @param  \DevCycle\Model\Event $event_data event_data (required)
+     * 
      * @throws \DevCycle\ApiException on non-2xx response
      * @throws \InvalidArgumentException
      * @return \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      */
-    public function postEvents($user_data_and_events_body)
+    public function track($user_data, $event_data)
     {
+        $this->validateUserData($user_data);
+        $this->validateEventData($event_data);
+
+        $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
+            "user" => $user_data, 
+            "events" => [$event_data]
+        ));
+
         list($response) = $this->postEventsWithHttpInfo($user_data_and_events_body);
         return $response;
     }
@@ -1391,13 +1464,21 @@ class DevcycleApi
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserDataAndEventsBody $user_data_and_events_body (required)
-     *
+     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param  \DevCycle\Model\Event $event_data (required)
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function postEventsAsync($user_data_and_events_body)
+    public function trackAsync($user_data, $event_data)
     {
+        $this->validateUserData($user_data);
+        $this->validateEventData($event_data);
+
+        $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
+            "user" => $user_data, 
+            "events" => [$event_data]
+        ));
+
         return $this->postEventsAsyncWithHttpInfo($user_data_and_events_body)
             ->then(
                 function ($response) {
