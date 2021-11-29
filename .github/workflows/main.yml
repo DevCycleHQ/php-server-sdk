@@ -26,4 +26,5 @@ jobs:
           url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.packagistToken}}
           # Additional headers to send alongside the defaults
           headers: '{"Content-Type": "application/json"}'
+          body: '{"repository": {"url": "https://github.com/DevCycleHQ/php-server-sdk"}}'
             
