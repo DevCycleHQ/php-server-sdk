@@ -1,6 +1,6 @@
 <?php
 /**
- * DevcycleApiTest
+ * DVCClientTest
  * PHP version 7.3
  *
  * @category Class
@@ -33,14 +33,14 @@ use \DevCycle\ObjectSerializer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * DevcycleApiTest Class Doc Comment
+ * DVCClientTest Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class DevcycleApiTest extends TestCase
+class DVCClientTest extends TestCase
 {
 
     /**

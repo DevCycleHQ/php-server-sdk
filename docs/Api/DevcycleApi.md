@@ -1,13 +1,13 @@
-# DevCycle\DevcycleApi
+# DevCycle\DVCClient
 
 All URIs are relative to https://bucketing-api.devcycle.com.
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getFeatures()**](DevcycleApi.md#getFeatures) | **POST** /v1/features | Get all features by key for user data
-[**getVariableByKey()**](DevcycleApi.md#getVariableByKey) | **POST** /v1/variables/{key} | Get variable by key for user data
-[**getVariables()**](DevcycleApi.md#getVariables) | **POST** /v1/variables | Get all variables by key for user data
-[**postEvents()**](DevcycleApi.md#postEvents) | **POST** /v1/track | Post events to DevCycle for user
+[**getFeatures()**](DVCClient.md#getFeatures) | **POST** /v1/features | Get all features by key for user data
+[**getVariableByKey()**](DVCClient.md#getVariableByKey) | **POST** /v1/variables/{key} | Get variable by key for user data
+[**getVariables()**](DVCClient.md#getVariables) | **POST** /v1/variables | Get all variables by key for user data
+[**postEvents()**](DVCClient.md#postEvents) | **POST** /v1/track | Post events to DevCycle for user
 
 
 ## `getFeatures()`
@@ -31,7 +31,7 @@ $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authoriz
 // $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevcycleApi(
+$apiInstance = new DevCycle\Api\DVCClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
@@ -43,7 +43,7 @@ try {
     $result = $apiInstance->getFeatures($user_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DevcycleApi->getFeatures: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DVCClient->getFeatures: ', $e->getMessage(), PHP_EOL;
 }
 ```
 
@@ -91,7 +91,7 @@ $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authoriz
 // $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevcycleApi(
+$apiInstance = new DevCycle\Api\DVCClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
@@ -104,7 +104,7 @@ try {
     $result = $apiInstance->getVariableByKey($key, $user_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DevcycleApi->getVariableByKey: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DVCClient->getVariableByKey: ', $e->getMessage(), PHP_EOL;
 }
 ```
 
@@ -153,7 +153,7 @@ $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authoriz
 // $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevcycleApi(
+$apiInstance = new DevCycle\Api\DVCClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
@@ -165,7 +165,7 @@ try {
     $result = $apiInstance->getVariables($user_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DevcycleApi->getVariables: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DVCClient->getVariables: ', $e->getMessage(), PHP_EOL;
 }
 ```
 
@@ -213,7 +213,7 @@ $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authoriz
 // $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevcycleApi(
+$apiInstance = new DevCycle\Api\DVCClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
@@ -225,7 +225,7 @@ try {
     $result = $apiInstance->postEvents($user_data_and_events_body);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DevcycleApi->postEvents: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DVCClient->postEvents: ', $e->getMessage(), PHP_EOL;
 }
 ```
 
