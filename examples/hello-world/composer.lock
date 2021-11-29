@@ -4,15 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d3a5c5d9340fe97185146bce141deb5",
+    "content-hash": "a95f83d747c5d72e108d9784b8b68811",
     "packages": [
         {
             "name": "devcycle/server-sdk",
-            "version": "dev-main",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DevCycleHQ/php-server-sdk.git",
+                "reference": "616dde910044b79897f1624effb3d8eab1b1dce8"
+            },
             "dist": {
-                "type": "path",
-                "url": "../..",
-                "reference": "37fd0491d18d9779608653235c499de9cf9b89fb"
+                "type": "zip",
+                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/616dde910044b79897f1624effb3d8eab1b1dce8",
+                "reference": "616dde910044b79897f1624effb3d8eab1b1dce8",
+                "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
@@ -32,11 +38,7 @@
                     "DevCycle\\": "lib/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "DevCycle\\Test\\": "test/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "unlicense"
             ],
@@ -57,9 +59,11 @@
                 "rest",
                 "sdk"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/DevCycleHQ/php-server-sdk/issues",
+                "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.0.0"
+            },
+            "time": "2021-11-29T17:19:09+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -659,9 +663,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "devcycle/server-sdk": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
