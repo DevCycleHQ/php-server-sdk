@@ -526,7 +526,7 @@ class DVCClient
 
         try {
             list($response) = $this->variableWithHttpInfo($user_data, $key, $default);
-            return $response[0];
+            return $response;
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
@@ -593,7 +593,7 @@ class DVCClient
                     } else {
                         $content = (string) $response->getBody();
                     }
-
+                    
                     return [
                         ObjectSerializer::deserialize($content, '\DevCycle\Model\Variable', []),
                         $response->getStatusCode(),
