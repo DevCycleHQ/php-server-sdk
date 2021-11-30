@@ -531,7 +531,7 @@ class DVCClient
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
-            return new \DevCycle\Model\Variable(array("key"=>$key,"value"=>$default));
+            return new \DevCycle\Model\Variable(array("key"=>$key,"value"=>$default,"isDefaulted"=>true));
         }
     }
 

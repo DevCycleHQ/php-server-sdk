@@ -30,6 +30,8 @@ namespace DevCycle\Test\Api;
 use \DevCycle\Configuration;
 use \DevCycle\ApiException;
 use \DevCycle\ObjectSerializer;
+use \DevCycle\Api\DVCClient;
+use \DevCycle\Model\UserData;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -40,14 +42,16 @@ use PHPUnit\Framework\TestCase;
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class DVCClientTest extends TestCase
+final class DVCClientTest extends TestCase
 {
+    private static $apiInstance;
+    private static $user_data;
 
     /**
      * Setup before running any test cases
      */
     public static function setUpBeforeClass(): void
-    {
+    {        
     }
 
     /**
@@ -55,6 +59,14 @@ class DVCClientTest extends TestCase
      */
     public function setUp(): void
     {
+        $config = Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
+
+        self::$apiInstance = new DVCClient(
+            $config
+        );
+        self::$user_data = new UserData(array(
+            "user_id"=>"user"
+        ));
     }
 
     /**
@@ -79,8 +91,9 @@ class DVCClientTest extends TestCase
      */
     public function testGetFeatures()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $result = self::$apiInstance->allVariables(self::$user_data);
+
+        self::assertCount(1, $result);
     }
 
     /**
@@ -91,8 +104,28 @@ class DVCClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $result = self::$apiInstance->variable(self::$user_data, 'activate-flag', true);
+
+        self::assertFalse($result['isDefaulted']);
+    }
+
+    /**
+     * Test case for getVariableByKey
+     *
+     * Get variable by key for user data.
+     *
+     */
+    public function testVariable_invalidSDKKey_isDefaultedTrue()
+    {
+        $localConfig = Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
+
+        $localApiInstance = new DVCClient(
+            $localConfig
+        );
+
+        $result = $localApiInstance->variable(self::$user_data, 'test-feature', true);
+
+        self::assertTrue($result['isDefaulted']);
     }
 
     /**
@@ -103,8 +136,9 @@ class DVCClientTest extends TestCase
      */
     public function testGetVariables()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $result = self::$apiInstance->allVariables(self::$user_data);
+
+        self::assertCount(1, $result);
     }
 
     /**
@@ -115,7 +149,12 @@ class DVCClientTest extends TestCase
      */
     public function testPostEvents()
     {
-        // TODO: implement
-        $this->markTestIncomplete('Not implemented');
+        $event_data = new \DevCycle\Model\Event(array(
+            "type" => "some_event"
+        ));
+
+        $result = self::$apiInstance->track(self::$user_data, $event_data);
+
+        self::assertEquals("Successfully received 1 events.", $result["message"]);
     }
 }
