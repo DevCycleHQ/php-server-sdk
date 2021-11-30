@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "devcycle/server-sdk",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevCycleHQ/php-server-sdk.git",
-                "reference": "616dde910044b79897f1624effb3d8eab1b1dce8"
+                "reference": "5d22b09612f1b2e3a62c4d6825304f6b0dd60f93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/616dde910044b79897f1624effb3d8eab1b1dce8",
-                "reference": "616dde910044b79897f1624effb3d8eab1b1dce8",
+                "url": "https://api.github.com/repos/DevCycleHQ/php-server-sdk/zipball/5d22b09612f1b2e3a62c4d6825304f6b0dd60f93",
+                "reference": "5d22b09612f1b2e3a62c4d6825304f6b0dd60f93",
                 "shasum": ""
             },
             "require": {
@@ -61,9 +61,9 @@
             ],
             "support": {
                 "issues": "https://github.com/DevCycleHQ/php-server-sdk/issues",
-                "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.0.0"
+                "source": "https://github.com/DevCycleHQ/php-server-sdk/tree/v1.0.1"
             },
-            "time": "2021-11-29T17:19:09+00:00"
+            "time": "2021-11-30T18:23:13+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
