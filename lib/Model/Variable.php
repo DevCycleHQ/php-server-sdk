@@ -109,7 +109,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => '_id',
         'key' => 'key',
         'type' => 'type',
-        'value' => 'value'
+        'value' => 'value',
+        'isDefaulted' => 'isDefaulted'
     ];
 
     /**
@@ -121,7 +122,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => 'setId',
         'key' => 'setKey',
         'type' => 'setType',
-        'value' => 'setValue'
+        'value' => 'setValue',
+        'isDefaulted' => 'setIsDefaulted'
     ];
 
     /**
@@ -133,7 +135,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => 'getId',
         'key' => 'getKey',
         'type' => 'getType',
-        'value' => 'getValue'
+        'value' => 'getValue',
+        'isDefaulted' => 'getIsDefaulted'
     ];
 
     /**
@@ -216,6 +219,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['key'] = $data['key'] ?? null;
         $this->container['type'] = $data['type'] ?? null;
         $this->container['value'] = $data['value'] ?? null;
+        $this->container['isDefaulted'] = $data['isDefaulted'] ?? false;
     }
 
     /**
@@ -368,6 +372,31 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
 
         return $this;
     }
+
+    /**
+     * Gets isDefaulted
+     *
+     * @return bool
+     */
+    public function getIsDefaulted()
+    {
+        return $this->container['isDefaulted'];
+    }
+
+    /**
+     * Sets isDefaulted
+     *
+     * @param bool $isDefaulted Variable set to true if the Variable could not be fetched
+     *
+     * @return self
+     */
+    public function setIsDefaulted($isDefaulted)
+    {
+        $this->container['isDefaulted'] = $isDefaulted;
+
+        return $this;
+    }
+
     /**
      * Returns true if offset exists. False otherwise.
      *
