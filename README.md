@@ -1,15 +1,14 @@
-# DevCycle
+# DevCycle PHP SDK
 
-Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.
+Welcome to the the DevCycle PHP SDK, initially generated via the [DevCycle Bucketing API](https://docs.devcycle.com/bucketing-api/#tag/devcycle).
 
-
-## Installation & Usage
-
-### Requirements
+## Requirements
 
 PHP 7.3 and later.
 
-### Composer
+## Installation
+
+### Composer Installation
 
 To install the bindings via [Composer](https://getcomposer.org/), add the following to `composer.json`:
 
@@ -39,7 +38,6 @@ Please follow the [installation procedure](#installation--usage) and then run th
 ```php
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
-
 
 
 // Configure API key authorization: bearerAuth
