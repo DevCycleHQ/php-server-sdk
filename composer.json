@@ -10,8 +10,8 @@
         "api"
     ],
     "homepage": "https://openapi-generator.tech",
-    "license": "unlicense",
-    "name": "devcycle/server-sdk",
+    "license": "MIT",
+    "name": "devcycle/php-server-sdk",
     "authors": [
         {
             "name": "OpenAPI-Generator contributors",

@@ -16,7 +16,7 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
 ```json
 {
   "require": {
-    "devcycle/server-sdk": "*"
+    "devcycle/php-server-sdk": "*"
   }
 }
 ```
