@@ -39,7 +39,6 @@ Please follow the [installation procedure](#installation--usage) and then run th
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-
 // Configure API key authorization: bearerAuth
 $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
 
@@ -84,7 +83,7 @@ try {
 }
 ```
 
-### Get all features
+### Get all Features
 ```php
 try {
     $result = $apiInstance->allFeatures($user_data);
@@ -94,7 +93,7 @@ try {
 }
 ```
 
-### Track event
+### Track Event
 ```php
 $event_data = new \DevCycle\Model\Event(array(
   "type"=>"my-event"
