@@ -63,7 +63,7 @@ try {
 
 ## Usage
 
-### Get variable by key
+### Get and use Variable by key
 ```php
 try {
     $result = $apiInstance->variable($user_data, "my-key", "default");
@@ -73,7 +73,7 @@ try {
 }
 ```
 
-### Get all variables
+### Get all Variables
 ```php
 try {
     $result = $apiInstance->allVariables($user_data);
@@ -83,7 +83,7 @@ try {
 }
 ```
 
-### Get all Features
+### Getting all Features
 ```php
 try {
     $result = $apiInstance->allFeatures($user_data);
