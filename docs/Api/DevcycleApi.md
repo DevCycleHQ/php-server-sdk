@@ -7,7 +7,7 @@ Method | HTTP request | Description
 [**getFeatures()**](DVCClient.md#getFeatures) | **POST** /v1/features | Get all features by key for user data
 [**getVariableByKey()**](DVCClient.md#getVariableByKey) | **POST** /v1/variables/{key} | Get variable by key for user data
 [**getVariables()**](DVCClient.md#getVariables) | **POST** /v1/variables | Get all variables by key for user data
-[**postEvents()**](DVCClient.md#postEvents) | **POST** /v1/track | Post events to DevCycle for user
+[**track()**](DVCClient.md#track) | **POST** /v1/track | Post events to DevCycle for user
 
 
 ## `getFeatures()`
@@ -192,10 +192,10 @@ Name | Type | Description  | Notes
 [[Back to Model list]](../../README.md#models)
 [[Back to README]](../../README.md)
 
-## `postEvents()`
+## `track()`
 
 ```php
-postEvents($user_data_and_events_body): \DevCycle\Model\InlineResponse201
+track($user_data, $event_data): \DevCycle\Model\InlineResponse201
 ```
 
 Post events to DevCycle for user
@@ -219,13 +219,16 @@ $apiInstance = new DevCycle\Api\DVCClient(
     new GuzzleHttp\Client(),
     $config
 );
-$user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(); // \DevCycle\Model\UserDataAndEventsBody
+$user_data = new \DevCycle\Model\UserData(); // \DevCycle\Model\UserData
+$event_data = new \DevCycle\Model\Event(array(
+  "type"=>"my-event"
+));
 
 try {
-    $result = $apiInstance->postEvents($user_data_and_events_body);
+    $result = $apiInstance->track($user_data, $event_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DVCClient->postEvents: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DVCClient->track: ', $e->getMessage(), PHP_EOL;
 }
 ```
 
