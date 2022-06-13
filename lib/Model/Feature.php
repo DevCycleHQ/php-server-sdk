@@ -63,6 +63,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'string',
         'type' => 'string',
         '_variation' => 'string',
+        'variationKey' => 'string',
+        'variationName' => 'string',
         'eval_reason' => 'string'
     ];
 
@@ -78,6 +80,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => null,
         'type' => null,
         '_variation' => null,
+        'variationKey' => null,
+        'variationName' => null,
         'eval_reason' => null
     ];
 
@@ -112,6 +116,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'key',
         'type' => 'type',
         '_variation' => '_variation',
+        'variationKey' => 'variationKey',
+        'variationName' => 'variationName',
         'eval_reason' => 'evalReason'
     ];
 
@@ -125,6 +131,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'setKey',
         'type' => 'setType',
         '_variation' => 'setVariation',
+        'variationKey' => 'setVariationKey',
+        'variationName' => 'setVariationName',
         'eval_reason' => 'setEvalReason'
     ];
 
@@ -138,6 +146,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'getKey',
         'type' => 'getType',
         '_variation' => 'getVariation',
+        'variationKey' => 'getVariationKey',
+        'variationName' => 'getVariationName',
         'eval_reason' => 'getEvalReason'
     ];
 
@@ -221,6 +231,8 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['key'] = $data['key'] ?? null;
         $this->container['type'] = $data['type'] ?? null;
         $this->container['_variation'] = $data['_variation'] ?? null;
+        $this->container['variationKey'] = $data['variationKey'] ?? null;
+        $this->container['variationName'] = $data['variationName'] ?? null;
         $this->container['eval_reason'] = $data['eval_reason'] ?? null;
     }
 
@@ -253,6 +265,12 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
 
         if ($this->container['_variation'] === null) {
             $invalidProperties[] = "'_variation' can't be null";
+        }
+        if ($this->container['variationKey'] === null) {
+            $invalidProperties[] = "'variationKey' can't be null";
+        }
+        if ($this->container['variationName'] === null) {
+            $invalidProperties[] = "'variationName' can't be null";
         }
         return $invalidProperties;
     }
@@ -371,6 +389,54 @@ class Feature implements ModelInterface, ArrayAccess, \JsonSerializable
     public function setVariation($_variation)
     {
         $this->container['_variation'] = $_variation;
+
+        return $this;
+    }
+
+    /**
+     * Gets variationKey
+     *
+     * @return string
+     */
+    public function getVariationKey()
+    {
+        return $this->container['variationKey'];
+    }
+
+    /**
+     * Sets variationKey
+     *
+     * @param string $variationKey Bucketed feature variation key
+     *
+     * @return self
+     */
+    public function setVariationKey($variationKey)
+    {
+        $this->container['variationKey'] = $variationKey;
+
+        return $this;
+    }
+
+    /**
+     * Gets variationName
+     *
+     * @return string
+     */
+    public function getVariationName()
+    {
+        return $this->container['variationName'];
+    }
+
+    /**
+     * Sets variationName
+     *
+     * @param string $variationName Bucketed feature variation name
+     *
+     * @return self
+     */
+    public function setVariationName($variationName)
+    {
+        $this->container['variationName'] = $variationName;
 
         return $this;
     }
