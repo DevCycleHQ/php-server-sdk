@@ -28,6 +28,7 @@
 namespace DevCycle\Test\Api;
 
 use \DevCycle\Configuration;
+use \DevCycle\Model\DVCOptions;
 use \DevCycle\ApiException;
 use \DevCycle\ObjectSerializer;
 use \DevCycle\Api\DVCClient;
@@ -61,8 +62,10 @@ final class DVCClientTest extends TestCase
     {
         $config = Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
 
+        $options = new DVCOptions(true);
         self::$apiInstance = new DVCClient(
-            $config
+            $config,
+            dvcOptions:$options
         );
         self::$user_data = new UserData(array(
             "user_id"=>"user"

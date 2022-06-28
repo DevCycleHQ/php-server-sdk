@@ -36,6 +36,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use DevCycle\ApiException;
 use DevCycle\Configuration;
+use DevCycle\Model\DVCOptions;
 use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
 
@@ -60,6 +61,11 @@ class DVCClient
     protected $config;
 
     /**
+     * @var DVCOptions
+     */
+    protected $dvcOptions;
+
+    /**
      * @var HeaderSelector
      */
     protected $headerSelector;
@@ -79,12 +85,14 @@ class DVCClient
         Configuration $config = null,
         ClientInterface $client = null,
         HeaderSelector $selector = null,
-        $hostIndex = 0
+        $hostIndex = 0,
+        DVCOptions $dvcOptions = null
     ) {
         $this->client = $client ?: new Client();
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
+        $this->dvcOptions = $dvcOptions ?: new DVCOptions();
     }
 
     /**
@@ -432,6 +440,9 @@ class DVCClient
         $resourcePath = '/v1/features';
         $formParams = [];
         $queryParams = [];
+        if($this->dvcOptions->getEnableEdgeDB()) {
+            $queryParams = ['enableEdgeDB' => 'true'];
+        }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
@@ -818,6 +829,10 @@ class DVCClient
         $resourcePath = '/v1/variables/{key}';
         $formParams = [];
         $queryParams = [];
+        $queryParams = [];
+        if($this->dvcOptions->getEnableEdgeDB()) {
+            $queryParams = ['enableEdgeDB' => 'true'];
+        }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
@@ -1184,6 +1199,10 @@ class DVCClient
         $resourcePath = '/v1/variables';
         $formParams = [];
         $queryParams = [];
+        $queryParams = [];
+        if($this->dvcOptions->getEnableEdgeDB()) {
+            $queryParams = ['enableEdgeDB' => 'true'];
+        }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
@@ -1555,6 +1574,10 @@ class DVCClient
         $resourcePath = '/v1/track';
         $formParams = [];
         $queryParams = [];
+        $queryParams = [];
+        if($this->dvcOptions->getEnableEdgeDB()) {
+            $queryParams = ['enableEdgeDB' => 'true'];
+        }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
