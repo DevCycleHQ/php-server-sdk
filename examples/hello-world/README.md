@@ -4,10 +4,13 @@ Install dependencies with composer:
 `composer update`
 
 ## Run
-Run the php debug server in this directory:
+Run the PHP Debug server in this directory:
 `php 127.0.0.1:8000`
+
+On MacOS run the PHP Debug server with:
+`php -S 127.0.0.1:8000`
 
 ## Usage
 Navigate in a browser to the various pages within this folder to test different SDK functionality, eg:
-`http://127.0.0.1:8000/features`
+`http://127.0.0.1:8000/features.php`
 
