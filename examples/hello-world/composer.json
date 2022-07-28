@@ -2,7 +2,7 @@
     "description": "DevCycle PHP Example App",
     "require": {
         "php": "^7.3 || ^8.0",
-        "devcycle/server-sdk": "1.*"
+        "devcycle/php-server-sdk": "1.*"
     },
     "autoload": {
         "psr-4": { "DevCycle\\" : "lib/" }
