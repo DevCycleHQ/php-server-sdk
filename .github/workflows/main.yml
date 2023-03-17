@@ -20,7 +20,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Webhook Action
-        uses: joelwmale/webhook-action@2.1.0
+        uses: joelwmale/webhook-action@2.3.2
         with:
           # The url to send the webhook event to
           url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.packagistToken}}
