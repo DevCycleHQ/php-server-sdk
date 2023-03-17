@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVCClient
  * PHP version 7.3
@@ -129,17 +130,17 @@ class DVCClient
      * 
      * @throws \InvalidArgumentException
      */
-    public function validateUserData($user_data) {
+    public function validateUserData($user_data)
+    {
         if (!($user_data instanceof \DevCycle\Model\UserData)) {
             throw new \InvalidArgumentException('User data must be an instance of UserData');
         }
 
-        if (!$user_data -> valid()) {
+        if (!$user_data->valid()) {
             $errors = $user_data->listInvalidProperties();
-            throw new \InvalidArgumentException("User data is invalid: $errors");
+            throw new \InvalidArgumentException("User data is invalid: " . implode(', ', $errors));
         }
     }
-
 
     /**
      * Validate user data exists and has valid data
@@ -147,14 +148,15 @@ class DVCClient
      * 
      * @throws \InvalidArgumentException
      */
-    public function validateEventData($event_data) {
+    public function validateEventData($event_data)
+    {
         if (!($event_data instanceof \DevCycle\Model\Event)) {
             throw new \InvalidArgumentException('Event data must be an instance of Event');
         }
 
-        if (!$event_data -> valid()) {
+        if (!$event_data->valid()) {
             $errors = $event_data->listInvalidProperties();
-            throw new \InvalidArgumentException("Event data is invalid: $errors");
+            throw new \InvalidArgumentException("Event data is invalid: " . implode(', ', $errors));
         }
     }
 
@@ -227,7 +229,7 @@ class DVCClient
                 );
             }
 
-            switch($statusCode) {
+            switch ($statusCode) {
                 case 200:
                     if ('array<string,\DevCycle\Model\Feature>' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
@@ -302,7 +304,6 @@ class DVCClient
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -440,7 +441,7 @@ class DVCClient
         $resourcePath = '/v1/features';
         $formParams = [];
         $queryParams = [];
-        if($this->dvcOptions->getEnableEdgeDB()) {
+        if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
@@ -483,10 +484,8 @@ class DVCClient
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -542,7 +541,7 @@ class DVCClient
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
-            return new \DevCycle\Model\Variable(array("key"=>$key,"value"=>$default,"isDefaulted"=>true));
+            return new \DevCycle\Model\Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
         }
     }
 
@@ -597,14 +596,14 @@ class DVCClient
                 );
             }
 
-            switch($statusCode) {
+            switch ($statusCode) {
                 case 200:
                     if ('\DevCycle\Model\Variable' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
                     }
-                    
+
                     return [
                         ObjectSerializer::deserialize($content, '\DevCycle\Model\Variable', []),
                         $response->getStatusCode(),
@@ -672,7 +671,6 @@ class DVCClient
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -740,14 +738,14 @@ class DVCClient
                 function ($response) {
                     return $response[0];
                 },
-                function($e) use ($default, $key){
+                function ($e) use ($default, $key) {
                     if ($e->getCode() != 404) {
                         error_log("Failed to get variable value for key $key, $e");
                     }
-                    
+
                     return new \DevCycle\Model\Variable(array(
-                        "value"=>$default,
-                        "key"=>$key
+                        "value" => $default,
+                        "key" => $key
                     ));
                 }
             );
@@ -830,7 +828,7 @@ class DVCClient
         $formParams = [];
         $queryParams = [];
         $queryParams = [];
-        if($this->dvcOptions->getEnableEdgeDB()) {
+        if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
@@ -881,10 +879,8 @@ class DVCClient
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -986,7 +982,7 @@ class DVCClient
                 );
             }
 
-            switch($statusCode) {
+            switch ($statusCode) {
                 case 200:
                     if ('array<string,\DevCycle\Model\Variable>' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
@@ -1061,7 +1057,6 @@ class DVCClient
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 200:
@@ -1200,7 +1195,7 @@ class DVCClient
         $formParams = [];
         $queryParams = [];
         $queryParams = [];
-        if($this->dvcOptions->getEnableEdgeDB()) {
+        if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
@@ -1243,10 +1238,8 @@ class DVCClient
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
@@ -1297,7 +1290,7 @@ class DVCClient
         $this->validateEventData($event_data);
 
         $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
-            "user" => $user_data, 
+            "user" => $user_data,
             "events" => [$event_data]
         ));
 
@@ -1355,7 +1348,7 @@ class DVCClient
                 );
             }
 
-            switch($statusCode) {
+            switch ($statusCode) {
                 case 201:
                     if ('\DevCycle\Model\InlineResponse201' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
@@ -1430,7 +1423,6 @@ class DVCClient
                 $response->getStatusCode(),
                 $response->getHeaders()
             ];
-
         } catch (ApiException $e) {
             switch ($e->getCode()) {
                 case 201:
@@ -1494,7 +1486,7 @@ class DVCClient
         $this->validateEventData($event_data);
 
         $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
-            "user" => $user_data, 
+            "user" => $user_data,
             "events" => [$event_data]
         ));
 
@@ -1575,7 +1567,7 @@ class DVCClient
         $formParams = [];
         $queryParams = [];
         $queryParams = [];
-        if($this->dvcOptions->getEnableEdgeDB()) {
+        if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
@@ -1618,10 +1610,8 @@ class DVCClient
                 }
                 // for HTTP post (form)
                 $httpBody = new MultipartStream($multipartContents);
-
             } elseif ($headers['Content-Type'] === 'application/json') {
                 $httpBody = \GuzzleHttp\json_encode($formParams);
-
             } else {
                 // for HTTP post (form)
                 $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
