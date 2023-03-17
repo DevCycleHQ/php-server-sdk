@@ -535,7 +535,7 @@ class DVCClient
         $this->validateUserData($user_data);
 
         try {
-            list($response) = $this->variableWithHttpInfo($user_data, $key, $default);
+            list($response) = $this->variableWithHttpInfo($user_data, $key);
             return $response;
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
@@ -723,8 +723,8 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  string $key Variable key (required)
      * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param  string $key Variable key (required)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -733,7 +733,7 @@ class DVCClient
     {
         $this->validateUserData($user_data);
 
-        return $this->variableAsyncWithHttpInfo($key, $user_data)
+        return $this->variableAsyncWithHttpInfo($user_data, $key)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -756,16 +756,16 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  string $key Variable key (required)
      * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param  string $key Variable key (required)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function variableAsyncWithHttpInfo($key, $user_data)
+    public function variableAsyncWithHttpInfo($user_data, $key)
     {
         $returnType = '\DevCycle\Model\Variable';
-        $request = $this->variableRequest($key, $user_data);
+        $request = $this->variableRequest($user_data, $key);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -803,13 +803,13 @@ class DVCClient
     /**
      * Create request for operation 'variable'
      *
-     * @param  string $key Variable key (required)
      * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param  string $key Variable key (required)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function variableRequest($key, $user_data)
+    public function variableRequest($user_data, $key)
     {
         // verify the required parameter 'key' is set
         if ($key === null || (is_array($key) && count($key) === 0)) {
@@ -826,7 +826,6 @@ class DVCClient
 
         $resourcePath = '/v1/variables/{key}';
         $formParams = [];
-        $queryParams = [];
         $queryParams = [];
         if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
@@ -1194,17 +1193,12 @@ class DVCClient
         $resourcePath = '/v1/variables';
         $formParams = [];
         $queryParams = [];
-        $queryParams = [];
         if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
-
-
-
-
 
         if ($multipart) {
             $headers = $this->headerSelector->selectHeadersForMultipart(
@@ -1566,17 +1560,12 @@ class DVCClient
         $resourcePath = '/v1/track';
         $formParams = [];
         $queryParams = [];
-        $queryParams = [];
         if ($this->dvcOptions->getEnableEdgeDB()) {
             $queryParams = ['enableEdgeDB' => 'true'];
         }
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
-
-
-
-
 
         if ($multipart) {
             $headers = $this->headerSelector->selectHeadersForMultipart(
