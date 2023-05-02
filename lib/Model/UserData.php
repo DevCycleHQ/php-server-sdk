@@ -1,4 +1,5 @@
 <?php
+
 /**
  * UserData
  *
@@ -47,17 +48,17 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     public const DISCRIMINATOR = null;
 
     /**
-      * The original name of the model.
-      *
-      * @var string
-      */
+     * The original name of the model.
+     *
+     * @var string
+     */
     protected static $openAPIModelName = 'UserData';
 
     /**
-      * Array of property to type mappings. Used for (de)serialization
-      *
-      * @var string[]
-      */
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @var string[]
+     */
     protected static $openAPITypes = [
         'user_id' => 'string',
         'email' => 'string',
@@ -72,18 +73,17 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_seen_date' => 'float',
         'platform' => 'string',
         'platform_version' => 'string',
-        'device_model' => 'string',
         'sdk_type' => 'string',
         'sdk_version' => 'string'
     ];
 
     /**
-      * Array of property to format mappings. Used for (de)serialization
-      *
-      * @var string[]
-      * @phpstan-var array<string, string|null>
-      * @psalm-var array<string, string|null>
-      */
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @var string[]
+     * @phpstan-var array<string, string|null>
+     * @psalm-var array<string, string|null>
+     */
     protected static $openAPIFormats = [
         'user_id' => null,
         'email' => null,
@@ -98,7 +98,6 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_seen_date' => null,
         'platform' => null,
         'platform_version' => null,
-        'device_model' => null,
         'sdk_type' => null,
         'sdk_version' => null
     ];
@@ -143,7 +142,6 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_seen_date' => 'lastSeenDate',
         'platform' => 'platform',
         'platform_version' => 'platformVersion',
-        'device_model' => 'deviceModel',
         'sdk_type' => 'sdkType',
         'sdk_version' => 'sdkVersion'
     ];
@@ -164,12 +162,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         'custom_data' => 'setCustomData',
         'private_custom_data' => 'setPrivateCustomData',
         'created_date' => 'setCreatedDate',
-        'last_seen_date' => 'setLastSeenDate',
-        'platform' => 'setPlatform',
-        'platform_version' => 'setPlatformVersion',
-        'device_model' => 'setDeviceModel',
-        'sdk_type' => 'setSdkType',
-        'sdk_version' => 'setSdkVersion'
+        'last_seen_date' => 'setLastSeenDate'
     ];
 
     /**
@@ -191,7 +184,6 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_seen_date' => 'getLastSeenDate',
         'platform' => 'getPlatform',
         'platform_version' => 'getPlatformVersion',
-        'device_model' => 'getDeviceModel',
         'sdk_type' => 'getSdkType',
         'sdk_version' => 'getSdkVersion'
     ];
@@ -279,11 +271,10 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['private_custom_data'] = $data['private_custom_data'] ?? null;
         $this->container['created_date'] = $data['created_date'] ?? null;
         $this->container['last_seen_date'] = $data['last_seen_date'] ?? null;
-        $this->container['platform'] = $data['platform'] ?? null;
-        $this->container['platform_version'] = $data['platform_version'] ?? null;
-        $this->container['device_model'] = $data['device_model'] ?? null;
-        $this->container['sdk_type'] = $data['sdk_type'] ?? null;
-        $this->container['sdk_version'] = $data['sdk_version'] ?? null;
+        $this->container['platform'] = 'PHP';
+        $this->container['platform_version'] = PHP_VERSION;
+        $this->container['sdk_type'] = 'server';
+        $this->container['sdk_version'] =  '1.0.5';
     }
 
     /**
@@ -605,7 +596,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets platform
      *
-     * @return string|null
+     * @return string
      */
     public function getPlatform()
     {
@@ -613,23 +604,9 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Sets platform
-     *
-     * @param string|null $platform Platform the Client SDK is running on
-     *
-     * @return self
-     */
-    public function setPlatform($platform)
-    {
-        $this->container['platform'] = $platform;
-
-        return $this;
-    }
-
-    /**
      * Gets platform_version
      *
-     * @return string|null
+     * @return string
      */
     public function getPlatformVersion()
     {
@@ -637,47 +614,9 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Sets platform_version
-     *
-     * @param string|null $platform_version Version of the platform the Client SDK is running on
-     *
-     * @return self
-     */
-    public function setPlatformVersion($platform_version)
-    {
-        $this->container['platform_version'] = $platform_version;
-
-        return $this;
-    }
-
-    /**
-     * Gets device_model
-     *
-     * @return string|null
-     */
-    public function getDeviceModel()
-    {
-        return $this->container['device_model'];
-    }
-
-    /**
-     * Sets device_model
-     *
-     * @param string|null $device_model User's device model
-     *
-     * @return self
-     */
-    public function setDeviceModel($device_model)
-    {
-        $this->container['device_model'] = $device_model;
-
-        return $this;
-    }
-
-    /**
      * Gets sdk_type
      *
-     * @return string|null
+     * @return string
      */
     public function getSdkType()
     {
@@ -685,33 +624,9 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Sets sdk_type
-     *
-     * @param string|null $sdk_type DevCycle SDK type
-     *
-     * @return self
-     */
-    public function setSdkType($sdk_type)
-    {
-        $allowedValues = $this->getSdkTypeAllowableValues();
-        if (!is_null($sdk_type) && !in_array($sdk_type, $allowedValues, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    "Invalid value '%s' for 'sdk_type', must be one of '%s'",
-                    $sdk_type,
-                    implode("', '", $allowedValues)
-                )
-            );
-        }
-        $this->container['sdk_type'] = $sdk_type;
-
-        return $this;
-    }
-
-    /**
      * Gets sdk_version
      *
-     * @return string|null
+     * @return string
      */
     public function getSdkVersion()
     {
@@ -719,26 +634,13 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
-     * Sets sdk_version
-     *
-     * @param string|null $sdk_version DevCycle SDK Version
-     *
-     * @return self
-     */
-    public function setSdkVersion($sdk_version)
-    {
-        $this->container['sdk_version'] = $sdk_version;
-
-        return $this;
-    }
-    /**
      * Returns true if offset exists. False otherwise.
      *
      * @param integer $offset Offset
      *
      * @return boolean
      */
-    public function offsetExists($offset):bool
+    public function offsetExists($offset): bool
     {
         return isset($this->container[$offset]);
     }
@@ -750,7 +652,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return mixed|null
      */
-    public function offsetGet($offset):mixed
+    public function offsetGet($offset): mixed
     {
         return $this->container[$offset] ?? null;
     }
@@ -763,7 +665,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetSet($offset, $value):void
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -779,7 +681,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetUnset($offset):void
+    public function offsetUnset($offset): void
     {
         unset($this->container[$offset]);
     }
@@ -791,9 +693,9 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
      * @return mixed Returns data which can be serialized by json_encode(), which is a value
      * of any type other than a resource.
      */
-    public function jsonSerialize():mixed
+    public function jsonSerialize(): mixed
     {
-       return ObjectSerializer::sanitizeForSerialization($this);
+        return ObjectSerializer::sanitizeForSerialization($this);
     }
 
     /**
@@ -819,5 +721,3 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
-
-
