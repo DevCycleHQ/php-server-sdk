@@ -6,8 +6,10 @@ $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authoriz
 $options = new DevCycle\Model\DVCOptions(true);
 $apiInstance = new DevCycle\Api\DVCClient(
     $config,
-    dvcOptions:$options
+    dvcOptions: $options
 );
 $user_data = new \DevCycle\Model\UserData(array(
-    "user_id"=>"user"
+    "user_id" => "php_test_user"
 ));
+
+echo $user_data->__toString();
