@@ -448,10 +448,6 @@ class DVCClient
         $httpBody = '';
         $multipart = false;
 
-
-
-
-
         if ($multipart) {
             $headers = $this->headerSelector->selectHeadersForMultipart(
                 ['application/json']
@@ -559,7 +555,7 @@ class DVCClient
      */
     public function variableWithHttpInfo($user_data, $key)
     {
-        $request = $this->variableRequest($key, $user_data);
+        $request = $this->variableRequest($user_data, $key);
 
         try {
             $options = $this->createHttpClientOption();
