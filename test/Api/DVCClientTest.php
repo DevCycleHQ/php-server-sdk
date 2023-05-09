@@ -29,8 +29,6 @@ namespace DevCycle\Test\Api;
 
 use \DevCycle\Configuration;
 use \DevCycle\Model\DVCOptions;
-use \DevCycle\ApiException;
-use \DevCycle\ObjectSerializer;
 use \DevCycle\Api\DVCClient;
 use \DevCycle\Model\UserData;
 use PHPUnit\Framework\TestCase;
@@ -108,8 +106,10 @@ final class DVCClientTest extends TestCase
     public function testGetVariableByKey()
     {
         $result = self::$apiInstance->variable(self::$user_data, 'activate-flag', true);
-
         self::assertFalse($result['isDefaulted']);
+
+        $resultValue = self::$apiInstance->variableValue(self::$user_data, 'activate-flag', true);
+        self::assertTrue($resultValue);
     }
 
     /**
@@ -127,8 +127,10 @@ final class DVCClientTest extends TestCase
         );
 
         $result = $localApiInstance->variable(self::$user_data, 'test-feature', true);
-
         self::assertTrue($result['isDefaulted']);
+
+        $resultValue = $localApiInstance->variableValue(self::$user_data, 'test-feature', true);
+        self::assertTrue($resultValue);
     }
 
     /**
