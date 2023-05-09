@@ -28,11 +28,17 @@
 
 namespace DevCycle\Api;
 
+use DevCycle\Model\Event;
+use DevCycle\Model\UserData;
+use DevCycle\Model\UserDataAndEventsBody;
+use DevCycle\Model\Variable;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\MultipartStream;
+use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use DevCycle\ApiException;
@@ -40,6 +46,8 @@ use DevCycle\Configuration;
 use DevCycle\Model\DVCOptions;
 use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * DVCClient Class Doc Comment
@@ -77,18 +85,19 @@ class DVCClient
     protected $hostIndex;
 
     /**
-     * @param Configuration   $config
+     * @param Configuration $config
      * @param ClientInterface $client
-     * @param HeaderSelector  $selector
-     * @param int             $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
+     * @param HeaderSelector $selector
+     * @param int $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
-        Configuration $config = null,
+        Configuration   $config = null,
         ClientInterface $client = null,
-        HeaderSelector $selector = null,
-        $hostIndex = 0,
-        DVCOptions $dvcOptions = null
-    ) {
+        HeaderSelector  $selector = null,
+                        $hostIndex = 0,
+        DVCOptions      $dvcOptions = null
+    )
+    {
         $this->client = $client ?: new Client();
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
@@ -126,37 +135,37 @@ class DVCClient
 
     /**
      * Validate user data exists and has valid data
-     * @param \DevCycle\Model\UserData $user_data user_data (required)
-     * 
-     * @throws \InvalidArgumentException
+     * @param UserData $user_data user_data (required)
+     *
+     * @throws InvalidArgumentException
      */
     public function validateUserData($user_data)
     {
-        if (!($user_data instanceof \DevCycle\Model\UserData)) {
-            throw new \InvalidArgumentException('User data must be an instance of UserData');
+        if (!($user_data instanceof UserData)) {
+            throw new InvalidArgumentException('User data must be an instance of UserData');
         }
 
         if (!$user_data->valid()) {
             $errors = $user_data->listInvalidProperties();
-            throw new \InvalidArgumentException("User data is invalid: " . implode(', ', $errors));
+            throw new InvalidArgumentException("User data is invalid: " . implode(', ', $errors));
         }
     }
 
     /**
      * Validate user data exists and has valid data
-     * @param \DevCycle\Model\Event $event_data event_data (required)
-     * 
-     * @throws \InvalidArgumentException
+     * @param Event $event_data event_data (required)
+     *
+     * @throws InvalidArgumentException
      */
     public function validateEventData($event_data)
     {
-        if (!($event_data instanceof \DevCycle\Model\Event)) {
-            throw new \InvalidArgumentException('Event data must be an instance of Event');
+        if (!($event_data instanceof Event)) {
+            throw new InvalidArgumentException('Event data must be an instance of Event');
         }
 
         if (!$event_data->valid()) {
             $errors = $event_data->listInvalidProperties();
-            throw new \InvalidArgumentException("Event data is invalid: " . implode(', ', $errors));
+            throw new InvalidArgumentException("Event data is invalid: " . implode(', ', $errors));
         }
     }
 
@@ -165,11 +174,11 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data user_data (required)
+     * @param UserData $user_data user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
      * @return array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function allFeatures($user_data)
     {
@@ -184,11 +193,11 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
      * @return array of array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function allFeaturesWithHttpInfo($user_data)
     {
@@ -201,14 +210,14 @@ class DVCClient
             } catch (RequestException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                    $e->getResponse() ? (string)$e->getResponse()->getBody() : null
                 );
             } catch (ConnectException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     null,
                     null
                 );
@@ -221,11 +230,11 @@ class DVCClient
                     sprintf(
                         '[%d] Error connecting to the API (%s)',
                         $statusCode,
-                        (string) $request->getUri()
+                        (string)$request->getUri()
                     ),
                     $statusCode,
                     $response->getHeaders(),
-                    (string) $response->getBody()
+                    (string)$response->getBody()
                 );
             }
 
@@ -234,7 +243,7 @@ class DVCClient
                     if ('array<string,\DevCycle\Model\Feature>' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -246,7 +255,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -258,7 +267,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -270,7 +279,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -282,7 +291,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -296,7 +305,7 @@ class DVCClient
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
-                $content = (string) $response->getBody();
+                $content = (string)$response->getBody();
             }
 
             return [
@@ -356,10 +365,10 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function allFeaturesAsync($user_data)
     {
@@ -378,10 +387,10 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function allFeaturesAsyncWithHttpInfo($user_data)
     {
@@ -395,7 +404,7 @@ class DVCClient
                     if ($returnType === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -415,7 +424,7 @@ class DVCClient
                         ),
                         $statusCode,
                         $response->getHeaders(),
-                        (string) $response->getBody()
+                        (string)$response->getBody()
                     );
                 }
             );
@@ -424,16 +433,16 @@ class DVCClient
     /**
      * Create request for operation 'allFeatures'
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return Request
+     * @throws InvalidArgumentException
      */
     public function allFeaturesRequest($user_data)
     {
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Missing the required parameter $user_data when calling allFeatures'
             );
         }
@@ -484,7 +493,7 @@ class DVCClient
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -505,7 +514,7 @@ class DVCClient
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
+        $query = Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -519,12 +528,12 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  string $key Variable key (required)
-     * @param  \DevCycle\Model\UserData $user_data user_data (required)
+     * @param string $key Variable key (required)
+     * @param UserData $user_data user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @return Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function variable($user_data, $key, $default)
     {
@@ -537,7 +546,7 @@ class DVCClient
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
-            return new \DevCycle\Model\Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+            return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
         }
     }
 
@@ -546,12 +555,12 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  string $key Variable key (required)
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param string $key Variable key (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
      * @return array of \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function variableWithHttpInfo($user_data, $key)
     {
@@ -564,14 +573,14 @@ class DVCClient
             } catch (RequestException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                    $e->getResponse() ? (string)$e->getResponse()->getBody() : null
                 );
             } catch (ConnectException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     null,
                     null
                 );
@@ -584,11 +593,11 @@ class DVCClient
                     sprintf(
                         '[%d] Error connecting to the API (%s)',
                         $statusCode,
-                        (string) $request->getUri()
+                        (string)$request->getUri()
                     ),
                     $statusCode,
                     $response->getHeaders(),
-                    (string) $response->getBody()
+                    (string)$response->getBody()
                 );
             }
 
@@ -597,7 +606,7 @@ class DVCClient
                     if ('\DevCycle\Model\Variable' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -609,7 +618,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -621,7 +630,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -633,7 +642,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -645,7 +654,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -659,7 +668,7 @@ class DVCClient
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
-                $content = (string) $response->getBody();
+                $content = (string)$response->getBody();
             }
 
             return [
@@ -719,11 +728,11 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
-     * @param  string $key Variable key (required)
+     * @param UserData $user_data (required)
+     * @param string $key Variable key (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function variableAsync($user_data, $key, $default)
     {
@@ -739,7 +748,7 @@ class DVCClient
                         error_log("Failed to get variable value for key $key, $e");
                     }
 
-                    return new \DevCycle\Model\Variable(array(
+                    return new Variable(array(
                         "value" => $default,
                         "key" => $key
                     ));
@@ -752,11 +761,11 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
-     * @param  string $key Variable key (required)
+     * @param UserData $user_data (required)
+     * @param string $key Variable key (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function variableAsyncWithHttpInfo($user_data, $key)
     {
@@ -770,7 +779,7 @@ class DVCClient
                     if ($returnType === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -790,7 +799,7 @@ class DVCClient
                         ),
                         $statusCode,
                         $response->getHeaders(),
-                        (string) $response->getBody()
+                        (string)$response->getBody()
                     );
                 }
             );
@@ -799,23 +808,23 @@ class DVCClient
     /**
      * Create request for operation 'variable'
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
-     * @param  string $key Variable key (required)
+     * @param UserData $user_data (required)
+     * @param string $key Variable key (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return Request
+     * @throws InvalidArgumentException
      */
     public function variableRequest($user_data, $key)
     {
         // verify the required parameter 'key' is set
         if ($key === null || (is_array($key) && count($key) === 0)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Missing the required parameter $key when calling variable'
             );
         }
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Missing the required parameter $user_data when calling variable'
             );
         }
@@ -829,7 +838,6 @@ class DVCClient
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
-
 
 
         // path params
@@ -878,7 +886,7 @@ class DVCClient
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -899,7 +907,7 @@ class DVCClient
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
+        $query = Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -913,11 +921,11 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data user_data (required)
+     * @param UserData $user_data user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
-     * @return array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @return array<string,Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function allVariables($user_data)
     {
@@ -932,11 +940,11 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
      * @return array of array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function allVariablesWithHttpInfo($user_data)
     {
@@ -949,14 +957,14 @@ class DVCClient
             } catch (RequestException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                    $e->getResponse() ? (string)$e->getResponse()->getBody() : null
                 );
             } catch (ConnectException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     null,
                     null
                 );
@@ -969,11 +977,11 @@ class DVCClient
                     sprintf(
                         '[%d] Error connecting to the API (%s)',
                         $statusCode,
-                        (string) $request->getUri()
+                        (string)$request->getUri()
                     ),
                     $statusCode,
                     $response->getHeaders(),
-                    (string) $response->getBody()
+                    (string)$response->getBody()
                 );
             }
 
@@ -982,7 +990,7 @@ class DVCClient
                     if ('array<string,\DevCycle\Model\Variable>' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -994,7 +1002,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1006,7 +1014,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1018,7 +1026,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1030,7 +1038,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1044,7 +1052,7 @@ class DVCClient
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
-                $content = (string) $response->getBody();
+                $content = (string)$response->getBody();
             }
 
             return [
@@ -1104,10 +1112,10 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function allVariablesAsync($user_data)
     {
@@ -1126,10 +1134,10 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function allVariablesAsyncWithHttpInfo($user_data)
     {
@@ -1143,7 +1151,7 @@ class DVCClient
                     if ($returnType === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1163,7 +1171,7 @@ class DVCClient
                         ),
                         $statusCode,
                         $response->getHeaders(),
-                        (string) $response->getBody()
+                        (string)$response->getBody()
                     );
                 }
             );
@@ -1172,16 +1180,16 @@ class DVCClient
     /**
      * Create request for operation 'allVariables'
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
+     * @param UserData $user_data (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return Request
+     * @throws InvalidArgumentException
      */
     public function allVariablesRequest($user_data)
     {
         // verify the required parameter 'user_data' is set
         if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Missing the required parameter $user_data when calling allVariables'
             );
         }
@@ -1232,7 +1240,7 @@ class DVCClient
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -1253,7 +1261,7 @@ class DVCClient
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
+        $query = Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1267,19 +1275,19 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserData $user_data user_data (required)
-     * @param  \DevCycle\Model\Event $event_data event_data (required)
-     * 
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
+     * @param UserData $user_data user_data (required)
+     * @param Event $event_data event_data (required)
+     *
      * @return \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function track($user_data, $event_data)
     {
         $this->validateUserData($user_data);
         $this->validateEventData($event_data);
 
-        $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
+        $user_data_and_events_body = new UserDataAndEventsBody(array(
             "user" => $user_data,
             "events" => [$event_data]
         ));
@@ -1293,11 +1301,11 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param UserDataAndEventsBody $user_data_and_events_body (required)
      *
-     * @throws \DevCycle\ApiException on non-2xx response
-     * @throws \InvalidArgumentException
      * @return array of \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function postEventsWithHttpInfo($user_data_and_events_body)
     {
@@ -1310,14 +1318,14 @@ class DVCClient
             } catch (RequestException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     $e->getResponse() ? $e->getResponse()->getHeaders() : null,
-                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                    $e->getResponse() ? (string)$e->getResponse()->getBody() : null
                 );
             } catch (ConnectException $e) {
                 throw new ApiException(
                     "[{$e->getCode()}] {$e->getMessage()}",
-                    (int) $e->getCode(),
+                    (int)$e->getCode(),
                     null,
                     null
                 );
@@ -1330,11 +1338,11 @@ class DVCClient
                     sprintf(
                         '[%d] Error connecting to the API (%s)',
                         $statusCode,
-                        (string) $request->getUri()
+                        (string)$request->getUri()
                     ),
                     $statusCode,
                     $response->getHeaders(),
-                    (string) $response->getBody()
+                    (string)$response->getBody()
                 );
             }
 
@@ -1343,7 +1351,7 @@ class DVCClient
                     if ('\DevCycle\Model\InlineResponse201' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1355,7 +1363,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1367,7 +1375,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1379,7 +1387,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1391,7 +1399,7 @@ class DVCClient
                     if ('\DevCycle\Model\ErrorResponse' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1405,7 +1413,7 @@ class DVCClient
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
-                $content = (string) $response->getBody();
+                $content = (string)$response->getBody();
             }
 
             return [
@@ -1465,17 +1473,17 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserData $user_data (required)
-     * @param  \DevCycle\Model\Event $event_data (required)
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @param UserData $user_data (required)
+     * @param Event $event_data (required)
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function trackAsync($user_data, $event_data)
     {
         $this->validateUserData($user_data);
         $this->validateEventData($event_data);
 
-        $user_data_and_events_body = new \DevCycle\Model\UserDataAndEventsBody(array(
+        $user_data_and_events_body = new UserDataAndEventsBody(array(
             "user" => $user_data,
             "events" => [$event_data]
         ));
@@ -1493,10 +1501,10 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param  \DevCycle\Model\UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param UserDataAndEventsBody $user_data_and_events_body (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @return PromiseInterface
+     * @throws InvalidArgumentException
      */
     public function postEventsAsyncWithHttpInfo($user_data_and_events_body)
     {
@@ -1510,7 +1518,7 @@ class DVCClient
                     if ($returnType === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
-                        $content = (string) $response->getBody();
+                        $content = (string)$response->getBody();
                     }
 
                     return [
@@ -1530,7 +1538,7 @@ class DVCClient
                         ),
                         $statusCode,
                         $response->getHeaders(),
-                        (string) $response->getBody()
+                        (string)$response->getBody()
                     );
                 }
             );
@@ -1539,16 +1547,16 @@ class DVCClient
     /**
      * Create request for operation 'postEvents'
      *
-     * @param  \DevCycle\Model\UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param UserDataAndEventsBody $user_data_and_events_body (required)
      *
-     * @throws \InvalidArgumentException
-     * @return \GuzzleHttp\Psr7\Request
+     * @return Request
+     * @throws InvalidArgumentException
      */
     public function postEventsRequest($user_data_and_events_body)
     {
         // verify the required parameter 'user_data_and_events_body' is set
         if ($user_data_and_events_body === null || (is_array($user_data_and_events_body) && count($user_data_and_events_body) === 0)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Missing the required parameter $user_data_and_events_body when calling postEvents'
             );
         }
@@ -1599,7 +1607,7 @@ class DVCClient
                 $httpBody = \GuzzleHttp\json_encode($formParams);
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
+                $httpBody = Query::build($formParams);
             }
         }
 
@@ -1620,7 +1628,7 @@ class DVCClient
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
+        $query = Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1632,8 +1640,8 @@ class DVCClient
     /**
      * Create http client option
      *
-     * @throws \RuntimeException on file opening failure
      * @return array of http client options
+     * @throws RuntimeException on file opening failure
      */
     protected function createHttpClientOption()
     {
@@ -1641,9 +1649,12 @@ class DVCClient
         if ($this->config->getDebug()) {
             $options[RequestOptions::DEBUG] = fopen($this->config->getDebugFile(), 'a');
             if (!$options[RequestOptions::DEBUG]) {
-                throw new \RuntimeException('Failed to open the debug file: ' . $this->config->getDebugFile());
+                throw new RuntimeException('Failed to open the debug file: ' . $this->config->getDebugFile());
             }
         }
+        $options["curl"] = $this->config->getUDSPath() == "" ? [] : [
+            CURLOPT_UNIX_SOCKET_PATH => $this->config->getUDSPath()
+        ];
 
         return $options;
     }
