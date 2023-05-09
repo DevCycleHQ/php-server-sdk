@@ -524,12 +524,31 @@ class DVCClient
     }
 
     /**
+     * Operation variableValue
+     *
+     * Get variable value by key for user data
+     *
+     * @param  UserData $user_data user_data (required)
+     * @param  string $key Variable key (required)
+     * @param  object $default Default value if variable is not found (required)
+     *
+     * @throws ApiException on non-2xx response
+     * @throws InvalidArgumentException
+     * @return object|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     */
+    public function variableValue($user_data, $key, $default)
+    {
+        return $this->variable($user_data, $key, $default)->getValue();
+    }
+
+    /**
      * Operation variable
      *
-     * Get variable by key for user data
+     * Get variable object by key for user data
      *
-     * @param string $key Variable key (required)
-     * @param UserData $user_data user_data (required)
+     * @param  UserData $user_data user_data (required)
+     * @param  string $key Variable key (required)
+     * @param  object $default Default value if variable is not found (required)
      *
      * @return Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
