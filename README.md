@@ -4,7 +4,7 @@ Welcome to the the DevCycle PHP SDK, initially generated via the [DevCycle Bucke
 
 ## Requirements
 
-PHP 7.3 and later.
+PHP 8.0 and later.
 
 ## Installation
 
