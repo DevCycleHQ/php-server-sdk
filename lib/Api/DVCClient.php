@@ -560,7 +560,9 @@ class DVCClient
 
         try {
             list($response) = $this->variableWithHttpInfo($user_data, $key);
-            if (gettype($response["value"]) != gettype($default)) {
+            $isArrayWrapped = gettype($response["value"]) == "array" && gettype($default) != "array" && sizeof($response["value"] > 0);
+            $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) == gettype($default) : gettype($response["value"]) != gettype($default);
+            if (!$doTypesMatch) {
                 return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
             } else {
                 return $response;

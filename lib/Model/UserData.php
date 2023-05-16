@@ -274,7 +274,7 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['platform'] = 'PHP';
         $this->container['platform_version'] = PHP_VERSION;
         $this->container['sdk_type'] = 'server';
-        $this->container['sdk_version'] =  '1.1.2';
+        $this->container['sdk_version'] =  '1.1.3';
     }
 
     /**
