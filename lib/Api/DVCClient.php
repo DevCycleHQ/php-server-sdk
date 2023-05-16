@@ -560,7 +560,11 @@ class DVCClient
 
         try {
             list($response) = $this->variableWithHttpInfo($user_data, $key);
-            return $response;
+            if (gettype($response["value"]) != gettype($default)) {
+                return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+            } else {
+                return $response;
+            }
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
