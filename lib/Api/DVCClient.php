@@ -528,13 +528,13 @@ class DVCClient
      *
      * Get variable value by key for user data
      *
-     * @param  UserData $user_data user_data (required)
-     * @param  string $key Variable key (required)
-     * @param  object $default Default value if variable is not found (required)
+     * @param UserData $user_data user_data (required)
+     * @param string $key Variable key (required)
+     * @param object $default Default value if variable is not found (required)
      *
-     * @throws ApiException on non-2xx response
-     * @throws InvalidArgumentException
      * @return object|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @throws InvalidArgumentException
+     * @throws ApiException on non-2xx response
      */
     public function variableValue($user_data, $key, $default)
     {
@@ -546,9 +546,9 @@ class DVCClient
      *
      * Get variable object by key for user data
      *
-     * @param  UserData $user_data user_data (required)
-     * @param  string $key Variable key (required)
-     * @param  object $default Default value if variable is not found (required)
+     * @param UserData $user_data user_data (required)
+     * @param string $key Variable key (required)
+     * @param object $default Default value if variable is not found (required)
      *
      * @return Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -560,22 +560,43 @@ class DVCClient
 
         try {
             list($response) = $this->variableWithHttpInfo($user_data, $key);
-            $isArrayWrapped = gettype($response["value"]) === "array" && gettype($default) !== "array";
-            $responseType = gettype($response["value"]);
-            $defaultType = gettype($default);
-            $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) === $defaultType : $responseType == $defaultType;
-            $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
-            if (!$doTypesMatch) {
-                return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
-            } else {
-                return new Variable(array("key" => $key, "value" => $isArrayWrapped ? $unwrappedValue : $response["value"], "isDefaulted" => false));
-            }
+            return $this->reformatVariable($key, $response, $default);
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
             return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
         }
+    }
+
+
+    private function reformatVariable($key, $response, $default) {
+        $isArrayWrapped = gettype($response["value"]) === "array" && (gettype($default) !== "array" && gettype($default) !== "object");
+        $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
+
+        $isObjectDefault = gettype($default) === "object";
+        $responseType = gettype($unwrappedValue);
+        $defaultType = gettype($default);
+
+        $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) === $defaultType : $responseType == $defaultType || $isObjectDefault;
+
+        if ($default === null) {
+            $doTypesMatch = true;
+        }
+
+        if (!$doTypesMatch) {
+            return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+        } else {
+            return new Variable(array("key" => $key, "value" => $unwrappedValue, "isDefaulted" => false));
+        }
+    }
+
+    private function fixVariableValueNesting($variable) {
+        $isArrayWrapped = gettype($variable["value"]) === "array";
+        if ($isArrayWrapped && sizeof($variable["value"]) > 0 && in_array(0, array_keys($variable["value"]))) {
+            $variable["value"] = $variable["value"][0];
+        }
+        return $variable;
     }
 
     /**
@@ -960,7 +981,11 @@ class DVCClient
         $this->validateUserData($user_data);
 
         list($response) = $this->allVariablesWithHttpInfo($user_data);
-        return $response;
+        $variables = [];
+        foreach($response as $key=>$variable) {
+            $variables[$key] = $this->fixVariableValueNesting($variable);
+        }
+        return $variables;
     }
 
     /**
