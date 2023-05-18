@@ -571,14 +571,13 @@ class DVCClient
 
 
     private function reformatVariable($key, $response, $default) {
-        $isArrayWrapped = gettype($response["value"]) === "array" && (gettype($default) !== "array" && gettype($default) !== "object");
-        $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
-
-        $isObjectDefault = gettype($default) === "object";
-        $responseType = gettype($unwrappedValue);
         $defaultType = gettype($default);
+        $isObjectDefault = $defaultType === "object";
+        $isArrayWrapped = gettype($response["value"]) === "array" && ($defaultType !== "array" && $isObjectDefault);
+        $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
+        $responseType = gettype($unwrappedValue);
 
-        $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) === $defaultType : $responseType == $defaultType || $isObjectDefault;
+        $doTypesMatch = $isArrayWrapped ? $responseType === $defaultType : $responseType === $defaultType || $isObjectDefault;
 
         if ($default === null) {
             $doTypesMatch = true;
