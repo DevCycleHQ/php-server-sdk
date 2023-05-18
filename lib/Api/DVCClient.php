@@ -560,12 +560,15 @@ class DVCClient
 
         try {
             list($response) = $this->variableWithHttpInfo($user_data, $key);
-            $isArrayWrapped = gettype($response["value"]) == "array" && gettype($default) != "array";
-            $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) == gettype($default) : gettype($response["value"]) != gettype($default);
+            $isArrayWrapped = gettype($response["value"]) === "array" && gettype($default) !== "array";
+            $responseType = gettype($response["value"]);
+            $defaultType = gettype($default);
+            $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) === $defaultType : $responseType == $defaultType;
+            $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
             if (!$doTypesMatch) {
                 return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
             } else {
-                return $response;
+                return new Variable(array("key" => $key, "value" => $isArrayWrapped ? $unwrappedValue : $response["value"], "isDefaulted" => false));
             }
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
