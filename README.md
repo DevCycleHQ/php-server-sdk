@@ -40,7 +40,7 @@ Please follow the [installation procedure](#installation--usage) and then run th
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_SERVER_SDK_TOKEN');
 
 $apiInstance = new DevCycle\Api\DVCClient(
     $config,
@@ -64,3 +64,28 @@ try {
 ## Usage
 
 To find usage documentation, visit our [docs](https://docs.devcycle.com/docs/sdk/server-side-sdks/php#usage).
+
+
+## Advanced Options (Local Bucketing)
+
+Because of the nature of PHP - we can't directly support local bucketing within PHP - but we have created a supporting worker that
+can be used to emulate the local bucketing function of low latency and high throughput.
+This proxy can be found here: https://github.com/devcyclehq/local-bucketing-proxy
+
+The proxy has two modes - HTTP, and Unix sockets. The PHP SDK supports both modes, but the HTTP mode should be used for most cases.
+
+The configuration for this proxy (in HTTP mode) is as follows (replacing the URL with the URL of the proxy):
+
+```
+$config = DevCycle\Configuration::getDefaultConfiguration()
+    ->setApiKey('Authorization', $_ENV["DVC_SERVER_SDK_KEY"])
+    ->setHost("http://localhost:8080/v1");
+```
+
+The configuration for this proxy (in Unix socket mode) is as follows (replacing the UDS path with the path to the socket):
+```
+$config = DevCycle\Configuration::getDefaultConfiguration()
+    ->setApiKey('Authorization', $_ENV["DVC_SERVER_SDK_KEY"])
+    ->setHost("http:/v1")
+    ->setUDSPath("/tmp/phpsock.sock");
+```
