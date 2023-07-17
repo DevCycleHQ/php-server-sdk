@@ -46,7 +46,8 @@ jobs:
 
       - name: Update Version in code
         run: |
-          sed -i "s/\$this->container\['sdk_version'\] = '[0-9]\+\.[0-9]\+\.[0-9]\+';/\$this->container['sdk_version'] = '${{steps.semverbump.outputs.minor}}';/g" ./lib/Model/UserData.php
+          echo "${{steps.semverbump.outputs.minor}}" > lib/VERSION.txt
+
 
       - name: Commit version change
         run: |
