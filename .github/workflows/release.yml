@@ -13,6 +13,15 @@ on:
         required: true
         default: false
         type: boolean
+      version-increment-type:
+          description: 'Which part of the version to increment:'
+          required: true
+          type: choice
+          options:
+            - major
+            - minor
+            - patch
+          default: 'patch'
 
 permissions:
   contents: write
@@ -28,53 +37,39 @@ jobs:
           token: ${{ secrets.AUTOMATION_USER_TOKEN }}
           fetch-depth: 0
 
-      - name: Get latest non-prerelease release
-        id: latestrelease
-        uses: cardinalby/git-get-release-action@v1
+      - uses: DevCycleHQ/release-action/prepare-release@main
+        id: prepare-release
         with:
-          latest: true
-          prerelease: false
-          draft: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get next version
-        id: semverbump
-        uses: WyriHaximus/github-action-next-semvers@v1.2.1
-        with:
-          version: ${{ steps.latestrelease.outputs.tag_name }}
+          github-token: ${{ secrets.AUTOMATION_USER_TOKEN }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+          draft: ${{ github.event.inputs.draft }}
+          version-increment-type: ${{ github.event.inputs.version-increment-type }}
 
       - name: Update Version in code
         run: |
-          echo "${{steps.semverbump.outputs.minor}}" > lib/VERSION.txt
-
+          echo "${{steps.prepare-release.outputs.next-release-tag}}" > lib/VERSION.txt
 
       - name: Commit version change
         run: |
           git config --global user.email "github-tracker-bot@taplytics.com"
           git config --global user.name "DevCycle Automation"
           git add ./lib/Model/UserData.php
-          git commit -m "Release ${{steps.semverbump.outputs.minor}}"
+          git commit -m "Release ${{steps.prepare-release.outputs.next-release-tag}}"
 
       - name: Push version change
         run: |
           git push origin HEAD:main
-        if: inputs.prerelease != true && inputs.draft != true
+        if: inputs.draft != true
 
-      - name: Push version change (prerelease)
-        run: |
-          git branch --force --track ${BRANCH}
-          git push origin ${BRANCH}
-        env:
-          BRANCH: prerelease-${{ steps.semverbump.outputs.minor }}
-        if: inputs.prerelease == true && inputs.draft != true
-
-      - name: Release SDK
-        uses: DevCycleHQ/release-action/gh-release@main
+      - uses: DevCycleHQ/release-action/create-release@main
+        id: create-release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.prepare-release.outputs.next-release-tag }}
+          target: main
           prerelease: ${{ github.event.inputs.prerelease }}
           draft: ${{ github.event.inputs.draft }}
+          changelog: ${{ steps.prepare-release.outputs.changelog }}
 
       # Trigger packagist.org after we do the internal release as it will pull 
       # data from the current state of the GitHub repo
@@ -85,3 +80,8 @@ jobs:
           headers: '{"Content-Type": "application/json"}'
           body: '{"repository": {"url": "https://github.com/DevCycleHQ/php-server-sdk"}}'
         if: inputs.prerelease != true && inputs.draft != true
+
+      - name: Display link to release
+        run: |
+          echo "::notice title=Release ID::${{ steps.create-release.outputs.release-id }}"
+          echo "::notice title=Release URL::${{ steps.create-release.outputs.release-url }}"
