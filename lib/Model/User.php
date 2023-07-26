@@ -1,7 +1,7 @@
 <?php
 
 /**
- * UserData
+ * User
  *
  * PHP version 7.3
  *
@@ -33,7 +33,7 @@ use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
 
 /**
- * UserData Class Doc Comment
+ * User Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
@@ -43,7 +43,7 @@ use \DevCycle\ObjectSerializer;
  * @template TKey int|null
  * @template TValue mixed|null
  */
-class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
+class User implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -721,3 +721,9 @@ class UserData implements ModelInterface, ArrayAccess, \JsonSerializable
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
+
+/**
+ * @deprecated Use DevCycle\Model\User instead
+ */
+class_alias('DevCycle\\Model\\User', 'DevCycle\\Model\\UserData');
+

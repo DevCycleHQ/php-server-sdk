@@ -1,6 +1,6 @@
 <?php
 /**
- * DVCOptions
+ * Options
  * PHP version 7.3
  *
  * @category Class
@@ -16,12 +16,12 @@
 namespace DevCycle\Model;
 
 /**
- * DVCOptions Class Doc Comment
+ * Options Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
  */
-class DVCOptions
+class Options
 {
     protected $enableEdgeDB;
 
@@ -48,13 +48,15 @@ class DVCOptions
     /**
      * Sets the enableEdgeDB flag
      *
-     * @param boolean $enableEdgeDB 
-     *
-     * @return boolean
+     * @param boolean $enableEdgeDB
      */
     public function setEnableEdgeDB($enableEdgeDB)
     {
         $this->enableEdgeDB = $enableEdgeDB;
     }
-
 }
+
+/**
+ * @deprecated Use DevCycle\Model\Options instead
+ */
+class_alias('DevCycle\\Model\\Options', 'DevCycle\\Model\\DVCOptions');

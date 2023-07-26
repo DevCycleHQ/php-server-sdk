@@ -1,6 +1,6 @@
 # DevCycle PHP Server SDK
 
-Welcome to the the DevCycle PHP SDK, initially generated via the [DevCycle Bucketing API](https://docs.devcycle.com/bucketing-api/#tag/devcycle).
+Welcome to the DevCycle PHP SDK, initially generated via the [DevCycle Bucketing API](https://docs.devcycle.com/bucketing-api/#tag/devcycle).
 
 ## Requirements
 
@@ -40,23 +40,23 @@ Please follow the [installation procedure](#installation--usage) and then run th
 require_once(__DIR__ . '/vendor/autoload.php');
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_SERVER_SDK_TOKEN');
+$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
 
-$apiInstance = new DevCycle\Api\DVCClient(
+$apiInstance = new DevCycle\Api\DevCycleClient(
     $config,
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
 );
-$user_data = new \DevCycle\Model\UserData(array(
+$user_data = new \DevCycle\Model\User(array(
   "user_id"=>"my-user"
-)); // \DevCycle\Model\UserData
+)); // \DevCycle\Model\User
 
 try {
     $result = $apiInstance->allFeatures($user_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DVCClient->allFeatures: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DevCycleClient->allFeatures: ', $e->getMessage(), PHP_EOL;
 }
 
 ```
@@ -78,14 +78,14 @@ The configuration for this proxy (in HTTP mode) is as follows (replacing the URL
 
 ```
 $config = DevCycle\Configuration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DVC_SERVER_SDK_KEY"])
+    ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
     ->setHost("http://localhost:8080/v1");
 ```
 
 The configuration for this proxy (in Unix socket mode) is as follows (replacing the UDS path with the path to the socket):
 ```
 $config = DevCycle\Configuration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DVC_SERVER_SDK_KEY"])
+    ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
     ->setHost("http:/v1")
     ->setUDSPath("/tmp/phpsock.sock");
 ```

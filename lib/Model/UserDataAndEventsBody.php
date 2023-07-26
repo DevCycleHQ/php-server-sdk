@@ -60,7 +60,7 @@ class UserDataAndEventsBody implements ModelInterface, ArrayAccess, \JsonSeriali
       */
     protected static $openAPITypes = [
         'events' => '\DevCycle\Model\Event[]',
-        'user' => '\DevCycle\Model\UserData'
+        'user' => '\DevCycle\Model\User'
     ];
 
     /**
@@ -238,7 +238,7 @@ class UserDataAndEventsBody implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets user
      *
-     * @return \DevCycle\Model\UserData|null
+     * @return \DevCycle\Model\User|null
      */
     public function getUser()
     {
@@ -248,7 +248,7 @@ class UserDataAndEventsBody implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets user
      *
-     * @param \DevCycle\Model\UserData|null $user user
+     * @param \DevCycle\Model\User|null $user user
      *
      * @return self
      */

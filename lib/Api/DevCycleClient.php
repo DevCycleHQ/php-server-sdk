@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DVCClient
+ * DevCycleClient
  * PHP version 7.3
  *
  * @category Class
@@ -29,8 +29,8 @@
 namespace DevCycle\Api;
 
 use DevCycle\Model\Event;
-use DevCycle\Model\UserData;
-use DevCycle\Model\UserDataAndEventsBody;
+use DevCycle\Model\User;
+use DevCycle\Model\UserAndEventsBody;
 use DevCycle\Model\Variable;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -43,7 +43,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use DevCycle\ApiException;
 use DevCycle\Configuration;
-use DevCycle\Model\DVCOptions;
+use DevCycle\Model\Options;
 use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
 use InvalidArgumentException;
@@ -57,7 +57,7 @@ use RuntimeException;
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class DVCClient
+class DevCycleClient
 {
     /**
      * @var ClientInterface
@@ -70,7 +70,7 @@ class DVCClient
     protected $config;
 
     /**
-     * @var DVCOptions
+     * @var Options
      */
     protected $dvcOptions;
 
@@ -95,14 +95,14 @@ class DVCClient
         ClientInterface $client = null,
         HeaderSelector  $selector = null,
                         $hostIndex = 0,
-        DVCOptions      $dvcOptions = null
+        Options         $dvcOptions = null
     )
     {
         $this->client = $client ?: new Client();
         $this->config = $config ?: new Configuration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
-        $this->dvcOptions = $dvcOptions ?: new DVCOptions();
+        $this->dvcOptions = $dvcOptions ?: new Options();
     }
 
     /**
@@ -135,13 +135,13 @@ class DVCClient
 
     /**
      * Validate user data exists and has valid data
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      *
      * @throws InvalidArgumentException
      */
     public function validateUserData($user_data)
     {
-        if (!($user_data instanceof UserData)) {
+        if (!($user_data instanceof User)) {
             throw new InvalidArgumentException('User data must be an instance of UserData');
         }
 
@@ -174,7 +174,7 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      *
      * @return array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -193,7 +193,7 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return array of array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -365,7 +365,7 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -387,7 +387,7 @@ class DVCClient
      *
      * Get all features by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -433,7 +433,7 @@ class DVCClient
     /**
      * Create request for operation 'allFeatures'
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return Request
      * @throws InvalidArgumentException
@@ -528,7 +528,7 @@ class DVCClient
      *
      * Get variable value by key for user data
      *
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      * @param string $key Variable key (required)
      * @param object $default Default value if variable is not found (required)
      *
@@ -546,7 +546,7 @@ class DVCClient
      *
      * Get variable object by key for user data
      *
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      * @param string $key Variable key (required)
      * @param object $default Default value if variable is not found (required)
      *
@@ -605,7 +605,7 @@ class DVCClient
      * Get variable by key for user data
      *
      * @param string $key Variable key (required)
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return array of \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -777,7 +777,7 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return PromiseInterface
@@ -810,7 +810,7 @@ class DVCClient
      *
      * Get variable by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return PromiseInterface
@@ -857,7 +857,7 @@ class DVCClient
     /**
      * Create request for operation 'variable'
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return Request
@@ -970,7 +970,7 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      *
      * @return array<string,Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -993,7 +993,7 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return array of array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -1165,7 +1165,7 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1187,7 +1187,7 @@ class DVCClient
      *
      * Get all variables by key for user data
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1233,7 +1233,7 @@ class DVCClient
     /**
      * Create request for operation 'allVariables'
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      *
      * @return Request
      * @throws InvalidArgumentException
@@ -1328,7 +1328,7 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param UserData $user_data user_data (required)
+     * @param User $user_data user_data (required)
      * @param Event $event_data event_data (required)
      *
      * @return \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
@@ -1526,7 +1526,7 @@ class DVCClient
      *
      * Post events to DevCycle for user
      *
-     * @param UserData $user_data (required)
+     * @param User $user_data (required)
      * @param Event $event_data (required)
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1712,3 +1712,8 @@ class DVCClient
         return $options;
     }
 }
+
+/**
+ * @deprecated Use DevCycle\Api\DevCycleApi instead
+ */
+class_alias('DevCycle\\Api\\DevCycleClient', 'DevCycle\\Api\\DVCClient');

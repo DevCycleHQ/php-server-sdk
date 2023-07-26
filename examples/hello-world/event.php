@@ -9,5 +9,5 @@ try {
     $result = $apiInstance->track($user_data, $event_data);
     print_r($result);
 } catch (Exception $e) {
-    echo 'Exception when calling DVCClient->track: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling DevCycleClient->track: ', $e->getMessage(), PHP_EOL;
 }
