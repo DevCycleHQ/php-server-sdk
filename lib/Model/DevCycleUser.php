@@ -1,7 +1,7 @@
 <?php
 
 /**
- * User
+ * DevCycleUser
  *
  * PHP version 7.3
  *
@@ -33,7 +33,7 @@ use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
 
 /**
- * User Class Doc Comment
+ * DevCycleUser Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
@@ -43,7 +43,7 @@ use \DevCycle\ObjectSerializer;
  * @template TKey int|null
  * @template TValue mixed|null
  */
-class User implements ModelInterface, ArrayAccess, \JsonSerializable
+class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -723,7 +723,7 @@ class User implements ModelInterface, ArrayAccess, \JsonSerializable
 }
 
 /**
- * @deprecated Use DevCycle\Model\User instead
+ * @deprecated Use DevCycle\Model\DevCycleUser instead
  */
-class_alias('DevCycle\\Model\\User', 'DevCycle\\Model\\UserData');
+class_alias('DevCycle\\Model\\DevCycleUser', 'DevCycle\\Model\\UserData');
 

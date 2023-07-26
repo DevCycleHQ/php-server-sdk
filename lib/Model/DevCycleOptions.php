@@ -1,6 +1,6 @@
 <?php
 /**
- * Options
+ * DevCycleOptions
  * PHP version 7.3
  *
  * @category Class
@@ -16,12 +16,12 @@
 namespace DevCycle\Model;
 
 /**
- * Options Class Doc Comment
+ * DevCycleOptions Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
  */
-class Options
+class DevCycleOptions
 {
     protected $enableEdgeDB;
 
@@ -59,4 +59,4 @@ class Options
 /**
  * @deprecated Use DevCycle\Model\Options instead
  */
-class_alias('DevCycle\\Model\\Options', 'DevCycle\\Model\\DVCOptions');
+class_alias('DevCycle\\Model\\DevCycleOptions', 'DevCycle\\Model\\DVCOptions');

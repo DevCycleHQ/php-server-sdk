@@ -1,6 +1,6 @@
 <?php
 /**
- * Event
+ * DevCycleEvent
  *
  * PHP version 7.3
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
 
 /**
- * Event Class Doc Comment
+ * DevCycleEvent Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
@@ -42,7 +42,7 @@ use \DevCycle\ObjectSerializer;
  * @template TKey int|null
  * @template TValue mixed|null
  */
-class Event implements ModelInterface, ArrayAccess, \JsonSerializable
+class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -439,3 +439,8 @@ class Event implements ModelInterface, ArrayAccess, \JsonSerializable
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
+
+/**
+ * @deprecated Use DevCycle\Model\DevCycleEvent instead
+ */
+class_alias('DevCycle\\Model\\DevCycleEvent', 'DevCycle\\Model\\Event');

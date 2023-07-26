@@ -1,4 +1,4 @@
-# DevCycle\DevCycleClient
+# DevCycleClient
 
 All URIs are relative to https://bucketing-api.devcycle.com.
 
@@ -24,20 +24,23 @@ Get all features by key for user data
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+// $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevCycleClient(
+$apiInstance = new DevCycleClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
     $config
 );
-$user_data = new \DevCycle\Model\User(); // \DevCycle\Model\User
+$user_data = new DevCycleUser();
 
 try {
     $result = $apiInstance->getFeatures($user_data);
@@ -51,7 +54,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **user_data** | [**\DevCycle\Model\User**](../Model/User.md)|  |
+ **user_data** | [**\DevCycle\Model\DevCycleUser**](../Model/DevCycleUser.md)|  |
 
 ### Return type
 
@@ -84,21 +87,23 @@ Get variable by key for user data
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+// $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
-
-$apiInstance = new DevCycle\Api\DevCycleClient(
+$apiInstance = new DevCycleClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
     $config
 );
 $key = 'key_example'; // string | Variable key
-$user_data = new \DevCycle\Model\User(); // \DevCycle\Model\User
+$user_data = new DevCycleUser();
 
 try {
     $result = $apiInstance->getVariableByKey($key, $user_data);
@@ -113,7 +118,7 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **key** | **string**| Variable key |
- **user_data** | [**\DevCycle\Model\User**](../Model/User.md)|  |
+ **user_data** | [**\DevCycle\Model\DevCycleUser**](../Model/DevCycleUser.md)|  |
 
 ### Return type
 
@@ -146,20 +151,23 @@ Get all variables by key for user data
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+// $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevCycleClient(
+$apiInstance = new DevCycleClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
     $config
 );
-$user_data = new \DevCycle\Model\User(); // \DevCycle\Model\User
+$user_data = new DevCycleUser();
 
 try {
     $result = $apiInstance->getVariables($user_data);
@@ -173,7 +181,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **user_data** | [**\DevCycle\Model\User**](../Model/User.md)|  |
+ **user_data** | [**\DevCycle\Model\DevCycleUser**](../Model/DevCycleUser.md)|  |
 
 ### Return type
 
@@ -206,21 +214,25 @@ Post events to DevCycle for user
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
+use DevCycle\Model\DevCycleEvent;
 
 // Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'YOUR_API_KEY');
+$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
 // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-// $config = DevCycle\Configuration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
+// $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKeyPrefix('Authorization', 'Bearer');
 
 
-$apiInstance = new DevCycle\Api\DevCycleClient(
+$apiInstance = new DevCycleClient(
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
     $config
 );
-$user_data = new \DevCycle\Model\User(); // \DevCycle\Model\User
-$event_data = new \DevCycle\Model\Event(array(
+$user_data = new DevCycleUser();
+$event_data = new DevCycleEvent(array(
   "type"=>"my-event"
 ));
 
@@ -236,7 +248,7 @@ try {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **user_data_and_events_body** | [**\DevCycle\Model\UserAndEventsBody**](../Model/UserDataAndEventsBody.md)|  |
+ **user_data_and_events_body** | [**\DevCycle\Model\DevCycleUserAndEventsBody**](../Model/UserDataAndEventsBody.md)|  |
 
 ### Return type
 

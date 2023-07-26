@@ -1,6 +1,6 @@
 <?php
 /**
- * Configuration
+ * DevCycleConfiguration
  * PHP version 7.3
  *
  * @category Class
@@ -28,7 +28,7 @@
 namespace DevCycle;
 
 /**
- * Configuration Class Doc Comment
+ * DevCycleConfiguration Class Doc Comment
  * PHP version 7.3
  *
  * @category Class
@@ -36,10 +36,10 @@ namespace DevCycle;
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-class Configuration
+class DevCycleConfiguration
 {
     /**
-     * @var Configuration
+     * @var DevCycleConfiguration
      */
     private static $defaultConfiguration;
 
@@ -383,12 +383,12 @@ class Configuration
     /**
      * Gets the default configuration instance
      *
-     * @return Configuration
+     * @return DevCycleConfiguration
      */
     public static function getDefaultConfiguration()
     {
         if (self::$defaultConfiguration === null) {
-            self::$defaultConfiguration = new Configuration();
+            self::$defaultConfiguration = new DevCycleConfiguration();
         }
 
         return self::$defaultConfiguration;
@@ -397,11 +397,11 @@ class Configuration
     /**
      * Sets the default configuration instance
      *
-     * @param Configuration $config An instance of the Configuration Object
+     * @param DevCycleConfiguration $config An instance of the DevCycleConfiguration Object
      *
      * @return void
      */
-    public static function setDefaultConfiguration(Configuration $config)
+    public static function setDefaultConfiguration(DevCycleConfiguration $config)
     {
         self::$defaultConfiguration = $config;
     }
@@ -502,3 +502,8 @@ class Configuration
         return $url;
     }
 }
+
+/**
+ * @deprecated Use DevCycle\Api\DevCycleApi instead
+ */
+class_alias('DevCycle\\DevCycleConfiguration', 'DevCycle\\Configuration');

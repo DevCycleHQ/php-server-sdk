@@ -39,18 +39,22 @@ Please follow the [installation procedure](#installation--usage) and then run th
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-// Configure API key authorization: bearerAuth
-$config = DevCycle\Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
 
-$apiInstance = new DevCycle\Api\DevCycleClient(
+// Configure API key authorization: bearerAuth
+$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
+
+$apiInstance = new DevCycleClient(
     $config,
     // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
     // This is optional, `GuzzleHttp\Client` will be used as default.
     new GuzzleHttp\Client(),
 );
-$user_data = new \DevCycle\Model\User(array(
+$user_data = new DevCycleUser(array(
   "user_id"=>"my-user"
-)); // \DevCycle\Model\User
+));
 
 try {
     $result = $apiInstance->allFeatures($user_data);
@@ -77,14 +81,14 @@ The proxy has two modes - HTTP, and Unix sockets. The PHP SDK supports both mode
 The configuration for this proxy (in HTTP mode) is as follows (replacing the URL with the URL of the proxy):
 
 ```
-$config = DevCycle\Configuration::getDefaultConfiguration()
+$config = DevCycleConfiguration::getDefaultConfiguration()
     ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
     ->setHost("http://localhost:8080/v1");
 ```
 
 The configuration for this proxy (in Unix socket mode) is as follows (replacing the UDS path with the path to the socket):
 ```
-$config = DevCycle\Configuration::getDefaultConfiguration()
+$config = DevCycleConfiguration::getDefaultConfiguration()
     ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
     ->setHost("http:/v1")
     ->setUDSPath("/tmp/phpsock.sock");

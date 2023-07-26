@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/app.php');
 
-$event_data = new \DevCycle\Model\Event(array(
+$event_data = new \DevCycle\Model\DevCycleEvent(array(
     "type" => "some_event"
 ));
 

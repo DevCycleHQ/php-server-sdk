@@ -28,8 +28,8 @@
 
 namespace DevCycle\Api;
 
-use DevCycle\Model\Event;
-use DevCycle\Model\User;
+use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\UserAndEventsBody;
 use DevCycle\Model\Variable;
 use GuzzleHttp\Client;
@@ -42,8 +42,8 @@ use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use DevCycle\ApiException;
-use DevCycle\Configuration;
-use DevCycle\Model\Options;
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Model\DevCycleOptions;
 use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
 use InvalidArgumentException;
@@ -65,12 +65,12 @@ class DevCycleClient
     protected $client;
 
     /**
-     * @var Configuration
+     * @var DevCycleConfiguration
      */
     protected $config;
 
     /**
-     * @var Options
+     * @var DevCycleOptions
      */
     protected $dvcOptions;
 
@@ -85,24 +85,24 @@ class DevCycleClient
     protected $hostIndex;
 
     /**
-     * @param Configuration $config
+     * @param DevCycleConfiguration $config
      * @param ClientInterface $client
      * @param HeaderSelector $selector
      * @param int $hostIndex (Optional) host index to select the list of hosts if defined in the OpenAPI spec
      */
     public function __construct(
-        Configuration   $config = null,
-        ClientInterface $client = null,
-        HeaderSelector  $selector = null,
-                        $hostIndex = 0,
-        Options         $dvcOptions = null
+        DevCycleConfiguration $config = null,
+        ClientInterface       $client = null,
+        HeaderSelector        $selector = null,
+                              $hostIndex = 0,
+        DevCycleOptions       $dvcOptions = null
     )
     {
         $this->client = $client ?: new Client();
-        $this->config = $config ?: new Configuration();
+        $this->config = $config ?: new DevCycleConfiguration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
-        $this->dvcOptions = $dvcOptions ?: new Options();
+        $this->dvcOptions = $dvcOptions ?: new DevCycleOptions();
     }
 
     /**
@@ -126,7 +126,7 @@ class DevCycleClient
     }
 
     /**
-     * @return Configuration
+     * @return DevCycleConfiguration
      */
     public function getConfig()
     {
@@ -135,13 +135,13 @@ class DevCycleClient
 
     /**
      * Validate user data exists and has valid data
-     * @param User $user_data user_data (required)
+     * @param DevCycleUser $user_data user_data (required)
      *
      * @throws InvalidArgumentException
      */
     public function validateUserData($user_data)
     {
-        if (!($user_data instanceof User)) {
+        if (!($user_data instanceof DevCycleUser)) {
             throw new InvalidArgumentException('User data must be an instance of UserData');
         }
 
@@ -153,13 +153,13 @@ class DevCycleClient
 
     /**
      * Validate user data exists and has valid data
-     * @param Event $event_data event_data (required)
+     * @param DevCycleEvent $event_data event_data (required)
      *
      * @throws InvalidArgumentException
      */
     public function validateEventData($event_data)
     {
-        if (!($event_data instanceof Event)) {
+        if (!($event_data instanceof DevCycleEvent)) {
             throw new InvalidArgumentException('Event data must be an instance of Event');
         }
 
@@ -174,7 +174,7 @@ class DevCycleClient
      *
      * Get all features by key for user data
      *
-     * @param User $user_data user_data (required)
+     * @param DevCycleUser $user_data user_data (required)
      *
      * @return array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -193,7 +193,7 @@ class DevCycleClient
      *
      * Get all features by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return array of array<string,\DevCycle\Model\Feature>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -365,7 +365,7 @@ class DevCycleClient
      *
      * Get all features by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -387,7 +387,7 @@ class DevCycleClient
      *
      * Get all features by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -433,7 +433,7 @@ class DevCycleClient
     /**
      * Create request for operation 'allFeatures'
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return Request
      * @throws InvalidArgumentException
@@ -528,7 +528,7 @@ class DevCycleClient
      *
      * Get variable value by key for user data
      *
-     * @param User $user_data user_data (required)
+     * @param DevCycleUser $user_data user_data (required)
      * @param string $key Variable key (required)
      * @param object $default Default value if variable is not found (required)
      *
@@ -546,7 +546,7 @@ class DevCycleClient
      *
      * Get variable object by key for user data
      *
-     * @param User $user_data user_data (required)
+     * @param DevCycleUser $user_data user_data (required)
      * @param string $key Variable key (required)
      * @param object $default Default value if variable is not found (required)
      *
@@ -605,7 +605,7 @@ class DevCycleClient
      * Get variable by key for user data
      *
      * @param string $key Variable key (required)
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return array of \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -777,7 +777,7 @@ class DevCycleClient
      *
      * Get variable by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return PromiseInterface
@@ -810,7 +810,7 @@ class DevCycleClient
      *
      * Get variable by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return PromiseInterface
@@ -857,7 +857,7 @@ class DevCycleClient
     /**
      * Create request for operation 'variable'
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      * @param string $key Variable key (required)
      *
      * @return Request
@@ -970,7 +970,7 @@ class DevCycleClient
      *
      * Get all variables by key for user data
      *
-     * @param User $user_data user_data (required)
+     * @param DevCycleUser $user_data user_data (required)
      *
      * @return array<string,Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -993,7 +993,7 @@ class DevCycleClient
      *
      * Get all variables by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return array of array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -1165,7 +1165,7 @@ class DevCycleClient
      *
      * Get all variables by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1187,7 +1187,7 @@ class DevCycleClient
      *
      * Get all variables by key for user data
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1233,7 +1233,7 @@ class DevCycleClient
     /**
      * Create request for operation 'allVariables'
      *
-     * @param User $user_data (required)
+     * @param DevCycleUser $user_data (required)
      *
      * @return Request
      * @throws InvalidArgumentException
@@ -1328,8 +1328,8 @@ class DevCycleClient
      *
      * Post events to DevCycle for user
      *
-     * @param User $user_data user_data (required)
-     * @param Event $event_data event_data (required)
+     * @param DevCycleUser $user_data user_data (required)
+     * @param DevCycleEvent $event_data event_data (required)
      *
      * @return \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
      * @throws InvalidArgumentException
@@ -1526,8 +1526,8 @@ class DevCycleClient
      *
      * Post events to DevCycle for user
      *
-     * @param User $user_data (required)
-     * @param Event $event_data (required)
+     * @param DevCycleUser $user_data (required)
+     * @param DevCycleEvent $event_data (required)
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
