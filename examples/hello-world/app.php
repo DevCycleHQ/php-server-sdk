@@ -9,7 +9,7 @@ use DevCycle\Model\DevCycleUser;
 
 // Configure API key authorization
 $config = DevCycleConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"]);
+    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
     // Uncomment the below lines to use unix domain sockets:
     //->setHost("http:/v1")
     //->setUDSPath("/tmp/phpsock.sock");

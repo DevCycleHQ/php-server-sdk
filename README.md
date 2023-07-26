@@ -82,14 +82,14 @@ The configuration for this proxy (in HTTP mode) is as follows (replacing the URL
 
 ```
 $config = DevCycleConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
+    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"))
     ->setHost("http://localhost:8080/v1");
 ```
 
 The configuration for this proxy (in Unix socket mode) is as follows (replacing the UDS path with the path to the socket):
 ```
 $config = DevCycleConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DEVCYCLE_SERVER_SDK_KEY"])
+    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"))
     ->setHost("http:/v1")
     ->setUDSPath("/tmp/phpsock.sock");
 ```
