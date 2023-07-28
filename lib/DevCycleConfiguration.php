@@ -131,7 +131,7 @@ class DevCycleConfiguration
      * Sets API key
      *
      * @param string $apiKeyIdentifier API key identifier (authentication scheme)
-     * @param string $key              API key or token
+     * @param string $key API key or token
      *
      * @return $this
      */
@@ -157,7 +157,7 @@ class DevCycleConfiguration
      * Sets the prefix for API key (e.g. Bearer)
      *
      * @param string $apiKeyIdentifier API key identifier (authentication scheme)
-     * @param string $prefix           API key prefix, e.g. Bearer
+     * @param string $prefix API key prefix, e.g. Bearer
      *
      * @return $this
      */
@@ -288,8 +288,8 @@ class DevCycleConfiguration
      *
      * @param string $userAgent the user agent of the api client
      *
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setUserAgent($userAgent)
     {
@@ -413,7 +413,7 @@ class DevCycleConfiguration
      */
     public static function toDebugReport()
     {
-        $report  = 'PHP SDK (DevCycle) Debug Report:' . PHP_EOL;
+        $report = 'PHP SDK (DevCycle) Debug Report:' . PHP_EOL;
         $report .= '    OS: ' . php_uname() . PHP_EOL;
         $report .= '    PHP Version: ' . PHP_VERSION . PHP_EOL;
         $report .= '    The version of the OpenAPI document: 1.0.0' . PHP_EOL;
@@ -425,7 +425,7 @@ class DevCycleConfiguration
     /**
      * Get API key (with prefix if set)
      *
-     * @param  string $apiKeyIdentifier name of apikey
+     * @param string $apiKeyIdentifier name of apikey
      *
      * @return null|string API key with the prefix
      */
@@ -465,7 +465,7 @@ class DevCycleConfiguration
     /**
      * Returns URL based on the index and variables
      *
-     * @param int        $index     index of the host settings
+     * @param int $index index of the host settings
      * @param array|null $variables hash of variable and the corresponding value (optional)
      * @return string URL based on host settings
      */
@@ -479,7 +479,7 @@ class DevCycleConfiguration
 
         // check array index out of bound
         if ($index < 0 || $index >= sizeof($hosts)) {
-            throw new \InvalidArgumentException("Invalid index $index when selecting the host. Must be less than ".sizeof($hosts));
+            throw new \InvalidArgumentException("Invalid index $index when selecting the host. Must be less than " . sizeof($hosts));
         }
 
         $host = $hosts[$index];
@@ -489,21 +489,16 @@ class DevCycleConfiguration
         foreach ($host["variables"] ?? [] as $name => $variable) {
             if (array_key_exists($name, $variables)) { // check to see if it's in the variables provided by the user
                 if (in_array($variables[$name], $variable["enum_values"], true)) { // check to see if the value is in the enum
-                    $url = str_replace("{".$name."}", $variables[$name], $url);
+                    $url = str_replace("{" . $name . "}", $variables[$name], $url);
                 } else {
-                    throw new \InvalidArgumentException("The variable `$name` in the host URL has invalid value ".$variables[$name].". Must be ".join(',', $variable["enum_values"]).".");
+                    throw new \InvalidArgumentException("The variable `$name` in the host URL has invalid value " . $variables[$name] . ". Must be " . join(',', $variable["enum_values"]) . ".");
                 }
             } else {
                 // use default value
-                $url = str_replace("{".$name."}", $variable["default_value"], $url);
+                $url = str_replace("{" . $name . "}", $variable["default_value"], $url);
             }
         }
 
         return $url;
     }
 }
-
-/**
- * @deprecated Use DevCycle\Api\DevCycleApi instead
- */
-class_alias('DevCycle\\DevCycleConfiguration', 'DevCycle\\Configuration');

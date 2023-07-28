@@ -27,10 +27,11 @@
 
 namespace DevCycle\Test\Api;
 
-use \DevCycle\DevCycleConfiguration;
-use \DevCycle\Model\DevCycleOptions;
-use \DevCycle\Api\DevCycleClient;
-use \DevCycle\Model\DevCycleUser;
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Model\DevCycleOptions;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
+use DevCycle\Model\DevCycleEvent;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -154,7 +155,7 @@ final class DevCycleClientTest extends TestCase
      */
     public function testPostEvents()
     {
-        $event_data = new \DevCycle\Model\DevCycleEvent(array(
+        $event_data = new DevCycleEvent(array(
             "type" => "some_event"
         ));
 

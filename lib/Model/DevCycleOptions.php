@@ -55,8 +55,3 @@ class DevCycleOptions
         $this->enableEdgeDB = $enableEdgeDB;
     }
 }
-
-/**
- * @deprecated Use DevCycle\Model\Options instead
- */
-class_alias('DevCycle\\Model\\DevCycleOptions', 'DevCycle\\Model\\DVCOptions');

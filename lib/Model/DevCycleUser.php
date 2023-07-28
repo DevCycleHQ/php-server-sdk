@@ -721,9 +721,3 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
-
-/**
- * @deprecated Use DevCycle\Model\DevCycleUser instead
- */
-class_alias('DevCycle\\Model\\DevCycleUser', 'DevCycle\\Model\\UserData');
-

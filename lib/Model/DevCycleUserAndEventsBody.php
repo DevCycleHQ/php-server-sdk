@@ -1,6 +1,6 @@
 <?php
 /**
- * DevCycleEvent
+ * UserDataAndEventsBody
  *
  * PHP version 7.3
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
 
 /**
- * DevCycleEvent Class Doc Comment
+ * UserDataAndEventsBody Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
@@ -42,7 +42,7 @@ use \DevCycle\ObjectSerializer;
  * @template TKey int|null
  * @template TValue mixed|null
  */
-class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
+class DevCycleUserAndEventsBody implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -51,7 +51,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'Event';
+    protected static $openAPIModelName = 'UserDataAndEventsBody';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -59,11 +59,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var string[]
       */
     protected static $openAPITypes = [
-        'type' => 'string',
-        'target' => 'string',
-        'date' => 'float',
-        'value' => 'float',
-        'meta_data' => 'object'
+        'events' => '\DevCycle\Model\DevCycleEvent[]',
+        'user' => '\DevCycle\Model\DevCycleUser'
     ];
 
     /**
@@ -74,11 +71,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'type' => null,
-        'target' => null,
-        'date' => null,
-        'value' => null,
-        'meta_data' => null
+        'events' => null,
+        'user' => null
     ];
 
     /**
@@ -108,11 +102,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $attributeMap = [
-        'type' => 'type',
-        'target' => 'target',
-        'date' => 'date',
-        'value' => 'value',
-        'meta_data' => 'metaData'
+        'events' => 'events',
+        'user' => 'user'
     ];
 
     /**
@@ -121,11 +112,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $setters = [
-        'type' => 'setType',
-        'target' => 'setTarget',
-        'date' => 'setDate',
-        'value' => 'setValue',
-        'meta_data' => 'setMetaData'
+        'events' => 'setEvents',
+        'user' => 'setUser'
     ];
 
     /**
@@ -134,11 +122,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $getters = [
-        'type' => 'getType',
-        'target' => 'getTarget',
-        'date' => 'getDate',
-        'value' => 'getValue',
-        'meta_data' => 'getMetaData'
+        'events' => 'getEvents',
+        'user' => 'getUser'
     ];
 
     /**
@@ -198,11 +183,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function __construct(array $data = null)
     {
-        $this->container['type'] = $data['type'] ?? null;
-        $this->container['target'] = $data['target'] ?? null;
-        $this->container['date'] = $data['date'] ?? null;
-        $this->container['value'] = $data['value'] ?? null;
-        $this->container['meta_data'] = $data['meta_data'] ?? null;
+        $this->container['events'] = $data['events'] ?? null;
+        $this->container['user'] = $data['user'] ?? null;
     }
 
     /**
@@ -214,9 +196,6 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
-        if ($this->container['type'] === null) {
-            $invalidProperties[] = "'type' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -233,121 +212,49 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
 
 
     /**
-     * Gets type
+     * Gets events
      *
-     * @return string
+     * @return \DevCycle\Model\DevCycleEvent[]|null
      */
-    public function getType()
+    public function getEvents()
     {
-        return $this->container['type'];
+        return $this->container['events'];
     }
 
     /**
-     * Sets type
+     * Sets events
      *
-     * @param string $type Custom event type
+     * @param \DevCycle\Model\DevCycleEvent[]|null $events events
      *
      * @return self
      */
-    public function setType($type)
+    public function setEvents($events)
     {
-        $this->container['type'] = $type;
+        $this->container['events'] = $events;
 
         return $this;
     }
 
     /**
-     * Gets target
+     * Gets user
      *
-     * @return string|null
+     * @return \DevCycle\Model\DevCycleUser|null
      */
-    public function getTarget()
+    public function getUser()
     {
-        return $this->container['target'];
+        return $this->container['user'];
     }
 
     /**
-     * Sets target
+     * Sets user
      *
-     * @param string|null $target Custom event target / subject of event. Contextual to event type
+     * @param \DevCycle\Model\DevCycleUser|null $user user
      *
      * @return self
      */
-    public function setTarget($target)
+    public function setUser($user)
     {
-        $this->container['target'] = $target;
-
-        return $this;
-    }
-
-    /**
-     * Gets date
-     *
-     * @return float|null
-     */
-    public function getDate()
-    {
-        return $this->container['date'];
-    }
-
-    /**
-     * Sets date
-     *
-     * @param float|null $date Unix epoch time the event occurred according to client
-     *
-     * @return self
-     */
-    public function setDate($date)
-    {
-        $this->container['date'] = $date;
-
-        return $this;
-    }
-
-    /**
-     * Gets value
-     *
-     * @return float|null
-     */
-    public function getValue()
-    {
-        return $this->container['value'];
-    }
-
-    /**
-     * Sets value
-     *
-     * @param float|null $value Value for numerical events. Contextual to event type
-     *
-     * @return self
-     */
-    public function setValue($value)
-    {
-        $this->container['value'] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Gets meta_data
-     *
-     * @return object|null
-     */
-    public function getMetaData()
-    {
-        return $this->container['meta_data'];
-    }
-
-    /**
-     * Sets meta_data
-     *
-     * @param object|null $meta_data Extra JSON metadata for event. Contextual to event type
-     *
-     * @return self
-     */
-    public function setMetaData($meta_data)
-    {
-        $this->container['meta_data'] = $meta_data;
+        $this->container['user'] = $user;
 
         return $this;
     }
@@ -439,3 +346,5 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
 }
+
+

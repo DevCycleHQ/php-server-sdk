@@ -30,7 +30,7 @@ namespace DevCycle\Api;
 
 use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\DevCycleUser;
-use DevCycle\Model\UserAndEventsBody;
+use DevCycle\Model\DevCycleUserAndEventsBody;
 use DevCycle\Model\Variable;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -1340,7 +1340,7 @@ class DevCycleClient
         $this->validateUserData($user_data);
         $this->validateEventData($event_data);
 
-        $user_data_and_events_body = new UserDataAndEventsBody(array(
+        $user_data_and_events_body = new DevCycleUserAndEventsBody(array(
             "user" => $user_data,
             "events" => [$event_data]
         ));
@@ -1354,7 +1354,7 @@ class DevCycleClient
      *
      * Post events to DevCycle for user
      *
-     * @param UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param DevCycleUserAndEventsBody $user_data_and_events_body (required)
      *
      * @return array of \DevCycle\Model\InlineResponse201|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
@@ -1536,7 +1536,7 @@ class DevCycleClient
         $this->validateUserData($user_data);
         $this->validateEventData($event_data);
 
-        $user_data_and_events_body = new UserDataAndEventsBody(array(
+        $user_data_and_events_body = new DevCycleUserAndEventsBody(array(
             "user" => $user_data,
             "events" => [$event_data]
         ));
@@ -1554,7 +1554,7 @@ class DevCycleClient
      *
      * Post events to DevCycle for user
      *
-     * @param UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param DevCycleUserAndEventsBody $user_data_and_events_body (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
@@ -1600,7 +1600,7 @@ class DevCycleClient
     /**
      * Create request for operation 'postEvents'
      *
-     * @param UserDataAndEventsBody $user_data_and_events_body (required)
+     * @param DevCycleUserAndEventsBody $user_data_and_events_body (required)
      *
      * @return Request
      * @throws InvalidArgumentException
@@ -1712,8 +1712,3 @@ class DevCycleClient
         return $options;
     }
 }
-
-/**
- * @deprecated Use DevCycle\Api\DevCycleApi instead
- */
-class_alias('DevCycle\\Api\\DevCycleClient', 'DevCycle\\Api\\DVCClient');
