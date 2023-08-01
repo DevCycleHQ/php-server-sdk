@@ -76,7 +76,7 @@ jobs:
       - name: Release to Packagist
         uses: joelwmale/webhook-action@2.3.2
         with:
-          url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.packagistToken}}
+          url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.PACKAGISTTOKEN}}
           headers: '{"Content-Type": "application/json"}'
           body: '{"repository": {"url": "https://github.com/DevCycleHQ/php-server-sdk"}}'
         if: inputs.prerelease != true && inputs.draft != true
