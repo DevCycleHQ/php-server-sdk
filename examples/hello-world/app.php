@@ -1,21 +1,24 @@
 <?php
 
-use DevCycle\Model\UserData;
-
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleOptions;
+use DevCycle\Model\DevCycleUser;
+
 // Configure API key authorization
-$config = DevCycle\Configuration::getDefaultConfiguration()
-    ->setApiKey('Authorization', $_ENV["DVC_SERVER_SDK_KEY"]);
+$config = DevCycleConfiguration::getDefaultConfiguration()
+    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
     // Uncomment the below lines to use unix domain sockets:
     //->setHost("http:/v1")
     //->setUDSPath("/tmp/phpsock.sock");
-$options = new DevCycle\Model\DVCOptions(false);
-$apiInstance = new DevCycle\Api\DVCClient(
+$options = new DevCycleOptions(false);
+$apiInstance = new DevCycleClient(
     $config,
     dvcOptions: $options
 );
-$user_data = new UserData(array(
+$user_data = new DevCycleUser(array(
     "user_id" => "test"
 ));
 

@@ -53,7 +53,7 @@ jobs:
         run: |
           git config --global user.email "github-tracker-bot@taplytics.com"
           git config --global user.name "DevCycle Automation"
-          git add ./lib/Model/UserData.php
+          git add ./lib/Model/User.php
           git commit -m "Release ${{steps.prepare-release.outputs.next-release-tag}}"
 
       - name: Push version change

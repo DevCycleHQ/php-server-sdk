@@ -1,6 +1,6 @@
 <?php
 /**
- * DVCClientTest
+ * DevCycleClientTest
  * PHP version 7.3
  *
  * @category Class
@@ -27,21 +27,22 @@
 
 namespace DevCycle\Test\Api;
 
-use \DevCycle\Configuration;
-use \DevCycle\Model\DVCOptions;
-use \DevCycle\Api\DVCClient;
-use \DevCycle\Model\UserData;
+use DevCycle\DevCycleConfiguration;
+use DevCycle\Model\DevCycleOptions;
+use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleUser;
+use DevCycle\Model\DevCycleEvent;
 use PHPUnit\Framework\TestCase;
 
 /**
- * DVCClientTest Class Doc Comment
+ * DevCycleClientTest Class Doc Comment
  *
  * @category Class
  * @package  DevCycle
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech
  */
-final class DVCClientTest extends TestCase
+final class DevCycleClientTest extends TestCase
 {
     private static $apiInstance;
     private static $user_data;
@@ -58,14 +59,14 @@ final class DVCClientTest extends TestCase
      */
     public function setUp(): void
     {
-        $config = Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
+        $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
 
-        $options = new DVCOptions(true);
-        self::$apiInstance = new DVCClient(
+        $options = new DevCycleOptions(true);
+        self::$apiInstance = new DevCycleClient(
             $config,
             dvcOptions:$options
         );
-        self::$user_data = new UserData(array(
+        self::$user_data = new DevCycleUser(array(
             "user_id"=>"user"
         ));
     }
@@ -120,9 +121,9 @@ final class DVCClientTest extends TestCase
      */
     public function testVariable_invalidSDKKey_isDefaultedTrue()
     {
-        $localConfig = Configuration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
+        $localConfig = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
 
-        $localApiInstance = new DVCClient(
+        $localApiInstance = new DevCycleClient(
             $localConfig
         );
 
@@ -154,7 +155,7 @@ final class DVCClientTest extends TestCase
      */
     public function testPostEvents()
     {
-        $event_data = new \DevCycle\Model\Event(array(
+        $event_data = new DevCycleEvent(array(
             "type" => "some_event"
         ));
 
