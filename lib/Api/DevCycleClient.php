@@ -585,9 +585,9 @@ class DevCycleClient
         }
 
         if (!$doTypesMatch) {
-            return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+            return new Variable(array("key" => $key, "value" => $default, "type" => $response['type'], "isDefaulted" => true));
         } else {
-            return new Variable(array("key" => $key, "value" => $unwrappedValue, "isDefaulted" => false));
+            return new Variable(array("key" => $key, "value" => $unwrappedValue, "type" => $response['type'], "isDefaulted" => false));
         }
     }
 
