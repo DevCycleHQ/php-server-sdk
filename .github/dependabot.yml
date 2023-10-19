@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "devcyclehq/engineering"
+    versioning-strategy: increase
+  - package-ecosystem: composer
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "devcyclehq/engineering"
+    versioning-strategy: increase
+  - package-ecosystem: composer
+    directory: "/examples/hello-world"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "devcyclehq/engineering"
+    versioning-strategy: increase
