@@ -13,11 +13,9 @@ updates:
       interval: "daily"
     reviewers:
       - "devcyclehq/engineering"
-    versioning-strategy: increase
   - package-ecosystem: composer
     directory: "/examples/hello-world"
     schedule:
       interval: "daily"
     reviewers:
       - "devcyclehq/engineering"
-    versioning-strategy: increase
