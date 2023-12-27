@@ -1,0 +1,9 @@
+{
+  "instances": [
+    {
+      "sdkKey": "${DEVCYCLE_SDK_KEY}",
+      "httpEnabled": true,
+      "httpPort": 8099
+    }
+  ]
+}
