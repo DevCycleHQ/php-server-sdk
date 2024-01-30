@@ -31,6 +31,8 @@ namespace DevCycle\Model;
 
 use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
+use OpenFeature\implementation\common\ValueTypeValidator;
+use OpenFeature\interfaces\flags\EvaluationContext;
 
 /**
  * DevCycleUser Class Doc Comment
@@ -274,7 +276,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['platform'] = 'PHP';
         $this->container['platform_version'] = PHP_VERSION;
         $this->container['sdk_type'] = 'server';
-        $this->container['sdk_version'] =  trim(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'VERSION.txt'));
+        $this->container['sdk_version'] = trim(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'VERSION.txt'));
     }
 
     /**
@@ -521,6 +523,12 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         return $this;
     }
 
+    public function addCustomData($key, $value)
+    {
+        $this->container['custom_data'][$key] = $value;
+        return $this;
+    }
+
     /**
      * Gets private_custom_data
      *
@@ -542,6 +550,12 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $this->container['private_custom_data'] = $private_custom_data;
 
+        return $this;
+    }
+
+    public function addPrivateCustomData($key, $value)
+    {
+        $this->container['private_custom_data'][$key] = $value;
         return $this;
     }
 
@@ -661,7 +675,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
      * Sets value based on offset.
      *
      * @param int|null $offset Offset
-     * @param mixed    $value  Value to be set
+     * @param mixed $value Value to be set
      *
      * @return void
      */
@@ -719,5 +733,88 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     public function toHeaderValue()
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+    }
+
+    public static function FromEvaluationContext(EvaluationContext $context): DevCycleUser
+    {
+        $user = new DevCycleUser();
+        if ($context->getTargetingKey() === null && $context->getAttributes()['user_id'] === null) {
+            throw new \InvalidArgumentException('targetingKey or user_id is missing from EvaluationContext');
+        }
+        if ($context->getTargetingKey() !== null) {
+            $userId = $context->getTargetingKey();
+        } else {
+            $userId = $context->getAttributes()['user_id'];
+        }
+        $user->setUserId($userId);
+
+        foreach ($context->getAttributes() as $key => $value) {
+            if ($key === 'user_id' || $key === 'targetingKey') {
+                continue;
+            }
+            switch ($key) {
+                case "email":
+                    if (!ValueTypeValidator::isString($value)) {
+                        continue 2;
+                    }
+                    $user->setEmail($value);
+                    break;
+                case "name":
+                    if (!ValueTypeValidator::isString($value)) {
+                        continue 2;
+                    }
+                    $user->setName($value);
+                    break;
+                case "language":
+                    if (!ValueTypeValidator::isString($value)) {
+                        continue 2;
+                    }
+                    $user->setLanguage($value);
+                    break;
+                case "country":
+                    if (!ValueTypeValidator::isString($value)) {
+                        continue 2;
+                    }
+                    $user->setCountry($value);
+                    break;
+                case "appVersion":
+                    if (!ValueTypeValidator::isString($value)) {
+                        continue 2;
+                    }
+                    $user->setAppVersion($value);
+                    break;
+                case "appBuild":
+                    if (!ValueTypeValidator::isInteger($value) && !ValueTypeValidator::isFloat($value)) {
+                        continue 2;
+                    }
+                    $user->setAppBuild($value);
+                    break;
+                case "customData":
+                case "privateCustomData":
+                    if (ValueTypeValidator::isStructure($value)) {
+                        foreach ($value as $subkey => $subvalue) {
+                            if (ValueTypeValidator::isStructure($subvalue)) {
+                                throw new \InvalidArgumentException('DevCycleUser only supports flat customData properties of type string / number / boolean / null');
+                            }
+                            switch ($key) {
+                                case "privateCustomData":
+                                    $user->addPrivateCustomData($subkey, $subvalue);
+                                    break;
+                                case "customData":
+                                    $user->addCustomData($subkey, $subvalue);
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    if (ValueTypeValidator::isStructure($value)) {
+                        throw new \InvalidArgumentException('DevCycleUser only supports flat customData properties of type string / number / boolean / null');
+                    }
+                    $user->addCustomData($key, $value);
+                    break;
+            }
+        }
+        return $user;
     }
 }

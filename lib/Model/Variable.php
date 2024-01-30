@@ -30,6 +30,10 @@ namespace DevCycle\Model;
 
 use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
+use OpenFeature\implementation\provider\ResolutionDetails;
+use OpenFeature\implementation\provider\ResolutionError;
+use OpenFeature\interfaces\provider\ErrorCode;
+use OpenFeature\interfaces\provider\Reason;
 
 /**
  * Variable Class Doc Comment
@@ -483,6 +487,18 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     public function toHeaderValue()
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+    }
+
+    public function AsResolutionDetails(): ResolutionDetails
+    {
+        $resolution = new ResolutionDetails();
+        $resolution->setValue($this->getValue());
+        $resolution->setReason(Reason::TARGETING_MATCH);
+        if ($this->getIsDefaulted()) {
+            $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
+            $resolution->setReason(Reason::DEFAULT);
+        }
+        return $resolution;
     }
 }
 

@@ -31,7 +31,9 @@ namespace DevCycle\Api;
 use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleUserAndEventsBody;
+use DevCycle\Model\ErrorResponse;
 use DevCycle\Model\Variable;
+use DevCycle\OpenFeature\DevCycleProvider;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -84,6 +86,9 @@ class DevCycleClient
      */
     protected $hostIndex;
 
+    protected $openFeatureProvider;
+
+
     /**
      * @param DevCycleConfiguration $config
      * @param ClientInterface $client
@@ -94,15 +99,20 @@ class DevCycleClient
         DevCycleConfiguration $config = null,
         ClientInterface       $client = null,
         HeaderSelector        $selector = null,
-                              $hostIndex = 0,
+        int                   $hostIndex = 0,
         DevCycleOptions       $dvcOptions = null
-    )
-    {
+    ) {
         $this->client = $client ?: new Client();
         $this->config = $config ?: new DevCycleConfiguration();
         $this->headerSelector = $selector ?: new HeaderSelector();
         $this->hostIndex = $hostIndex;
         $this->dvcOptions = $dvcOptions ?: new DevCycleOptions();
+        $this->openFeatureProvider = new DevCycleProvider($this);
+    }
+
+    public function getOpenFeatureProvider()
+    {
+        return $this->openFeatureProvider;
     }
 
     /**
@@ -548,13 +558,13 @@ class DevCycleClient
      *
      * @param DevCycleUser $user_data user_data (required)
      * @param string $key Variable key (required)
-     * @param object $default Default value if variable is not found (required)
+     * @param mixed $default Default value if variable is not found (required)
      *
-     * @return Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse
+     * @return Variable|ErrorResponse
      * @throws InvalidArgumentException
      * @throws ApiException on non-2xx response
      */
-    public function variable($user_data, $key, $default)
+    public function variable(DevCycleUser $user_data, string $key, mixed $default): Variable|ErrorResponse
     {
         $this->validateUserData($user_data);
 
@@ -570,7 +580,8 @@ class DevCycleClient
     }
 
 
-    private function reformatVariable($key, $response, $default) {
+    private function reformatVariable($key, $response, $default)
+    {
         $isArrayWrapped = gettype($response["value"]) === "array" && (gettype($default) !== "array" && gettype($default) !== "object");
         $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
 
@@ -591,7 +602,8 @@ class DevCycleClient
         }
     }
 
-    private function fixVariableValueNesting($variable) {
+    private function fixVariableValueNesting($variable)
+    {
         $isArrayWrapped = gettype($variable["value"]) === "array";
         if ($isArrayWrapped && sizeof($variable["value"]) > 0 && in_array(0, array_keys($variable["value"]))) {
             $variable["value"] = $variable["value"][0];
@@ -982,7 +994,7 @@ class DevCycleClient
 
         list($response) = $this->allVariablesWithHttpInfo($user_data);
         $variables = [];
-        foreach($response as $key=>$variable) {
+        foreach ($response as $key => $variable) {
             $variables[$key] = $this->fixVariableValueNesting($variable);
         }
         return $variables;
