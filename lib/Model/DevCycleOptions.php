@@ -55,7 +55,7 @@ class DevCycleOptions
      * Gets the unix socket path
      * @return string unix socket path
      */
-    public function getUnixSocketPath(): string
+    public function getUnixSocketPath(): ?string
     {
         return $this->unixSocketPath;
     }

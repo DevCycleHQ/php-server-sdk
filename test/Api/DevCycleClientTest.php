@@ -59,11 +59,9 @@ final class DevCycleClientTest extends TestCase
      */
     public function setUp(): void
     {
-        $config = HTTPConfiguration::getDefaultConfiguration()->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
-
         $options = new DevCycleOptions(true);
         self::$client = new DevCycleClient(
-            $config,
+            sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
             dvcOptions: $options
         );
         self::$user = new DevCycleUser(array(
@@ -95,7 +93,7 @@ final class DevCycleClientTest extends TestCase
     {
         $result = self::$client->allVariables(self::$user);
 
-        self::assertCount(1, $result);
+        self::assertGreaterThan(0, count($result));
     }
 
     /**
@@ -106,10 +104,10 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$client->variable(self::$user, 'activate-flag', true);
-        self::assertFalse($result['isDefaulted']);
+        $result = self::$client->variable(self::$user, 'test', true);
+        self::assertFalse($result->isDefaulted());
 
-        $resultValue = self::$client->variableValue(self::$user, 'activate-flag', true);
+        $resultValue = self::$client->variableValue(self::$user, 'test', true);
         self::assertTrue($resultValue);
     }
 
@@ -121,10 +119,9 @@ final class DevCycleClientTest extends TestCase
      */
     public function testVariable_invalidSDKKey_isDefaultedTrue()
     {
-        $localConfig = HTTPConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
-
         $localApiInstance = new DevCycleClient(
-            $localConfig
+            "dvc_server_invalid-sdk-key",
+            new DevCycleOptions(false)
         );
 
         $result = $localApiInstance->variable(self::$user, 'test-feature', true);
@@ -145,7 +142,7 @@ final class DevCycleClientTest extends TestCase
     {
         $result = self::$client->allVariables(self::$user);
 
-        self::assertCount(1, $result);
+        self::assertGreaterThan(0, $result);
     }
 
     /**

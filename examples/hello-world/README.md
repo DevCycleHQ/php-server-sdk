@@ -3,6 +3,11 @@
 Install dependencies with composer:
 `composer update`
 
+Set the following environment variables:
+```
+export DEVCYCLE_SERVER_SDK_KEY
+```
+
 ## Run
 Run the PHP Debug server in this directory:
 `php 127.0.0.1:8000`

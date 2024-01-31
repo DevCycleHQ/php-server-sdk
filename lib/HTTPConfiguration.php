@@ -51,7 +51,7 @@ class HTTPConfiguration
      */
     public function __construct()
     {
-        $this->userAgent .= trim(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'VERSION.txt')) . '/' . PHP_VERSION;
+        $this->userAgent .= Version::$VERSION . '/' . PHP_VERSION;
     }
 
     /**
@@ -212,7 +212,7 @@ class HTTPConfiguration
         $report = 'PHP SDK (DevCycle) Debug Report:' . PHP_EOL;
         $report .= '    OS: ' . php_uname() . PHP_EOL;
         $report .= '    PHP Version: ' . PHP_VERSION . PHP_EOL;
-        $report .= '    SDK Version' . trim(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'VERSION.txt'));
+        $report .= '    SDK Version' . Version::$VERSION. PHP_EOL;
 
         return $report;
     }

@@ -300,16 +300,16 @@ class DevCycleClient
     }
 
 
-    private function reformatVariable(string $key, array $response, mixed $default): Variable
+    private function reformatVariable(string $key, Variable $response, mixed $default): Variable
     {
-        $isArrayWrapped = gettype($response["value"]) === "array" && (gettype($default) !== "array" && gettype($default) !== "object");
-        $unwrappedValue = $isArrayWrapped ? $response["value"][0] : $response["value"];
+        $isArrayWrapped = gettype($response->getValue()) === "array" && (gettype($default) !== "array" && gettype($default) !== "object");
+        $unwrappedValue = $isArrayWrapped ? $response->getValue()[0] : $response->getValue();
 
         $isObjectDefault = gettype($default) === "object";
         $responseType = gettype($unwrappedValue);
         $defaultType = gettype($default);
 
-        $doTypesMatch = $isArrayWrapped ? gettype($response["value"][0]) === $defaultType : $responseType == $defaultType || $isObjectDefault;
+        $doTypesMatch = $isArrayWrapped ? gettype($response->getValue()[0]) === $defaultType : $responseType == $defaultType || $isObjectDefault;
 
         if ($default === null) {
             $doTypesMatch = true;

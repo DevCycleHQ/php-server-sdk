@@ -3,6 +3,7 @@ namespace DevCycle\Model;
 
 use \ArrayAccess;
 use \DevCycle\ObjectSerializer;
+use DevCycle\Version;
 use OpenFeature\implementation\common\ValueTypeValidator;
 use OpenFeature\interfaces\flags\EvaluationContext;
 
@@ -247,7 +248,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['platform'] = 'PHP';
         $this->container['platform_version'] = PHP_VERSION;
         $this->container['sdk_type'] = 'server';
-        $this->container['sdk_version'] = trim(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'VERSION.txt'));
+        $this->container['sdk_version'] = Version::$VERSION;
     }
 
     /**

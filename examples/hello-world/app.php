@@ -8,7 +8,7 @@ use DevCycle\Model\DevCycleUser;
 
 $bucketingHostname = null;
 $unixSocketPath = null;
-// Uncomment the below two lines to enable SDK Proxy use.
+// Uncomment the below two lines to enable SDK Proxy use. Setting the socket path as appropriate
 // $bucketingHostname = "http:/localhost";
 // $unixSocketPath = "/tmp/devcycle.sock";
 
