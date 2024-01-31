@@ -2,10 +2,8 @@
 
 namespace DevCycle\OpenFeature;
 use DevCycle\Api\DevCycleClient;
-use DevCycle\ApiException;
 use DevCycle\Model\DevCycleUser;
-use http\Exception\InvalidArgumentException;
-use OpenFeature\interfaces\common\Metadata;
+use OpenFeature\implementation\common\Metadata;
 use OpenFeature\interfaces\flags\EvaluationContext;
 use OpenFeature\interfaces\hooks\Hook;
 use OpenFeature\interfaces\provider\Provider;
@@ -15,9 +13,13 @@ use Psr\Log\LoggerInterface;
 class DevCycleProvider implements Provider
 {
     private DevCycleClient $apiClient;
+    private Metadata $metadata;
+
+    private array $hooks;
     public function __construct(DevCycleClient $apiClient)
     {
         $this->apiClient = $apiClient;
+        $this->metadata = new Metadata("DevCycle-PHP");
     }
 
     /**
@@ -25,7 +27,12 @@ class DevCycleProvider implements Provider
      */
     public function getHooks(): array
     {
-        return $this->getHooks();
+        return $this->hooks;
+    }
+
+    public function setHooks(array $hooks): void
+    {
+        $this->hooks = $hooks;
     }
 
     /**
@@ -42,7 +49,7 @@ class DevCycleProvider implements Provider
      */
     public function getMetadata(): Metadata
     {
-        return new \OpenFeature\implementation\common\Metadata("DevCycle-PHP");
+        return $this->metadata;
     }
 
     /**
@@ -50,7 +57,6 @@ class DevCycleProvider implements Provider
      * @param bool $defaultValue
      * @param EvaluationContext|null $context
      * @return ResolutionDetails
-     * @throws ApiException
      */
     public function resolveBooleanValue(string $flagKey, bool $defaultValue, ?EvaluationContext $context = null): ResolutionDetails
     {
@@ -59,9 +65,7 @@ class DevCycleProvider implements Provider
         }
         $user = DevCycleUser::FromEvaluationContext($context);
 
-        $flag = $this->apiClient->variable($user, $flagKey, $defaultValue);
-        return new \OpenFeature\implementation\provider\ResolutionDetails();
-        // TODO: Implement resolveBooleanValue() method.
+        return $this->apiClient->variable($user, $flagKey, $defaultValue)->asResolutionDetails();
     }
 
     /**
@@ -72,7 +76,12 @@ class DevCycleProvider implements Provider
      */
     public function resolveStringValue(string $flagKey, string $defaultValue, ?EvaluationContext $context = null): ResolutionDetails
     {
-        // TODO: Implement resolveStringValue() method.
+        if ($context == null) {
+            throw new \InvalidArgumentException("Context cannot be null");
+        }
+        $user = DevCycleUser::FromEvaluationContext($context);
+
+        return $this->apiClient->variable($user, $flagKey, $defaultValue)->asResolutionDetails();
     }
 
     /**
@@ -83,7 +92,12 @@ class DevCycleProvider implements Provider
      */
     public function resolveIntegerValue(string $flagKey, int $defaultValue, ?EvaluationContext $context = null): ResolutionDetails
     {
-        // TODO: Implement resolveIntegerValue() method.
+        if ($context == null) {
+            throw new \InvalidArgumentException("Context cannot be null");
+        }
+        $user = DevCycleUser::FromEvaluationContext($context);
+
+        return $this->apiClient->variable($user, $flagKey, $defaultValue)->asResolutionDetails();
     }
 
     /**
@@ -94,7 +108,12 @@ class DevCycleProvider implements Provider
      */
     public function resolveFloatValue(string $flagKey, float $defaultValue, ?EvaluationContext $context = null): ResolutionDetails
     {
-        // TODO: Implement resolveFloatValue() method.
+        if ($context == null) {
+            throw new \InvalidArgumentException("Context cannot be null");
+        }
+        $user = DevCycleUser::FromEvaluationContext($context);
+
+        return $this->apiClient->variable($user, $flagKey, $defaultValue)->asResolutionDetails();
     }
 
     /**
@@ -105,8 +124,11 @@ class DevCycleProvider implements Provider
      */
     public function resolveObjectValue(string $flagKey, array $defaultValue, ?EvaluationContext $context = null): ResolutionDetails
     {
-        // TODO: Implement resolveObjectValue() method.
+        if ($context == null) {
+            throw new \InvalidArgumentException("Context cannot be null");
+        }
+        $user = DevCycleUser::FromEvaluationContext($context);
+
+        return $this->apiClient->variable($user, $flagKey, $defaultValue)->asResolutionDetails();
     }
-
-
 }

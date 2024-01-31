@@ -28,9 +28,9 @@ class DevCycleOptions
     /**
      * Constructor
      *
-     * @param boolean                $enableEdgeDB         flag to enable EdgeDB user data storage 
+     * @param boolean $enableEdgeDB flag to enable EdgeDB user data storage
      */
-    public function __construct($enableEdgeDB = false)
+    public function __construct(bool $enableEdgeDB = false)
     {
         $this->enableEdgeDB = $enableEdgeDB;
     }
@@ -40,7 +40,7 @@ class DevCycleOptions
      *
      * @return boolean enable EdgeDB flag
      */
-    public function getEnableEdgeDB()
+    public function isEdgeDBEnabled(): bool
     {
         return $this->enableEdgeDB;
     }
@@ -50,8 +50,9 @@ class DevCycleOptions
      *
      * @param boolean $enableEdgeDB
      */
-    public function setEnableEdgeDB($enableEdgeDB)
+    public function setEnableEdgeDB(bool $enableEdgeDB): self
     {
         $this->enableEdgeDB = $enableEdgeDB;
+        return $this;
     }
 }

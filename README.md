@@ -22,15 +22,6 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
 
 Then run `composer install`
 
-### Manual Installation
-
-Download the files and include `autoload.php`:
-
-```php
-<?php
-require_once('/path/to/DevCycle/vendor/autoload.php');
-```
-
 ## Getting Started
 
 Please follow the [installation procedure](#installation--usage) and then run the following:

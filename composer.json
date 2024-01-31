@@ -14,8 +14,8 @@
     "name": "devcycle/php-server-sdk",
     "authors": [
         {
-            "name": "OpenAPI-Generator contributors",
-            "homepage": "https://openapi-generator.tech"
+            "name": "DevCycle",
+            "homepage": "https://devcycle.com"
         }
     ],
     "require": {
