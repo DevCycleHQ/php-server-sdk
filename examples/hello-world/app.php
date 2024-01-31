@@ -7,15 +7,20 @@ use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 
-// Configure API key authorization
-$config = HTTPConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
-    // Uncomment the below lines to use unix domain sockets:
-    //->setHost("http:/v1")
-    //->setUDSPath("/tmp/phpsock.sock");
-$options = new DevCycleOptions(false);
+$bucketingHostname = null;
+$unixSocketPath = null;
+// Uncomment the below two lines to enable SDK Proxy use.
+// $bucketingHostname = "http:/localhost";
+// $unixSocketPath = "/tmp/devcycle.sock";
+
+
+$options = new DevCycleOptions(
+    false,
+    $bucketingHostname,
+    $unixSocketPath
+);
 $apiInstance = new DevCycleClient(
-    $config,
+    sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
     dvcOptions: $options
 );
 $user_data = new DevCycleUser(array(

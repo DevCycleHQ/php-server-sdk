@@ -1,4 +1,5 @@
 <?php
+
 namespace DevCycle\Model;
 
 /**
@@ -19,11 +20,15 @@ class DevCycleOptions
      * Constructor
      *
      * @param boolean $enableEdgeDB flag to enable EdgeDB user data storage
+     * @param string|null $bucketingApiHostname
+     * @param string|null $unixSocketPath
      */
-    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = "https://bucketing-api.devcycle.com", ?string $unixSocketPath = null)
+    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = null, ?string $unixSocketPath = null)
     {
         $this->enableEdgeDB = $enableEdgeDB;
-        $this->bucketingApiHostname = $bucketingApiHostname;
+        if ($bucketingApiHostname !== null) {
+            $this->bucketingApiHostname = $bucketingApiHostname;
+        }
         $this->unixSocketPath = $unixSocketPath;
     }
 

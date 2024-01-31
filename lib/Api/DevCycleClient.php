@@ -67,6 +67,7 @@ class DevCycleClient
      * @param HeaderSelector|null $selector
      */
     public function __construct(
+        string $sdkKey,
         DevCycleOptions   $dvcOptions,
         HTTPConfiguration $config = null,
         ClientInterface   $client = null,
@@ -75,6 +76,7 @@ class DevCycleClient
     {
         $this->client = $client ?? new Client();
         $this->httpConfiguration = $config ?? new HTTPConfiguration();
+        $this->httpConfiguration->setApiKey('Authorization', $sdkKey);
         $this->headerSelector = $selector ?? new HeaderSelector();
         $this->dvcOptions = $dvcOptions;
         $this->openFeatureProvider = new DevCycleProvider($this);
