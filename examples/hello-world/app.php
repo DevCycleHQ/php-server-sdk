@@ -2,13 +2,13 @@
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-use DevCycle\DevCycleConfiguration;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 
 // Configure API key authorization
-$config = DevCycleConfiguration::getDefaultConfiguration()
+$config = HTTPConfiguration::getDefaultConfiguration()
     ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
     // Uncomment the below lines to use unix domain sockets:
     //->setHost("http:/v1")

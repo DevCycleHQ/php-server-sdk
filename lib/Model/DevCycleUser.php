@@ -1,18 +1,4 @@
 <?php
-
-/**
- * DevCycleUser
- *
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
-
-
-
 namespace DevCycle\Model;
 
 use \ArrayAccess;
@@ -33,14 +19,13 @@ use OpenFeature\interfaces\flags\EvaluationContext;
  */
 class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
 {
-    public const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
      *
      * @var string
      */
-    protected static $openAPIModelName = 'UserData';
+    protected static string $openAPIModelName = 'User';
 
     /**
      * Array of property to type mappings. Used for (de)serialization
@@ -401,7 +386,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     public function setLanguage(?string $language): self
     {
         if (!is_null($language) && (mb_strlen($language) > 2)) {
-            throw new \InvalidArgumentException('invalid length for $language when calling UserData., must be smaller than or equal to 2.');
+            throw new \InvalidArgumentException('invalid length for $language when calling setLanguage, must be smaller than or equal to 2.');
         }
 
         $this->container['language'] = $language;
@@ -429,7 +414,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     public function setCountry(?string $country): self
     {
         if (!is_null($country) && (mb_strlen($country) > 2)) {
-            throw new \InvalidArgumentException('invalid length for $country when calling UserData., must be smaller than or equal to 2.');
+            throw new \InvalidArgumentException('invalid length for $country when calling setCountry., must be smaller than or equal to 2.');
         }
 
         $this->container['country'] = $country;

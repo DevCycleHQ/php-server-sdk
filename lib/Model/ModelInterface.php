@@ -1,16 +1,4 @@
 <?php
-/**
- * ModelInterface
- *
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle\Model
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
-
-
 
 namespace DevCycle\Model;
 
@@ -69,7 +57,7 @@ interface ModelInterface
      *
      * @return array
      */
-    public function listInvalidProperties();
+    public function listInvalidProperties(): array;
 
     /**
      * Validate all the properties in the model

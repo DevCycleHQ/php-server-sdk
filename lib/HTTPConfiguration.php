@@ -1,32 +1,14 @@
 <?php
-/**
- * DevCycleConfiguration
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
 
 
 namespace DevCycle;
 
-/**
- * DevCycleConfiguration Class Doc Comment
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
-class DevCycleConfiguration
+class HTTPConfiguration
 {
     /**
-     * @var DevCycleConfiguration
+     * @var HTTPConfiguration
      */
-    private static DevCycleConfiguration $defaultConfiguration;
+    private static HTTPConfiguration $defaultConfiguration;
 
     /**
      * Associate array to store API key(s)
@@ -41,20 +23,6 @@ class DevCycleConfiguration
      * @var string[]
      */
     protected array $apiKeyPrefixes = [];
-
-
-    /**
-     * The host
-     *
-     * @var string
-     */
-    protected string $host = 'https://bucketing-api.devcycle.com';
-
-
-    /**
-     * @var string path to a Unix Domain socket. Only used if host is set to 'http:'.
-     */
-    protected string $udsPath = "";
 
     /**
      * User agent of the HTTP request, set to "OpenAPI-Generator/{version}/PHP" by default
@@ -139,41 +107,6 @@ class DevCycleConfiguration
     }
 
     /**
-     * Sets the host
-     *
-     * @param string $host Host
-     *
-     * @return $this
-     */
-    public function setHost(string $host): self
-    {
-        $this->host = $host;
-        return $this;
-    }
-
-    /**
-     * Gets the host
-     *
-     * @return string Host
-     */
-    public function getHost(): string
-    {
-        return $this->host;
-    }
-
-
-    public function getUDSPath(): string
-    {
-        return $this->udsPath;
-    }
-
-    public function setUDSPath(string $udsPath): self
-    {
-        $this->udsPath = $udsPath;
-        return $this;
-    }
-
-    /**
      * Sets the user agent of the api client
      *
      * @param string $userAgent the user agent of the api client
@@ -246,12 +179,12 @@ class DevCycleConfiguration
     /**
      * Gets the default configuration instance
      *
-     * @return DevCycleConfiguration
+     * @return HTTPConfiguration
      */
-    public static function getDefaultConfiguration(): DevCycleConfiguration
+    public static function getDefaultConfiguration(): HTTPConfiguration
     {
         if (self::$defaultConfiguration === null) {
-            self::$defaultConfiguration = new DevCycleConfiguration();
+            self::$defaultConfiguration = new HTTPConfiguration();
         }
 
         return self::$defaultConfiguration;
@@ -260,11 +193,11 @@ class DevCycleConfiguration
     /**
      * Sets the default configuration instance
      *
-     * @param DevCycleConfiguration $config An instance of the DevCycleConfiguration Object
+     * @param HTTPConfiguration $config An instance of the DevCycleConfiguration Object
      *
      * @return void
      */
-    public static function setDefaultConfiguration(DevCycleConfiguration $config): void
+    public static function setDefaultConfiguration(HTTPConfiguration $config): void
     {
         self::$defaultConfiguration = $config;
     }

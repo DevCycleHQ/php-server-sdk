@@ -27,7 +27,7 @@
 
 namespace DevCycle\Test\Api;
 
-use DevCycle\DevCycleConfiguration;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
@@ -44,14 +44,14 @@ use PHPUnit\Framework\TestCase;
  */
 final class DevCycleClientTest extends TestCase
 {
-    private static $apiInstance;
-    private static $user_data;
+    private static DevCycleClient $client;
+    private static DevCycleUser $user;
 
     /**
      * Setup before running any test cases
      */
     public static function setUpBeforeClass(): void
-    {        
+    {
     }
 
     /**
@@ -59,15 +59,15 @@ final class DevCycleClientTest extends TestCase
      */
     public function setUp(): void
     {
-        $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
+        $config = HTTPConfiguration::getDefaultConfiguration()->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"));
 
         $options = new DevCycleOptions(true);
-        self::$apiInstance = new DevCycleClient(
+        self::$client = new DevCycleClient(
             $config,
-            dvcOptions:$options
+            dvcOptions: $options
         );
-        self::$user_data = new DevCycleUser(array(
-            "user_id"=>"user"
+        self::$user = new DevCycleUser(array(
+            "user_id" => "user"
         ));
     }
 
@@ -93,7 +93,7 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetFeatures()
     {
-        $result = self::$apiInstance->allVariables(self::$user_data);
+        $result = self::$client->allVariables(self::$user);
 
         self::assertCount(1, $result);
     }
@@ -106,10 +106,10 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$apiInstance->variable(self::$user_data, 'activate-flag', true);
+        $result = self::$client->variable(self::$user, 'activate-flag', true);
         self::assertFalse($result['isDefaulted']);
 
-        $resultValue = self::$apiInstance->variableValue(self::$user_data, 'activate-flag', true);
+        $resultValue = self::$client->variableValue(self::$user, 'activate-flag', true);
         self::assertTrue($resultValue);
     }
 
@@ -121,16 +121,17 @@ final class DevCycleClientTest extends TestCase
      */
     public function testVariable_invalidSDKKey_isDefaultedTrue()
     {
-        $localConfig = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
+        $localConfig = HTTPConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
 
         $localApiInstance = new DevCycleClient(
             $localConfig
         );
 
-        $result = $localApiInstance->variable(self::$user_data, 'test-feature', true);
-        self::assertTrue($result['isDefaulted']);
+        $result = $localApiInstance->variable(self::$user, 'test-feature', true);
+        self::assertTrue($result->isDefaulted());
+        self::assertTrue((bool)$result->getValue());
 
-        $resultValue = $localApiInstance->variableValue(self::$user_data, 'test-feature', true);
+        $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
         self::assertTrue($resultValue);
     }
 
@@ -142,7 +143,7 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariables()
     {
-        $result = self::$apiInstance->allVariables(self::$user_data);
+        $result = self::$client->allVariables(self::$user);
 
         self::assertCount(1, $result);
     }
@@ -159,7 +160,7 @@ final class DevCycleClientTest extends TestCase
             "type" => "some_event"
         ));
 
-        $result = self::$apiInstance->track(self::$user_data, $event_data);
+        $result = self::$client->track(self::$user, $event_data);
 
         self::assertEquals("Successfully received 1 events.", $result["message"]);
     }

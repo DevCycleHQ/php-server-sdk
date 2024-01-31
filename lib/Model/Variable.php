@@ -1,14 +1,4 @@
 <?php
-/**
- * Variable
- *
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
 
 
 
@@ -34,21 +24,20 @@ use OpenFeature\interfaces\provider\Reason;
  */
 class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
 {
-    public const DISCRIMINATOR = null;
 
     /**
       * The original name of the model.
       *
       * @var string
       */
-    protected static $openAPIModelName = 'Variable';
+    protected static string $openAPIModelName = 'Variable';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
       *
       * @var string[]
       */
-    protected static $openAPITypes = [
+    protected static array $openAPITypes = [
         '_id' => 'string',
         'key' => 'string',
         'type' => 'string',
@@ -74,7 +63,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function openAPITypes()
+    public static function openAPITypes(): array
     {
         return self::$openAPITypes;
     }
@@ -84,7 +73,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function openAPIFormats()
+    public static function openAPIFormats(): array
     {
         return self::$openAPIFormats;
     }
@@ -108,7 +97,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var string[]
      */
-    protected static $setters = [
+    protected static array $setters = [
         '_id' => 'setId',
         'key' => 'setKey',
         'type' => 'setType',
@@ -121,7 +110,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var string[]
      */
-    protected static $getters = [
+    protected static array $getters = [
         '_id' => 'getId',
         'key' => 'getKey',
         'type' => 'getType',
@@ -135,7 +124,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function attributeMap()
+    public static function attributeMap(): array
     {
         return self::$attributeMap;
     }
@@ -145,7 +134,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function setters()
+    public static function setters(): array
     {
         return self::$setters;
     }
@@ -155,7 +144,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function getters()
+    public static function getters(): array
     {
         return self::$getters;
     }
@@ -165,7 +154,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getModelName()
+    public function getModelName(): string
     {
         return self::$openAPIModelName;
     }
@@ -180,7 +169,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string[]
      */
-    public function getTypeAllowableValues()
+    public function getTypeAllowableValues(): array
     {
         return [
             self::TYPE_STRING,
@@ -195,7 +184,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var mixed[]
      */
-    protected $container = [];
+    protected array $container = [];
 
     /**
      * Constructor
@@ -217,7 +206,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array invalid properties with reasons
      */
-    public function listInvalidProperties()
+    public function listInvalidProperties(): array
     {
         $invalidProperties = [];
 
@@ -251,7 +240,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return bool True if all properties are valid
      */
-    public function valid()
+    public function valid(): bool
     {
         return count($this->listInvalidProperties()) === 0;
     }
@@ -262,7 +251,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->container['_id'];
     }
@@ -274,7 +263,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setId($_id)
+    public function setId($_id): static
     {
         $this->container['_id'] = $_id;
 
@@ -286,7 +275,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->container['key'];
     }
@@ -298,7 +287,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setKey($key)
+    public function setKey($key): static
     {
         $this->container['key'] = $key;
 
@@ -310,7 +299,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->container['type'];
     }
@@ -322,7 +311,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $allowedValues = $this->getTypeAllowableValues();
         if (!in_array($type, $allowedValues, true)) {
@@ -342,9 +331,9 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets value
      *
-     * @return object
+     * @return mixed object
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->container['value'];
     }
@@ -356,7 +345,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setValue($value)
+    public function setValue(mixed $value): self
     {
         $this->container['value'] = $value;
 
@@ -368,7 +357,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return bool
      */
-    public function getIsDefaulted()
+    public function isDefaulted(): bool
     {
         return $this->container['isDefaulted'];
     }
@@ -380,7 +369,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setIsDefaulted($isDefaulted)
+    public function setIsDefaulted(bool $isDefaulted): static
     {
         $this->container['isDefaulted'] = $isDefaulted;
 
@@ -419,7 +408,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetSet($offset, $value):void
+    public function offsetSet($offset, mixed $value):void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -449,7 +438,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function jsonSerialize():mixed
     {
-       return ObjectSerializer::sanitizeForSerialization($this);
+        return ObjectSerializer::sanitizeForSerialization($this);
     }
 
     /**
@@ -480,12 +469,10 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $resolution = new ResolutionDetails();
         $resolution->setValue($this->getValue());
         $resolution->setReason(Reason::TARGETING_MATCH);
-        if ($this->getIsDefaulted()) {
+        if ($this->isDefaulted()) {
             $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
             $resolution->setReason(Reason::DEFAULT);
         }
         return $resolution;
     }
 }
-
-

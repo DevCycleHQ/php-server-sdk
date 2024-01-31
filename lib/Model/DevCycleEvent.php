@@ -1,16 +1,4 @@
 <?php
-/**
- * DevCycleEvent
- *
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
-
-
 namespace DevCycle\Model;
 
 use \ArrayAccess;

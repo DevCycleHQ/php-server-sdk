@@ -1,18 +1,4 @@
 <?php
-/**
- * DevCycleOptions
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- */
-
-/**
- * DevCycle Bucketing API
- *
- * Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.
- */
-
 namespace DevCycle\Model;
 
 /**
@@ -23,16 +9,22 @@ namespace DevCycle\Model;
  */
 class DevCycleOptions
 {
-    protected $enableEdgeDB;
+    protected bool $enableEdgeDB;
+
+    protected string $bucketingApiHostname = "https://bucketing-api.devcycle.com";
+
+    protected ?string $unixSocketPath = null;
 
     /**
      * Constructor
      *
      * @param boolean $enableEdgeDB flag to enable EdgeDB user data storage
      */
-    public function __construct(bool $enableEdgeDB = false)
+    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = "https://bucketing-api.devcycle.com", ?string $unixSocketPath = null)
     {
         $this->enableEdgeDB = $enableEdgeDB;
+        $this->bucketingApiHostname = $bucketingApiHostname;
+        $this->unixSocketPath = $unixSocketPath;
     }
 
     /**
@@ -46,13 +38,20 @@ class DevCycleOptions
     }
 
     /**
-     * Sets the enableEdgeDB flag
-     *
-     * @param boolean $enableEdgeDB
+     * Gets the bucketing API hostname
+     * @return string bucketing API hostname
      */
-    public function setEnableEdgeDB(bool $enableEdgeDB): self
+    public function getBucketingApiHostname(): string
     {
-        $this->enableEdgeDB = $enableEdgeDB;
-        return $this;
+        return $this->bucketingApiHostname;
+    }
+
+    /**
+     * Gets the unix socket path
+     * @return string unix socket path
+     */
+    public function getUnixSocketPath(): string
+    {
+        return $this->unixSocketPath;
     }
 }

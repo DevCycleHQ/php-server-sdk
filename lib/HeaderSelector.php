@@ -31,18 +31,6 @@ class HeaderSelector
     }
 
     /**
-     * @param string[] $accept
-     * @return array
-     */
-    public function selectHeadersForMultipart(array $accept): array
-    {
-        $headers = $this->selectHeaders($accept, []);
-
-        unset($headers['Content-Type']);
-        return $headers;
-    }
-
-    /**
      * Return the header 'Accept' based on an array of Accept provided
      *
      * @param string[] $accept Array of header

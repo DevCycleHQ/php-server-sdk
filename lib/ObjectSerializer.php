@@ -1,31 +1,14 @@
 <?php
-
 namespace DevCycle;
 
+use DateTimeInterface;
 use DevCycle\Model\ModelInterface;
 
-/**
- * ObjectSerializer Class Doc Comment
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
 class ObjectSerializer
 {
     /** @var string */
-    private static $dateTimeFormat = \DateTime::ATOM;
+    private static string $dateTimeFormat = DateTimeInterface::ATOM;
 
-    /**
-     * Change the date format
-     *
-     * @param string $format the new date format to use
-     */
-    public static function setDateTimeFormat($format)
-    {
-        self::$dateTimeFormat = $format;
-    }
 
     /**
      * Serialize data
@@ -85,22 +68,6 @@ class ObjectSerializer
         }
     }
 
-    /**
-     * Sanitize filename by removing path.
-     * e.g. ../../sun.gif becomes sun.gif
-     *
-     * @param string $filename filename to be sanitized
-     *
-     * @return string the sanitized filename
-     */
-    public static function sanitizeFilename(string $filename): string
-    {
-        if (preg_match("/.*[\/\\\\](.*)$/", $filename, $match)) {
-            return $match[1];
-        } else {
-            return $filename;
-        }
-    }
 
     /**
      * Take value and turn it into a string suitable for inclusion in
@@ -143,7 +110,7 @@ class ObjectSerializer
      *
      * @return string the header string
      */
-    public static function toHeaderValue($value)
+    public static function toHeaderValue(string $value): \DateTime|string
     {
         $callable = [$value, 'toHeaderValue'];
         if (is_callable($callable)) {
@@ -151,24 +118,6 @@ class ObjectSerializer
         }
 
         return self::toString($value);
-    }
-
-    /**
-     * Take value and turn it into a string suitable for inclusion in
-     * the http body (form parameter). If it's a string, pass through unchanged
-     * If it's a datetime object, format it in ISO8601
-     *
-     * @param string|\SplFileObject $value the value of the form parameter
-     *
-     * @return string the form string
-     */
-    public static function toFormValue($value)
-    {
-        if ($value instanceof \SplFileObject) {
-            return $value->getRealPath();
-        } else {
-            return self::toString($value);
-        }
     }
 
     /**
@@ -181,7 +130,7 @@ class ObjectSerializer
      *
      * @return string the header string
      */
-    public static function toString($value)
+    public static function toString($value): \DateTime|string
     {
         if ($value instanceof \DateTime) { // datetime in ISO8601 format
             return $value->format(self::$dateTimeFormat);
@@ -202,7 +151,7 @@ class ObjectSerializer
      *
      * @return string
      */
-    public static function serializeCollection(array $collection, $style, $allowCollectionFormatMulti = false)
+    public static function serializeCollection(array $collection, string $style, bool $allowCollectionFormatMulti = false): string
     {
         if ($allowCollectionFormatMulti && ('multi' === $style)) {
             // http_build_query() almost does the job for us. We just
@@ -237,7 +186,7 @@ class ObjectSerializer
      * @param null $httpHeaders HTTP headers
      * @return object|array|null a single or an array of $class instances
      */
-    public static function deserialize($data, $class, $httpHeaders = null)
+    public static function deserialize(mixed $data, string $class, $httpHeaders = null)
     {
         if (null === $data) {
             return null;
@@ -335,10 +284,8 @@ class ObjectSerializer
                     continue;
                 }
 
-                if (isset($data->{$instance::attributeMap()[$property]})) {
-                    $propertyValue = $data->{$instance::attributeMap()[$property]};
-                    $instance->$propertySetter(self::deserialize($propertyValue, $type, null));
-                }
+                $propertyValue = $data->{$instance::attributeMap()[$property]};
+                $instance->$propertySetter(self::deserialize($propertyValue, $type, null));
             }
             return $instance;
         }

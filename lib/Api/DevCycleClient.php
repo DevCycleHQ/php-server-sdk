@@ -7,13 +7,20 @@ use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleUserAndEventsBody;
 use DevCycle\Model\ErrorResponse;
 use DevCycle\Model\Feature;
+use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
 use DevCycle\OpenFeature\DevCycleProvider;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Psr7\Query;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use DevCycle\ApiException;
-use DevCycle\DevCycleConfiguration;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\HeaderSelector;
 use DevCycle\ObjectSerializer;
@@ -36,9 +43,9 @@ class DevCycleClient
     protected ClientInterface $client;
 
     /**
-     * @var DevCycleConfiguration
+     * @var HTTPConfiguration
      */
-    protected DevCycleConfiguration $config;
+    protected HTTPConfiguration $httpConfiguration;
 
     /**
      * @var DevCycleOptions
@@ -54,36 +61,28 @@ class DevCycleClient
 
 
     /**
-     * @param DevCycleConfiguration|null $config
+     * @param DevCycleOptions $dvcOptions
+     * @param HTTPConfiguration|null $config
      * @param ClientInterface|null $client
      * @param HeaderSelector|null $selector
-     * @param DevCycleOptions|null $dvcOptions
      */
     public function __construct(
-        DevCycleConfiguration $config = null,
-        ClientInterface       $client = null,
-        HeaderSelector        $selector = null,
-        DevCycleOptions       $dvcOptions = null
+        DevCycleOptions   $dvcOptions,
+        HTTPConfiguration $config = null,
+        ClientInterface   $client = null,
+        HeaderSelector    $selector = null,
     )
     {
         $this->client = $client ?? new Client();
-        $this->config = $config ?? new DevCycleConfiguration();
+        $this->httpConfiguration = $config ?? new HTTPConfiguration();
         $this->headerSelector = $selector ?? new HeaderSelector();
-        $this->dvcOptions = $dvcOptions ?? new DevCycleOptions();
+        $this->dvcOptions = $dvcOptions;
         $this->openFeatureProvider = new DevCycleProvider($this);
     }
 
     public function getOpenFeatureProvider(): DevCycleProvider
     {
         return $this->openFeatureProvider;
-    }
-
-    /**
-     * @return DevCycleConfiguration
-     */
-    public function getConfig(): DevCycleConfiguration
-    {
-        return $this->config;
     }
 
     /**
@@ -126,6 +125,7 @@ class DevCycleClient
      * @return array<string,Feature>|ErrorResponse
      * @throws InvalidArgumentException
      * @throws ApiException on non-2xx response
+     * @throws GuzzleException
      */
     public function allFeatures(DevCycleUser $user_data)
     {
@@ -144,9 +144,9 @@ class DevCycleClient
      *
      * @return array of array<string,\Feature>|\ErrorResponse
      * @throws InvalidArgumentException
-     * @throws ApiException on non-2xx response
+     * @throws ApiException|GuzzleException on non-2xx response
      */
-    public function allFeaturesWithHttpInfo(DevCycleUser $user_data): array
+    private function allFeaturesWithHttpInfo(DevCycleUser $user_data): array
     {
         $request = $this->allFeaturesRequest($user_data);
 
@@ -229,12 +229,11 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function allFeaturesAsyncWithHttpInfo(DevCycleUser $user_data): PromiseInterface
+    private function allFeaturesAsyncWithHttpInfo(DevCycleUser $user_data): PromiseInterface
     {
         $returnType = 'array<string,\DevCycle\Model\Feature>';
         $request = $this->allFeaturesRequest($user_data);
-
-        return $this->getThen($request, $returnType);
+        return $this->asyncMakeRequest($request, $returnType);
     }
 
     /**
@@ -245,10 +244,10 @@ class DevCycleClient
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function allFeaturesRequest(DevCycleUser $user_data): Request
+    private function allFeaturesRequest(DevCycleUser $user_data): Request
     {
         $resourcePath = '/v1/features';
-        return $this->bucketingAPIRequest($user_data, $resourcePath);
+        return $this->buildBucketingApiRequest($user_data, $resourcePath);
     }
 
     /**
@@ -260,11 +259,10 @@ class DevCycleClient
      * @param string $key Variable key (required)
      * @param mixed $default Default value if variable is not found (required)
      *
-     * @return object|ErrorResponse|ErrorResponse|ErrorResponse|ErrorResponse
+     * @return mixed
      * @throws InvalidArgumentException
-     * @throws ApiException on non-2xx response
      */
-    public function variableValue(DevCycleUser $user_data, string $key, mixed $default)
+    public function variableValue(DevCycleUser $user_data, string $key, mixed $default): mixed
     {
         return $this->variable($user_data, $key, $default)->getValue();
     }
@@ -274,25 +272,26 @@ class DevCycleClient
      *
      * Get variable object by key for user data
      *
-     * @param DevCycleUser $user_data user_data (required)
+     * @param DevCycleUser $user user_data (required)
      * @param string $key Variable key (required)
      * @param mixed $default Default value if variable is not found (required)
      *
-     * @return Variable|ErrorResponse
+     * @return Variable
      * @throws InvalidArgumentException
+     * @throws GuzzleException
      */
-    public function variable(DevCycleUser $user_data, string $key, mixed $default): Variable|ErrorResponse
+    public function variable(DevCycleUser $user, string $key, mixed $default): Variable
     {
-        $this->validateUserData($user_data);
+        $this->validateUserData($user);
 
         try {
-            list($response) = $this->variableWithHttpInfo($user_data, $key);
+            list($response) = $this->variableWithHttpInfo($user, $key);
             return $this->reformatVariable($key, $response, $default);
         } catch (ApiException $e) {
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
-            return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+            return new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
         }
     }
 
@@ -313,9 +312,9 @@ class DevCycleClient
         }
 
         if (!$doTypesMatch) {
-            return new Variable(array("key" => $key, "value" => $default, "isDefaulted" => true));
+            return new Variable(array("key" => $key, "value" => $default, "type" => $defaultType, "isDefaulted" => true));
         } else {
-            return new Variable(array("key" => $key, "value" => $unwrappedValue, "isDefaulted" => false));
+            return new Variable(array("key" => $key, "value" => $unwrappedValue, "type" => $responseType, "isDefaulted" => false));
         }
     }
 
@@ -338,7 +337,7 @@ class DevCycleClient
      *
      * @return array of \DevCycle\Model\Variable|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
-     * @throws ApiException on non-2xx response
+     * @throws ApiException|GuzzleException on non-2xx response
      */
     public function variableWithHttpInfo(DevCycleUser $user_data, string $key): array
     {
@@ -414,7 +413,7 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function variableAsync(DevCycleUser $user_data, string $key, mixed $default)
+    public function variableAsync(DevCycleUser $user_data, string $key, mixed $default): PromiseInterface
     {
         $this->validateUserData($user_data);
 
@@ -447,12 +446,12 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function variableAsyncWithHttpInfo(DevCycleUser $user_data, string $key)
+    public function variableAsyncWithHttpInfo(DevCycleUser $user_data, string $key): PromiseInterface
     {
         $returnType = '\DevCycle\Model\Variable';
         $request = $this->variableRequest($user_data, $key);
 
-        return $this->getThen($request, $returnType);
+        return $this->asyncMakeRequest($request, $returnType);
     }
 
     /**
@@ -464,7 +463,7 @@ class DevCycleClient
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function variableRequest(DevCycleUser $user_data, string $key)
+    public function variableRequest(DevCycleUser $user_data, string $key): Request
     {
         $resourcePath = '/v1/variables/{key}';
         $queryParams = [];
@@ -496,7 +495,7 @@ class DevCycleClient
 
 
         // this endpoint requires API key authentication
-        return $this->makeAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
+        return $this->buildAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
     }
 
     /**
@@ -531,7 +530,7 @@ class DevCycleClient
      *
      * @return array of array<string,\DevCycle\Model\Variable>|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse|\DevCycle\Model\ErrorResponse, HTTP status code, HTTP response headers (array of strings)
      * @throws InvalidArgumentException
-     * @throws ApiException on non-2xx response
+     * @throws ApiException|GuzzleException on non-2xx response
      */
     public function allVariablesWithHttpInfo(DevCycleUser $user_data): array
     {
@@ -541,11 +540,8 @@ class DevCycleClient
             list($response, $statusCode) = $this->makeRequest($request);
 
             if ($statusCode == 200) {
-                if ('array<string,\DevCycle\Model\Variable>' === '\SplFileObject') {
-                    $content = $response->getBody(); //stream goes to serializer
-                } else {
-                    $content = (string)$response->getBody();
-                }
+
+                $content = (string)$response->getBody();
 
                 return [
                     ObjectSerializer::deserialize($content, 'array<string,\DevCycle\Model\Variable>', []),
@@ -599,7 +595,7 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function allVariablesAsync($user_data)
+    public function allVariablesAsync(DevCycleUser $user_data): PromiseInterface
     {
         $this->validateUserData($user_data);
 
@@ -621,12 +617,12 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function allVariablesAsyncWithHttpInfo($user_data)
+    private function allVariablesAsyncWithHttpInfo(DevCycleUser $user_data): PromiseInterface
     {
         $returnType = 'array<string,\DevCycle\Model\Variable>';
         $request = $this->allVariablesRequest($user_data);
 
-        return $this->getThen($request, $returnType);
+        return $this->asyncMakeRequest($request, $returnType);
     }
 
     /**
@@ -637,67 +633,10 @@ class DevCycleClient
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function allVariablesRequest($user_data)
+    private function allVariablesRequest(DevCycleUser $user_data): Request
     {
-        // verify the required parameter 'user_data' is set
-        if ($user_data === null || (is_array($user_data) && count($user_data) === 0)) {
-            throw new InvalidArgumentException(
-                'Missing the required parameter $user_data when calling allVariables'
-            );
-        }
-
         $resourcePath = '/v1/variables';
-        $formParams = [];
-        $queryParams = [];
-        if ($this->dvcOptions->isEdgeDBEnabled()) {
-            $queryParams = ['enableEdgeDB' => 'true'];
-        }
-        $headerParams = [];
-        $httpBody = '';
-        $multipart = false;
-
-        if ($multipart) {
-            $headers = $this->headerSelector->selectHeadersForMultipart(
-                ['application/json']
-            );
-        } else {
-            $headers = $this->headerSelector->selectHeaders(
-                ['application/json'],
-                ['application/json']
-            );
-        }
-
-        // for model (json/xml)
-        if (isset($user_data)) {
-            if ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($user_data));
-            } else {
-                $httpBody = $user_data;
-            }
-        } elseif (count($formParams) > 0) {
-            if ($multipart) {
-                $multipartContents = [];
-                foreach ($formParams as $formParamName => $formParamValue) {
-                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
-                    foreach ($formParamValueItems as $formParamValueItem) {
-                        $multipartContents[] = [
-                            'name' => $formParamName,
-                            'contents' => $formParamValueItem
-                        ];
-                    }
-                }
-                // for HTTP post (form)
-                $httpBody = new MultipartStream($multipartContents);
-            } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
-            } else {
-                // for HTTP post (form)
-                $httpBody = Query::build($formParams);
-            }
-        }
-
-        // this endpoint requires API key authentication
-        return $this->makeAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
+        return $this->buildBucketingApiRequest($user_data, $resourcePath);
     }
 
     /**
@@ -708,11 +647,11 @@ class DevCycleClient
      * @param DevCycleUser $user_data user_data (required)
      * @param DevCycleEvent $event_data event_data (required)
      *
-     * @return \DevCycle\Model\InlineResponse201|ErrorResponse|ErrorResponse|ErrorResponse|ErrorResponse
+     * @return InlineResponse201|ErrorResponse
      * @throws InvalidArgumentException
      * @throws ApiException on non-2xx response
      */
-    public function track(DevCycleUser $user_data, DevCycleEvent $event_data)
+    public function track(DevCycleUser $user_data, DevCycleEvent $event_data): ErrorResponse|InlineResponse201
     {
         $this->validateUserData($user_data);
         $this->validateEventData($event_data);
@@ -746,11 +685,9 @@ class DevCycleClient
             list($response, $statusCode) = $this->makeRequest($request);
 
             if ($statusCode == 201) {
-                if ('\DevCycle\Model\InlineResponse201' === '\SplFileObject') {
-                    $content = $response->getBody(); //stream goes to serializer
-                } else {
-                    $content = (string)$response->getBody();
-                }
+
+                $content = (string)$response->getBody();
+
 
                 return [
                     ObjectSerializer::deserialize($content, '\DevCycle\Model\InlineResponse201', []),
@@ -805,7 +742,7 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function trackAsync(DevCycleUser $user, $event): PromiseInterface
+    public function trackAsync(DevCycleUser $user, DevCycleEvent $event): PromiseInterface
     {
         $this->validateUserData($user);
         $this->validateEventData($event);
@@ -828,17 +765,17 @@ class DevCycleClient
      *
      * Post events to DevCycle for user
      *
-     * @param DevCycleUserAndEventsBody $user_data_and_events_body (required)
+     * @param DevCycleUserAndEventsBody $userEvents (required)
      *
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function postEventsAsyncWithHttpInfo(DevCycleUserAndEventsBody $user_data_and_events_body): PromiseInterface
+    private function postEventsAsyncWithHttpInfo(DevCycleUserAndEventsBody $userEvents): PromiseInterface
     {
         $returnType = '\DevCycle\Model\InlineResponse201';
-        $request = $this->postEventsRequest($user_data_and_events_body);
+        $request = $this->postEventsRequest($userEvents);
 
-        return $this->getThen($request, $returnType);
+        return $this->asyncMakeRequest($request, $returnType);
     }
 
     /**
@@ -849,11 +786,11 @@ class DevCycleClient
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function postEventsRequest(DevCycleUserAndEventsBody $user_data_and_events_body): Request
+    private function postEventsRequest(DevCycleUserAndEventsBody $user_data_and_events_body): Request
     {
         $resourcePath = '/v1/track';
 
-        return $this->bucketingAPIRequest($user_data_and_events_body, $resourcePath);
+        return $this->buildBucketingApiRequest($user_data_and_events_body, $resourcePath);
     }
 
     /**
@@ -865,14 +802,8 @@ class DevCycleClient
     protected function createHttpClientOption(): array
     {
         $options = [];
-        if ($this->config->getDebug()) {
-            $options[RequestOptions::DEBUG] = fopen($this->config->getDebugFile(), 'a');
-            if (!$options[RequestOptions::DEBUG]) {
-                throw new RuntimeException('Failed to open the debug file: ' . $this->config->getDebugFile());
-            }
-        }
-        $options["curl"] = $this->config->getUDSPath() == "" ? [] : [
-            CURLOPT_UNIX_SOCKET_PATH => $this->config->getUDSPath()
+        $options["curl"] = $this->dvcOptions->getUnixSocketPath() == "" ? [] : [
+            CURLOPT_UNIX_SOCKET_PATH => $this->dvcOptions->getUnixSocketPath()
         ];
 
         return $options;
@@ -883,7 +814,7 @@ class DevCycleClient
      * @param string $returnType
      * @return PromiseInterface
      */
-    private function getThen(Request $request, string $returnType): PromiseInterface
+    private function asyncMakeRequest(Request $request, string $returnType): PromiseInterface
     {
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -921,16 +852,16 @@ class DevCycleClient
      * @param DevCycleUserAndEventsBody|string $httpBody
      * @return Request
      */
-    private function makeAuthorizedRequest(array $headers, array $headerParams, array $queryParams, string $resourcePath, DevCycleUserAndEventsBody|string $httpBody): Request
+    private function buildAuthorizedRequest(array $headers, array $headerParams, array $queryParams, string $resourcePath, DevCycleUserAndEventsBody|string $httpBody): Request
     {
-        $apiKey = $this->config->getApiKeyWithPrefix('Authorization');
+        $apiKey = $this->httpConfiguration->getApiKeyWithPrefix('Authorization');
         if ($apiKey !== null) {
             $headers['Authorization'] = $apiKey;
         }
 
         $defaultHeaders = [];
-        if ($this->config->getUserAgent()) {
-            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        if ($this->httpConfiguration->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->httpConfiguration->getUserAgent();
         }
 
         $headers = array_merge(
@@ -942,7 +873,7 @@ class DevCycleClient
         $query = Query::build($queryParams);
         return new Request(
             'POST',
-            $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
+            $this->dvcOptions->getBucketingApiHostname() . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
         );
@@ -952,7 +883,7 @@ class DevCycleClient
      * @param Request $request
      * @return array
      * @throws ApiException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     private function makeRequest(Request $request): array
     {
@@ -995,9 +926,9 @@ class DevCycleClient
     /**
      * @param DevCycleUser $user_data
      * @param string $resourcePath
-     * @return \GuzzleHttp\Psr7\Request
+     * @return Request
      */
-    private function bucketingAPIRequest(DevCycleUser $user_data, string $resourcePath): Request
+    private function buildBucketingApiRequest(DevCycleUser|DevCycleUserAndEventsBody $body, string $resourcePath): Request
     {
         $queryParams = [];
         if ($this->dvcOptions->isEdgeDBEnabled()) {
@@ -1011,13 +942,11 @@ class DevCycleClient
         );
 
         if ($headers['Content-Type'] === 'application/json') {
-            $httpBody = json_encode(ObjectSerializer::sanitizeForSerialization($user_data));
+            $httpBody = json_encode(ObjectSerializer::sanitizeForSerialization($body));
         } else {
-            $httpBody = $user_data;
+            $httpBody = $body;
         }
-
-
         // this endpoint requires API key authentication
-        return $this->makeAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
+        return $this->buildAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
     }
 }

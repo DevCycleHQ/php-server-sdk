@@ -1,14 +1,5 @@
 <?php
-/**
- * ErrorResponse
- *
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
+
 
 
 
@@ -37,14 +28,14 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'ErrorResponse';
+    protected static string $openAPIModelName = 'ErrorResponse';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
       *
       * @var string[]
       */
-    protected static $openAPITypes = [
+    protected static array $openAPITypes = [
         'message' => 'string',
         'data' => 'object'
     ];
@@ -56,7 +47,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
       * @phpstan-var array<string, string|null>
       * @psalm-var array<string, string|null>
       */
-    protected static $openAPIFormats = [
+    protected static array $openAPIFormats = [
         'message' => null,
         'data' => null
     ];
@@ -66,7 +57,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function openAPITypes()
+    public static function openAPITypes(): array
     {
         return self::$openAPITypes;
     }
@@ -76,7 +67,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function openAPIFormats()
+    public static function openAPIFormats(): array
     {
         return self::$openAPIFormats;
     }
@@ -87,7 +78,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var string[]
      */
-    protected static $attributeMap = [
+    protected static array $attributeMap = [
         'message' => 'message',
         'data' => 'data'
     ];
@@ -97,7 +88,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var string[]
      */
-    protected static $setters = [
+    protected static array $setters = [
         'message' => 'setMessage',
         'data' => 'setData'
     ];
@@ -107,7 +98,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var string[]
      */
-    protected static $getters = [
+    protected static array $getters = [
         'message' => 'getMessage',
         'data' => 'getData'
     ];
@@ -118,7 +109,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function attributeMap()
+    public static function attributeMap(): array
     {
         return self::$attributeMap;
     }
@@ -128,7 +119,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function setters()
+    public static function setters(): array
     {
         return self::$setters;
     }
@@ -138,7 +129,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array
      */
-    public static function getters()
+    public static function getters(): array
     {
         return self::$getters;
     }
@@ -148,7 +139,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getModelName()
+    public function getModelName(): string
     {
         return self::$openAPIModelName;
     }
@@ -159,7 +150,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @var mixed[]
      */
-    protected $container = [];
+    protected array $container = [];
 
     /**
      * Constructor
@@ -178,7 +169,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return array invalid properties with reasons
      */
-    public function listInvalidProperties()
+    public function listInvalidProperties(): array
     {
         $invalidProperties = [];
 
@@ -194,7 +185,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return bool True if all properties are valid
      */
-    public function valid()
+    public function valid(): bool
     {
         return count($this->listInvalidProperties()) === 0;
     }
@@ -205,7 +196,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->container['message'];
     }
@@ -217,7 +208,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setMessage($message)
+    public function setMessage(string $message): static
     {
         $this->container['message'] = $message;
 
@@ -229,7 +220,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return object|null
      */
-    public function getData()
+    public function getData(): ?object
     {
         return $this->container['data'];
     }
@@ -241,7 +232,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setData($data)
+    public function setData(?object $data): static
     {
         $this->container['data'] = $data;
 
@@ -279,7 +270,7 @@ class ErrorResponse implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return void
      */
-    public function offsetSet($offset, $value):void
+    public function offsetSet($offset, mixed $value):void
     {
         if (is_null($offset)) {
             $this->container[] = $value;
