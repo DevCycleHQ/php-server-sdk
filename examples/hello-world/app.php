@@ -2,7 +2,6 @@
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-use DevCycle\HTTPConfiguration;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;

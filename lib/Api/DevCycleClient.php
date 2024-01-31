@@ -76,6 +76,9 @@ class DevCycleClient
         HeaderSelector    $selector = null,
     )
     {
+        if ($sdkKey === '') {
+            throw new InvalidArgumentException("SDK Key is required");
+        }
         $this->client = $client ?? new Client();
         $this->httpConfiguration = $config ?? new HTTPConfiguration();
         $this->httpConfiguration->setApiKey('Authorization', $sdkKey);
