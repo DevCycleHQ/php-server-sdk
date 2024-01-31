@@ -13,20 +13,21 @@ $unixSocketPath = null;
 // $bucketingHostname = "http:/localhost";
 // $unixSocketPath = "/tmp/devcycle.sock";
 
-
 $options = new DevCycleOptions(
     false,
     $bucketingHostname,
     $unixSocketPath
 );
-$apiInstance = new DevCycleClient(
+
+$devCycleClient = new DevCycleClient(
     sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
     dvcOptions: $options
 );
-$user_data = new DevCycleUser(array(
+
+$user = new DevCycleUser(array(
     "user_id" => "test"
 ));
 
-echo $user_data->__toString();
+echo $user->__toString();
 
-echo $apiInstance->variable($user_data, "test", false);
+echo $devCycleClient->variable($user, "test", false);

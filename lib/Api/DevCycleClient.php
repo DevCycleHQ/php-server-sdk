@@ -10,6 +10,7 @@ use DevCycle\Model\Feature;
 use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
 use DevCycle\OpenFeature\DevCycleProvider;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ConnectException;
@@ -61,6 +62,7 @@ class DevCycleClient
 
 
     /**
+     * @param string $sdkKey
      * @param DevCycleOptions $dvcOptions
      * @param HTTPConfiguration|null $config
      * @param ClientInterface|null $client
@@ -89,14 +91,13 @@ class DevCycleClient
 
     /**
      * Validate user data exists and has valid data
-     * @param DevCycleUser $user_data user_data (required)
-     *
-     * @throws InvalidArgumentException
+     * @param DevCycleUser $user user (required)
+     * @return bool
      */
-    public function validateUserData(DevCycleUser $user_data): bool
+    public function validateUserData(DevCycleUser $user): bool
     {
-        if (!$user_data->valid()) {
-            $errors = $user_data->listInvalidProperties();
+        if (!$user->valid()) {
+            $errors = $user->listInvalidProperties();
             throw new InvalidArgumentException("User data is invalid: " . implode(', ', $errors));
         }
         return true;
@@ -124,7 +125,6 @@ class DevCycleClient
      *
      * @param DevCycleUser $user_data user_data (required)
      *
-     * @return array<string,Feature>|ErrorResponse
      * @throws InvalidArgumentException
      * @throws ApiException on non-2xx response
      * @throws GuzzleException
@@ -278,7 +278,6 @@ class DevCycleClient
      * @param string $key Variable key (required)
      * @param mixed $default Default value if variable is not found (required)
      *
-     * @return Variable
      * @throws InvalidArgumentException
      * @throws GuzzleException
      */
@@ -289,7 +288,7 @@ class DevCycleClient
         try {
             list($response) = $this->variableWithHttpInfo($user, $key);
             return $this->reformatVariable($key, $response, $default);
-        } catch (ApiException $e) {
+        } catch (Exception $e) {
             if ($e->getCode() != 404) {
                 error_log("Failed to get variable value for key $key, $e");
             }
@@ -341,7 +340,7 @@ class DevCycleClient
      * @throws InvalidArgumentException
      * @throws ApiException|GuzzleException on non-2xx response
      */
-    public function variableWithHttpInfo(DevCycleUser $user_data, string $key): array
+    private function variableWithHttpInfo(DevCycleUser $user_data, string $key): array
     {
         $request = $this->variableRequest($user_data, $key);
 
@@ -448,7 +447,7 @@ class DevCycleClient
      * @return PromiseInterface
      * @throws InvalidArgumentException
      */
-    public function variableAsyncWithHttpInfo(DevCycleUser $user_data, string $key): PromiseInterface
+    private function variableAsyncWithHttpInfo(DevCycleUser $user_data, string $key): PromiseInterface
     {
         $returnType = '\DevCycle\Model\Variable';
         $request = $this->variableRequest($user_data, $key);
@@ -465,7 +464,7 @@ class DevCycleClient
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function variableRequest(DevCycleUser $user_data, string $key): Request
+    private function variableRequest(DevCycleUser $user_data, string $key): Request
     {
         $resourcePath = '/v1/variables/{key}';
         $queryParams = [];
@@ -534,7 +533,7 @@ class DevCycleClient
      * @throws InvalidArgumentException
      * @throws ApiException|GuzzleException on non-2xx response
      */
-    public function allVariablesWithHttpInfo(DevCycleUser $user_data): array
+    private function allVariablesWithHttpInfo(DevCycleUser $user_data): array
     {
         $request = $this->allVariablesRequest($user_data);
 
