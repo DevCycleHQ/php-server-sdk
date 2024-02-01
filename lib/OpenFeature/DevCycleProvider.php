@@ -1,9 +1,12 @@
 <?php
-
+declare(strict_types=1);
 namespace DevCycle\OpenFeature;
+
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
+
 use OpenFeature\implementation\common\Metadata;
+use OpenFeature\interfaces\common\Metadata as IMetadata;
 use OpenFeature\interfaces\flags\EvaluationContext;
 use OpenFeature\interfaces\hooks\Hook;
 use OpenFeature\interfaces\provider\Provider;
@@ -47,7 +50,7 @@ class DevCycleProvider implements Provider
     /**
      * @return Metadata
      */
-    public function getMetadata(): Metadata
+    public function getMetadata(): IMetadata
     {
         return $this->metadata;
     }

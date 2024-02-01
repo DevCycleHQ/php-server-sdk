@@ -4,6 +4,12 @@
         "php": "^8.0",
         "devcycle/php-server-sdk": "*"
     },
+    "repositories": [{
+        "type": "path",
+        "url": "../../",
+        "only": ["devcycle/php-server-sdk"]
+    }
+    ],
     "autoload": {
         "psr-4": { "DevCycle\\" : "../../lib/" }
     }

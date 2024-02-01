@@ -104,10 +104,10 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$client->variable(self::$user, 'test', true);
+        $result = self::$client->variable(self::$user, 'php-sdk', true);
         self::assertFalse($result->isDefaulted());
 
-        $resultValue = self::$client->variableValue(self::$user, 'test', true);
+        $resultValue = self::$client->variableValue(self::$user, 'php-sdk', true);
         self::assertTrue($resultValue);
     }
 
@@ -124,12 +124,29 @@ final class DevCycleClientTest extends TestCase
             new DevCycleOptions(false)
         );
 
-        $result = $localApiInstance->variable(self::$user, 'test-feature', true);
+
+
+        try {
+            $result = $localApiInstance->variable(self::$user, 'test-feature', true);
+            $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
+            $threw = false;
+        } catch (\Exception $e) {
+            self::assertEquals(401, $e->getCode());
+            self::assertTrue($result->isDefaulted());
+            self::assertTrue((bool)$result->getValue());
+            $threw = true;
+        } finally {
+            self::assertTrue($resultValue);
+            self::assertFalse($threw);
+        }
+
+    }
+
+    public function testVariableDefaultedDoesNotThrow()
+    {
+        $result = self::$client->variable(self::$user, 'variable-does-not-exist', true);
         self::assertTrue($result->isDefaulted());
         self::assertTrue((bool)$result->getValue());
-
-        $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
-        self::assertTrue($resultValue);
     }
 
     /**

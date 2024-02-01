@@ -1,4 +1,5 @@
 {
+    "version": "2.0.0",
     "description": "Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.",
     "keywords": [
         "openapitools",

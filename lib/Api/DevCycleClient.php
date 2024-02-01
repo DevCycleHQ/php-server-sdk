@@ -280,9 +280,6 @@ class DevCycleClient
      * @param DevCycleUser $user user_data (required)
      * @param string $key Variable key (required)
      * @param mixed $default Default value if variable is not found (required)
-     *
-     * @throws InvalidArgumentException
-     * @throws GuzzleException
      */
     public function variable(DevCycleUser $user, string $key, mixed $default): Variable
     {
@@ -291,9 +288,10 @@ class DevCycleClient
         try {
             list($response) = $this->variableWithHttpInfo($user, $key);
             return $this->reformatVariable($key, $response, $default);
-        } catch (Exception $e) {
+        } catch (GuzzleException|ApiException $e) {
             if ($e->getCode() != 404) {
-                error_log("Failed to get variable value for key $key, $e");
+
+                error_log("Failed to get variable value for key $key, ".$e->getMessage());
             }
             return new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
         }
@@ -901,7 +899,7 @@ class DevCycleClient
                 $e->getResponse() ? $e->getResponse()->getHeaders() : null,
                 $e->getResponse() ? (string)$e->getResponse()->getBody() : null
             );
-        } catch (ConnectException $e) {
+        } catch (Exception $e) {
             throw new ApiException(
                 "[{$e->getCode()}] {$e->getMessage()}",
                 (int)$e->getCode(),
@@ -917,7 +915,7 @@ class DevCycleClient
                 sprintf(
                     '[%d] Error connecting to the API (%s)',
                     $statusCode,
-                    (string)$request->getUri()
+                    $request->getUri()
                 ),
                 $statusCode,
                 $response->getHeaders(),

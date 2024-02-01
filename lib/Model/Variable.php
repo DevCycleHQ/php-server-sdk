@@ -251,7 +251,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->container['_id'];
     }
@@ -259,11 +259,11 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets _id
      *
-     * @param string $_id unique database id
+     * @param string|null $_id unique database id
      *
      * @return self
      */
-    public function setId($_id): static
+    public function setId(?string $_id): self
     {
         $this->container['_id'] = $_id;
 
