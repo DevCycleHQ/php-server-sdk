@@ -476,7 +476,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return object|null
      */
-    public function getCustomData(): ?object
+    public function getCustomData(): ?array
     {
         return $this->container['custom_data'];
     }
@@ -484,18 +484,18 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets custom_data
      *
-     * @param object|null $custom_data User's custom data to target the user with, data will be logged to DevCycle for use in dashboard.
+     * @param array|null $custom_data User's custom data to target the user with, data will be logged to DevCycle for use in dashboard.
      *
      * @return self
      */
-    public function setCustomData(?object $custom_data): self
+    public function setCustomData(?array $custom_data): self
     {
         $this->container['custom_data'] = $custom_data;
 
         return $this;
     }
 
-    public function addCustomData($key, $value): self
+    public function addCustomData(string $key, $value): self
     {
         $this->container['custom_data'][$key] = $value;
         return $this;
