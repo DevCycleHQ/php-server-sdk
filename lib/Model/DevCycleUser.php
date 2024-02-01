@@ -504,9 +504,9 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets private_custom_data
      *
-     * @return object|null
+     * @return array|null
      */
-    public function getPrivateCustomData(): ?object
+    public function getPrivateCustomData(): ?array
     {
         return $this->container['private_custom_data'];
     }
@@ -514,11 +514,11 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets private_custom_data
      *
-     * @param object|null $private_custom_data User's custom data to target the user with, data will not be logged to DevCycle only used for feature bucketing.
+     * @param array|null $private_custom_data User's custom data to target the user with, data will not be logged to DevCycle only used for feature bucketing.
      *
      * @return self
      */
-    public function setPrivateCustomData(?object $private_custom_data): self
+    public function setPrivateCustomData(?array $private_custom_data): self
     {
         $this->container['private_custom_data'] = $private_custom_data;
 
