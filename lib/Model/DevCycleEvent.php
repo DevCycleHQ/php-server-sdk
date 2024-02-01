@@ -186,8 +186,8 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
-        if ($this->container['type'] === null) {
-            $invalidProperties[] = "'type' can't be null";
+        if ($this->container['type'] === null || $this->container['type'] === '') {
+            $invalidProperties[] = "'type' can't be null or empty";
         }
         return $invalidProperties;
     }
@@ -221,7 +221,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setType(string $type): static
+    public function setType(string $type): self
     {
         $this->container['type'] = $type;
 
@@ -245,7 +245,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setTarget(?string $target): static
+    public function setTarget(?string $target): self
     {
         $this->container['target'] = $target;
 
@@ -269,7 +269,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setDate($date): static
+    public function setDate(?float $date): self
     {
         $this->container['date'] = $date;
 
@@ -293,7 +293,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setValue(?float $value): static
+    public function setValue(?float $value): self
     {
         $this->container['value'] = $value;
 
@@ -305,7 +305,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return object|null
      */
-    public function getMetaData(): ?object
+    public function getMetaData(): ?array
     {
         return $this->container['meta_data'];
     }
@@ -317,7 +317,7 @@ class DevCycleEvent implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return self
      */
-    public function setMetaData(?object $meta_data): self
+    public function setMetaData(?array $meta_data): self
     {
         $this->container['meta_data'] = $meta_data;
 

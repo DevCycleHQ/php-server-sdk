@@ -1,6 +1,6 @@
 {
     "version": "2.0.0",
-    "description": "Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.",
+    "description": "DevCycle PHP Server SDK",
     "keywords": [
         "openapitools",
         "openapi-generator",
@@ -10,7 +10,7 @@
         "rest",
         "api"
     ],
-    "homepage": "https://openapi-generator.tech",
+    "homepage": "https://devcycle.com",
     "license": "MIT",
     "name": "devcycle/php-server-sdk",
     "authors": [
