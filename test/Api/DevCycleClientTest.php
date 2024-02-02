@@ -32,6 +32,12 @@ use DevCycle\Model\DevCycleOptions;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleEvent;
+use Exception;
+use OpenFeature\implementation\flags\EvaluationContext;
+use OpenFeature\interfaces\flags\Client;
+use OpenFeature\interfaces\provider\Reason;
+use OpenFeature\OpenFeatureAPI;
+use OpenFeature\OpenFeatureClient;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,13 +51,20 @@ use PHPUnit\Framework\TestCase;
 final class DevCycleClientTest extends TestCase
 {
     private static DevCycleClient $client;
+
+    private static OpenFeatureAPI $api;
+    private static Client $openFeatureClient;
     private static DevCycleUser $user;
+
+    private static EvaluationContext $context;
 
     /**
      * Setup before running any test cases
      */
     public static function setUpBeforeClass(): void
     {
+        self::$api = OpenFeatureAPI::getInstance();
+
     }
 
     /**
@@ -67,6 +80,10 @@ final class DevCycleClientTest extends TestCase
         self::$user = new DevCycleUser(array(
             "user_id" => "user"
         ));
+        self::$api->setProvider(self::$client->getOpenFeatureProvider());
+        self::$openFeatureClient = self::$api->getClient();
+        self::$context = new EvaluationContext('user');
+
     }
 
     /**
@@ -104,10 +121,13 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$client->variable(self::$user, 'php-sdk', true);
+        $result = self::$client->variable(self::$user, 'php-sdk', false);
         self::assertFalse($result->isDefaulted());
 
-        $resultValue = self::$client->variableValue(self::$user, 'php-sdk', true);
+        // add a value to the invocation context
+        $boolValue = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        self::assertTrue($boolValue);
+        $resultValue = self::$client->variableValue(self::$user, 'php-sdk', false);
         self::assertTrue($resultValue);
     }
 
@@ -123,23 +143,15 @@ final class DevCycleClientTest extends TestCase
             "dvc_server_invalid-sdk-key",
             new DevCycleOptions(false)
         );
+        $result = $localApiInstance->variable(self::$user, 'test-feature', true);
+        $openFeatureResult = self::$openFeatureClient->getBooleanDetails('test-feature', true, self::$context);
+        $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
+        $openFeatureValue = self::$openFeatureClient->getBooleanValue('test-feature', true, self::$context);
 
-
-
-        try {
-            $result = $localApiInstance->variable(self::$user, 'test-feature', true);
-            $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
-            $threw = false;
-        } catch (\Exception $e) {
-            self::assertEquals(401, $e->getCode());
-            self::assertTrue($result->isDefaulted());
-            self::assertTrue((bool)$result->getValue());
-            $threw = true;
-        } finally {
-            self::assertTrue($resultValue);
-            self::assertFalse($threw);
-        }
-
+        self::assertTrue($result->isDefaulted());
+        self::assertEquals(Reason::DEFAULT, $openFeatureResult->getReason());
+        self::assertTrue($resultValue);
+        self::assertTrue($openFeatureValue);
     }
 
     public function testVariableDefaultedDoesNotThrow()
@@ -177,5 +189,21 @@ final class DevCycleClientTest extends TestCase
         $result = self::$client->track(self::$user, $event_data);
 
         self::assertEquals("Successfully received 1 events.", $result["message"]);
+    }
+
+    public function testTrackNoType()
+    {
+        $event_data = new DevCycleEvent(array(
+            "type" => ""
+        ));
+        try {
+            $result = self::$client->track(self::$user, $event_data);
+            $threw = false;
+        } catch (Exception $e) {
+            $threw = true;
+            self::assertEquals("Event data is invalid: 'type' can't be null or empty", $e->getMessage());
+        } finally {
+            self::assertTrue($threw);
+        }
     }
 }

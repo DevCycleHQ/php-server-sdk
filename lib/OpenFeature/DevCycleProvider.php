@@ -23,6 +23,7 @@ class DevCycleProvider implements Provider
     {
         $this->apiClient = $apiClient;
         $this->metadata = new Metadata("DevCycle-PHP");
+        $this->hooks = [];
     }
 
     /**
