@@ -655,9 +655,12 @@ class DevCycleClient
      */
     public function track(DevCycleUser $user_data, DevCycleEvent $event_data): ErrorResponse|InlineResponse201
     {
-        $this->validateUserData($user_data);
-        $this->validateEventData($event_data);
-
+        try {
+            $this->validateUserData($user_data);
+            $this->validateEventData($event_data);
+        } catch(InvalidArgumentException $e) {
+            return new ErrorResponse(array("message" => $e->getMessage()));
+        }
         $user_data_and_events_body = new DevCycleUserAndEventsBody(array(
             "user" => $user_data,
             "events" => [$event_data]
