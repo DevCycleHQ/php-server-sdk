@@ -316,6 +316,10 @@ class DevCycleClient
         if (!$doTypesMatch) {
             return new Variable(array("key" => $key, "value" => $default, "type" => $defaultType, "isDefaulted" => true));
         } else {
+            if ($responseType === 'array') {
+                $jsonValue = json_decode(json_encode($unwrappedValue), true);
+                $unwrappedValue = $jsonValue;
+            }
             return new Variable(array("key" => $key, "value" => $unwrappedValue, "type" => $responseType, "isDefaulted" => false));
         }
     }

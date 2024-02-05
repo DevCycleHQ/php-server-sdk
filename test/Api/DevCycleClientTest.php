@@ -202,4 +202,19 @@ final class DevCycleClientTest extends TestCase
         self::assertTrue($result instanceof ErrorResponse);
         self::assertEquals("Event data is invalid: 'type' can't be null or empty", $result->getMessage());
     }
+
+    public function testOpenFeature()
+    {
+        $boolResult = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        self::assertTrue($boolResult);
+
+        $numberResult = self::$openFeatureClient->getIntegerValue('php-sdk-integer', -1, self::$context);
+        self::assertEquals(1, $numberResult);
+
+        $stringResult = self::$openFeatureClient->getStringValue('php-sdk-string', 'default', self::$context);
+        self::assertEquals('string', $stringResult);
+
+        $structResult = self::$openFeatureClient->getObjectValue('php-sdk-struct', array(), self::$context);
+        self::assertEquals(array("key"=>"value", "number"=>1, "bool"=>true, "nested"=>array("key"=>"value")), $structResult);
+    }
 }
