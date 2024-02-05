@@ -1,17 +1,4 @@
 <?php
-/**
- * DevCycleOptions
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- */
-
-/**
- * DevCycle Bucketing API
- *
- * Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.
- */
 
 namespace DevCycle\Model;
 
@@ -23,16 +10,26 @@ namespace DevCycle\Model;
  */
 class DevCycleOptions
 {
-    protected $enableEdgeDB;
+    protected bool $enableEdgeDB;
+
+    protected string $bucketingApiHostname = "https://bucketing-api.devcycle.com";
+
+    protected ?string $unixSocketPath = null;
 
     /**
      * Constructor
      *
-     * @param boolean                $enableEdgeDB         flag to enable EdgeDB user data storage 
+     * @param boolean $enableEdgeDB flag to enable EdgeDB user data storage
+     * @param string|null $bucketingApiHostname
+     * @param string|null $unixSocketPath
      */
-    public function __construct($enableEdgeDB = false)
+    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = null, ?string $unixSocketPath = null)
     {
         $this->enableEdgeDB = $enableEdgeDB;
+        if ($bucketingApiHostname !== null) {
+            $this->bucketingApiHostname = $bucketingApiHostname;
+        }
+        $this->unixSocketPath = $unixSocketPath;
     }
 
     /**
@@ -40,18 +37,26 @@ class DevCycleOptions
      *
      * @return boolean enable EdgeDB flag
      */
-    public function getEnableEdgeDB()
+    public function isEdgeDBEnabled(): bool
     {
         return $this->enableEdgeDB;
     }
 
     /**
-     * Sets the enableEdgeDB flag
-     *
-     * @param boolean $enableEdgeDB
+     * Gets the bucketing API hostname
+     * @return string bucketing API hostname
      */
-    public function setEnableEdgeDB($enableEdgeDB)
+    public function getBucketingApiHostname(): string
     {
-        $this->enableEdgeDB = $enableEdgeDB;
+        return $this->bucketingApiHostname;
+    }
+
+    /**
+     * Gets the unix socket path
+     * @return string unix socket path
+     */
+    public function getUnixSocketPath(): ?string
+    {
+        return $this->unixSocketPath;
     }
 }

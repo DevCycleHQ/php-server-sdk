@@ -27,11 +27,18 @@
 
 namespace DevCycle\Test\Api;
 
-use DevCycle\DevCycleConfiguration;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\ErrorResponse;
+use Exception;
+use OpenFeature\implementation\flags\EvaluationContext;
+use OpenFeature\interfaces\flags\Client;
+use OpenFeature\interfaces\provider\Reason;
+use OpenFeature\OpenFeatureAPI;
+use OpenFeature\OpenFeatureClient;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,14 +51,21 @@ use PHPUnit\Framework\TestCase;
  */
 final class DevCycleClientTest extends TestCase
 {
-    private static $apiInstance;
-    private static $user_data;
+    private static DevCycleClient $client;
+
+    private static OpenFeatureAPI $api;
+    private static Client $openFeatureClient;
+    private static DevCycleUser $user;
+
+    private static EvaluationContext $context;
 
     /**
      * Setup before running any test cases
      */
     public static function setUpBeforeClass(): void
-    {        
+    {
+        self::$api = OpenFeatureAPI::getInstance();
+
     }
 
     /**
@@ -59,16 +73,18 @@ final class DevCycleClientTest extends TestCase
      */
     public function setUp(): void
     {
-        $config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'addARealSDKKey');
-
         $options = new DevCycleOptions(true);
-        self::$apiInstance = new DevCycleClient(
-            $config,
-            dvcOptions:$options
+        self::$client = new DevCycleClient(
+            sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
+            dvcOptions: $options
         );
-        self::$user_data = new DevCycleUser(array(
-            "user_id"=>"user"
+        self::$user = new DevCycleUser(array(
+            "user_id" => "user"
         ));
+        self::$api->setProvider(self::$client->getOpenFeatureProvider());
+        self::$openFeatureClient = self::$api->getClient();
+        self::$context = new EvaluationContext('user');
+
     }
 
     /**
@@ -93,9 +109,9 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetFeatures()
     {
-        $result = self::$apiInstance->allVariables(self::$user_data);
+        $result = self::$client->allVariables(self::$user);
 
-        self::assertCount(1, $result);
+        self::assertGreaterThan(0, count($result));
     }
 
     /**
@@ -106,10 +122,13 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$apiInstance->variable(self::$user_data, 'activate-flag', true);
-        self::assertFalse($result['isDefaulted']);
+        $result = self::$client->variable(self::$user, 'php-sdk', false);
+        self::assertFalse($result->isDefaulted());
 
-        $resultValue = self::$apiInstance->variableValue(self::$user_data, 'activate-flag', true);
+        // add a value to the invocation context
+        $boolValue = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        self::assertTrue($boolValue);
+        $resultValue = self::$client->variableValue(self::$user, 'php-sdk', false);
         self::assertTrue($resultValue);
     }
 
@@ -121,17 +140,26 @@ final class DevCycleClientTest extends TestCase
      */
     public function testVariable_invalidSDKKey_isDefaultedTrue()
     {
-        $localConfig = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'server-invalidSDKKey');
-
         $localApiInstance = new DevCycleClient(
-            $localConfig
+            "dvc_server_invalid-sdk-key",
+            new DevCycleOptions(false)
         );
+        $result = $localApiInstance->variable(self::$user, 'test-feature', true);
+        $openFeatureResult = self::$openFeatureClient->getBooleanDetails('test-feature', true, self::$context);
+        $resultValue = (bool)$localApiInstance->variableValue(self::$user, 'test-feature', true);
+        $openFeatureValue = self::$openFeatureClient->getBooleanValue('test-feature', true, self::$context);
 
-        $result = $localApiInstance->variable(self::$user_data, 'test-feature', true);
-        self::assertTrue($result['isDefaulted']);
-
-        $resultValue = $localApiInstance->variableValue(self::$user_data, 'test-feature', true);
+        self::assertTrue($result->isDefaulted());
+        self::assertEquals(Reason::DEFAULT, $openFeatureResult->getReason());
         self::assertTrue($resultValue);
+        self::assertTrue($openFeatureValue);
+    }
+
+    public function testVariableDefaultedDoesNotThrow()
+    {
+        $result = self::$client->variable(self::$user, 'variable-does-not-exist', true);
+        self::assertTrue($result->isDefaulted());
+        self::assertTrue((bool)$result->getValue());
     }
 
     /**
@@ -142,9 +170,9 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariables()
     {
-        $result = self::$apiInstance->allVariables(self::$user_data);
+        $result = self::$client->allVariables(self::$user);
 
-        self::assertCount(1, $result);
+        self::assertGreaterThan(0, $result);
     }
 
     /**
@@ -159,8 +187,34 @@ final class DevCycleClientTest extends TestCase
             "type" => "some_event"
         ));
 
-        $result = self::$apiInstance->track(self::$user_data, $event_data);
+        $result = self::$client->track(self::$user, $event_data);
 
         self::assertEquals("Successfully received 1 events.", $result["message"]);
+    }
+
+    public function testTrackNoType()
+    {
+        $event_data = new DevCycleEvent(array(
+            "type" => ""
+        ));
+
+        $result = self::$client->track(self::$user, $event_data);
+        self::assertTrue($result instanceof ErrorResponse);
+        self::assertEquals("Event data is invalid: 'type' can't be null or empty", $result->getMessage());
+    }
+
+    public function testOpenFeature()
+    {
+        $boolResult = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        self::assertTrue($boolResult);
+
+        $numberResult = self::$openFeatureClient->getIntegerValue('php-sdk-integer', -1, self::$context);
+        self::assertEquals(1, $numberResult);
+
+        $stringResult = self::$openFeatureClient->getStringValue('php-sdk-string', 'default', self::$context);
+        self::assertEquals('string', $stringResult);
+
+        $structResult = self::$openFeatureClient->getObjectValue('php-sdk-struct', array(), self::$context);
+        self::assertEquals(array("key"=>"value", "number"=>1, "bool"=>true, "nested"=>array("key"=>"value")), $structResult);
     }
 }

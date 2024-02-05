@@ -22,15 +22,6 @@ To install the bindings via [Composer](https://getcomposer.org/), add the follow
 
 Then run `composer install`
 
-### Manual Installation
-
-Download the files and include `autoload.php`:
-
-```php
-<?php
-require_once('/path/to/DevCycle/vendor/autoload.php');
-```
-
 ## Getting Started
 
 Please follow the [installation procedure](#installation--usage) and then run the following:
@@ -39,19 +30,21 @@ Please follow the [installation procedure](#installation--usage) and then run th
 <?php
 require_once(__DIR__ . '/vendor/autoload.php');
 
-use DevCycle\DevCycleConfiguration;
 use DevCycle\Api\DevCycleClient;
+use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 
-// Configure API key authorization: bearerAuth
-$config = DevCycleConfiguration::getDefaultConfiguration()->setApiKey('Authorization', 'DEVCYCLE_SERVER_SDK_KEY');
-
-$apiInstance = new DevCycleClient(
-    $config,
-    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
-    // This is optional, `GuzzleHttp\Client` will be used as default.
-    new GuzzleHttp\Client(),
+$options = new DevCycleOptions(
+    false,
+    $bucketingHostname,
+    $unixSocketPath
 );
+
+$devCycleClient = new DevCycleClient(
+    sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
+    dvcOptions: $options
+);
+
 $user_data = new DevCycleUser(array(
   "user_id"=>"my-user"
 ));
@@ -65,10 +58,26 @@ try {
 
 ```
 
+
+
 ## Usage
 
 To find usage documentation, visit our [docs](https://docs.devcycle.com/docs/sdk/server-side-sdks/php#usage).
 
+# OpenFeature Support
+
+This SDK provides an implementation of the [OpenFeature](https://openfeature.dev/) Provider interface. Use the `getOpenFeatureProvider()` method on the DevCycle SDK client to obtain a provider for OpenFeature.
+
+```php
+$devCycleClient = new DevCycleClient(
+    sdkKey: getenv("DEVCYCLE_SERVER_SDK_KEY"),
+    dvcOptions: $options
+);
+$api->setProvider($devCycleClient->getOpenFeatureProvider());
+```
+
+- [The DevCycle Go OpenFeature Provider](https://docs.devcycle.com/sdk/server-side-sdks/go/go-openfeature)
+- [The OpenFeature documentation](https://openfeature.dev/docs/reference/intro)
 
 ## Advanced Options (Local Bucketing)
 
