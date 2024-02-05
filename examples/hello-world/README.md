@@ -3,9 +3,9 @@
 Install dependencies with composer:
 `composer update`
 
-Set the following environment variables:
+Set the following environment variables in your shell session before running the PHP example app in the same session.
 ```
-export DEVCYCLE_SERVER_SDK_KEY
+export DEVCYCLE_SERVER_SDK_KEY=`<your-sdk-key>`
 ```
 
 ## Run
