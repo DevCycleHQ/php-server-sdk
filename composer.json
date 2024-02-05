@@ -29,7 +29,7 @@
         "open-feature/sdk": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0 || ^9.0",
+        "phpunit/phpunit": "^10.5.10",
         "friendsofphp/php-cs-fixer": "^v3.49.0"
     },
     "autoload": {
