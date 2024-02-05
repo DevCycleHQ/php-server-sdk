@@ -32,6 +32,7 @@ use DevCycle\Model\DevCycleOptions;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\ErrorResponse;
 use Exception;
 use OpenFeature\implementation\flags\EvaluationContext;
 use OpenFeature\interfaces\flags\Client;
@@ -196,14 +197,9 @@ final class DevCycleClientTest extends TestCase
         $event_data = new DevCycleEvent(array(
             "type" => ""
         ));
-        try {
-            $result = self::$client->track(self::$user, $event_data);
-            $threw = false;
-        } catch (Exception $e) {
-            $threw = true;
-            self::assertEquals("Event data is invalid: 'type' can't be null or empty", $e->getMessage());
-        } finally {
-            self::assertTrue($threw);
-        }
+
+        $result = self::$client->track(self::$user, $event_data);
+        self::assertTrue($result instanceof ErrorResponse);
+        self::assertEquals("Event data is invalid: 'type' can't be null or empty", $result->getMessage());
     }
 }
