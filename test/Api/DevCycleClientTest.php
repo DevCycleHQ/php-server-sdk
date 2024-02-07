@@ -1,15 +1,5 @@
 <?php
 /**
- * DevCycleClientTest
- * PHP version 7.3
- *
- * @category Class
- * @package  DevCycle
- * @author   OpenAPI Generator team
- * @link     https://openapi-generator.tech
- */
-
-/**
  * DevCycle Bucketing API
  *
  * Documents the DevCycle Bucketing API which provides and API interface to User Bucketing and for generated SDKs.

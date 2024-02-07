@@ -497,6 +497,9 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
 
     public function addCustomData(string $key, $value): self
     {
+        if($this->container['custom_data'] === null) {
+            $this->container['custom_data'] = [];
+        }
         $this->container['custom_data'][$key] = $value;
         return $this;
     }
@@ -710,17 +713,17 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     public static function FromEvaluationContext(EvaluationContext $context): DevCycleUser
     {
         $user = new DevCycleUser();
-        if ($context->getTargetingKey() === null && $context->getAttributes()['user_id'] === null) {
+        if ($context->getTargetingKey() === null && $context->getAttributes()->get("user_id") === null) {
             throw new \InvalidArgumentException('targetingKey or user_id is missing from EvaluationContext');
         }
         if ($context->getTargetingKey() !== null) {
             $userId = $context->getTargetingKey();
         } else {
-            $userId = $context->getAttributes()['user_id'];
+            $userId = $context->getAttributes()->get("user_id");
         }
         $user->setUserId($userId);
 
-        foreach ($context->getAttributes() as $key => $value) {
+        foreach ($context->getAttributes()->toArray() as $key => $value) {
             if ($key === 'user_id' || $key === 'targetingKey') {
                 continue;
             }
@@ -780,7 +783,7 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
                     }
                     break;
                 default:
-                    if (ValueTypeValidator::isStructure($value)) {
+                    if (gettype($value) !== 'string' && gettype($value) !== 'integer' && gettype($value) !== 'boolean' && gettype($value) !== 'NULL') {
                         throw new \InvalidArgumentException('DevCycleUser only supports flat customData properties of type string / number / boolean / null');
                     }
                     $user->addCustomData($key, $value);
