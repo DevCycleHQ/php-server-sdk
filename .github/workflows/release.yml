@@ -73,16 +73,6 @@ jobs:
           draft: ${{ github.event.inputs.draft }}
           changelog: ${{ steps.prepare-release.outputs.changelog }}
 
-      # Trigger packagist.org after we do the internal release as it will pull 
-      # data from the current state of the GitHub repo
-      - name: Release to Packagist
-        uses: joelwmale/webhook-action@2.3.2
-        with:
-          url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.PACKAGISTTOKEN}}
-          headers: '{"Content-Type": "application/json"}'
-          body: '{"repository": {"url": "https://github.com/DevCycleHQ/php-server-sdk"}}'
-        if: inputs.prerelease != true && inputs.draft != true
-
       - name: Display link to release
         run: |
           echo "::notice title=Release ID::${{ steps.create-release.outputs.release-id }}"
