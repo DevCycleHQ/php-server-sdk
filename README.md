@@ -76,7 +76,7 @@ $devCycleClient = new DevCycleClient(
 $api->setProvider($devCycleClient->getOpenFeatureProvider());
 ```
 
-- [The DevCycle Go OpenFeature Provider](https://docs.devcycle.com/sdk/server-side-sdks/go/go-openfeature)
+- [The DevCycle PHP OpenFeature Provider](https://docs.devcycle.com/sdk/server-side-sdks/php/php-openfeature)
 - [The OpenFeature documentation](https://openfeature.dev/docs/reference/intro)
 
 ## Advanced Options (Local Bucketing)
