@@ -90,15 +90,21 @@ The proxy has two modes - HTTP, and Unix sockets. The PHP SDK supports both mode
 The configuration for this proxy (in HTTP mode) is as follows (replacing the URL with the URL of the proxy):
 
 ```
-$config = DevCycleConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"))
-    ->setHost("http://localhost:8080/v1");
+use DevCycle\Model\DevCycleOptions;
+
+$options = new DevCycleOptions(
+    enableEdgeDB: false, 
+    bucketingApiHostname = "hostname for sdk proxy here"
+);
 ```
 
 The configuration for this proxy (in Unix socket mode) is as follows (replacing the UDS path with the path to the socket):
 ```
-$config = DevCycleConfiguration::getDefaultConfiguration()
-    ->setApiKey('Authorization', getenv("DEVCYCLE_SERVER_SDK_KEY"))
-    ->setHost("http:/v1")
-    ->setUDSPath("/tmp/phpsock.sock");
+use DevCycle\Model\DevCycleOptions;
+
+$options = new DevCycleOptions(
+    enableEdgeDB: false, 
+    bucketingApiHostname: "http:/localhost",
+    unixSocketPath: "/path/to/unix/socket"
+);
 ```
