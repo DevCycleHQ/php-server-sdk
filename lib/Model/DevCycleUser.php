@@ -716,10 +716,10 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         if ($context->getTargetingKey() === null && $context->getAttributes()->get("user_id") === null) {
             throw new \InvalidArgumentException('targetingKey or user_id is missing from EvaluationContext');
         }
-        if ($context->getTargetingKey() !== null) {
-            $userId = $context->getTargetingKey();
-        } else {
+        if ($context->getAttributes()->get("user_id") !== null) {
             $userId = $context->getAttributes()->get("user_id");
+        } else {
+            $userId = $context->getTargetingKey();
         }
         $user->setUserId($userId);
 

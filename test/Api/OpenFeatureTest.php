@@ -24,6 +24,25 @@ use PHPUnit\Framework\TestCase;
 
 final class OpenFeatureTest extends TestCase
 {
+
+    public function testEvaluationContextTargetingKey()
+    {
+
+        $evalContextTK = new EvaluationContext(targetingKey: "test");
+        $user = DevCycleUser::FromEvaluationContext($evalContextTK);
+        self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
+
+        $attributes = new Attributes(array("user_id" => "test"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
+
+        $attributes = new Attributes(array("user_id" => "test"));
+        $evaluationContext = new EvaluationContext(targetingKey: "test2", attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
+
+    }
     public function testEvaluationContext()
     {
         $attributes = new Attributes(array(
