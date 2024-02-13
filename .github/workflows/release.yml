@@ -14,14 +14,14 @@ on:
         default: false
         type: boolean
       version-increment-type:
-          description: 'Which part of the version to increment:'
-          required: true
-          type: choice
-          options:
-            - major
-            - minor
-            - patch
-          default: 'patch'
+        description: 'Which part of the version to increment:'
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+        default: 'patch'
 
 permissions:
   contents: write
@@ -47,13 +47,15 @@ jobs:
 
       - name: Update Version in code
         run: |
-          echo "${{steps.prepare-release.outputs.next-release-tag}}" > lib/VERSION.txt
+          sed -i "s/VERSION = '.*'/VERSION = '${{steps.prepare-release.outputs.next-release-tag}}'/g" lib/Version.php
+          sed -i "s/\"version\": \".*\"/\"version\": \"${{steps.prepare-release.outputs.next-release-tag}}\"/g" composer.json
 
       - name: Commit version change
         run: |
           git config --global user.email "github-tracker-bot@taplytics.com"
           git config --global user.name "DevCycle Automation"
-          git add ./lib/VERSION.txt
+          git add ./lib/Version.php
+          git add ./composer.json
           git commit -m "Release ${{steps.prepare-release.outputs.next-release-tag}}"
 
       - name: Push version change
@@ -70,16 +72,6 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           draft: ${{ github.event.inputs.draft }}
           changelog: ${{ steps.prepare-release.outputs.changelog }}
-
-      # Trigger packagist.org after we do the internal release as it will pull 
-      # data from the current state of the GitHub repo
-      - name: Release to Packagist
-        uses: joelwmale/webhook-action@2.3.2
-        with:
-          url: https://packagist.org/api/github?username=DevCycle&apiToken=${{secrets.PACKAGISTTOKEN}}
-          headers: '{"Content-Type": "application/json"}'
-          body: '{"repository": {"url": "https://github.com/DevCycleHQ/php-server-sdk"}}'
-        if: inputs.prerelease != true && inputs.draft != true
 
       - name: Display link to release
         run: |

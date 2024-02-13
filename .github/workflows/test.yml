@@ -1,0 +1,20 @@
+name: Unit Tests
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      DEVCYCLE_SERVER_SDK_KEY: ${{ secrets.DEVCYCLE_SERVER_SDK_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: php-actions/composer@v6
+      - name: PHPUnit tests
+        uses: php-actions/phpunit@v3
+        with:
+          configuration: "phpunit.xml"
+          memory_limit: "256M"
