@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        DEVCYCLE_SDK_KEY: "dvc_server_ef37f82e_a697_49f7_a78c_52b0350c5a38_9adcfa8"
+        DEVCYCLE_SDK_KEY: "replace_with_your_sdk_key"
     ports:
       - "80:80"
     volumes:
