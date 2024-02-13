@@ -1,0 +1,12 @@
+version: '3'
+services:
+  app:
+    container_name: "DevCycleUDPProxyWithNginxAndPhp82"
+    build:
+      context: .
+      args:
+        DEVCYCLE_SDK_KEY: "replace_with_your_sdk_key"
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html

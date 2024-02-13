@@ -1,0 +1,11 @@
+{
+  "instances": [
+    {
+      "sdkKey": "${DEVCYCLE_SDK_KEY}",
+      "unixSocketPath": "/tmp/dvc_lb_proxy.sock",
+      "unixSocketEnabled": true,
+      "unixSocketPermissions": "0777",
+      "httpEnabled": false
+    }
+  ]
+}
