@@ -19,6 +19,6 @@ $apiInstance = new DevCycleClient(
 
 $user_data = new DevCycleUser(array(
     'user_id' => 'integration-test',
-    'email' => 'nhaynes@adaction.com',
+    'email' => 'email@example.com',
     'country' => 'US',
 ));
