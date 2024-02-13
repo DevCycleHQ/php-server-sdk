@@ -1,11 +1,11 @@
 version: '3'
 services:
   app:
-    environment:
-      DEVCYCLE_SDK_KEY: "replace_with_your_sdk_key"
     container_name: "DevCycleHTTPProxyWithNginxAndPhp82"
     build:
       context: .
+      args:
+        DEVCYCLE_SDK_KEY: "replace_with_your_sdk_key"
     ports:
       - "80:80"
     volumes:
