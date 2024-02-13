@@ -2,14 +2,13 @@
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
-use DevCycle\DevCycleConfiguration;
 use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 
 $options = new DevCycleOptions(
     enableEdgeDB: false,
-    bucketingApiHostname: "http://localhost",
+    bucketingApiHostname: "http:/localhost",
     unixSocketPath: "/tmp/dvc_lb_proxy.sock",
 );
 
