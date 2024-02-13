@@ -2,6 +2,6 @@
     "description": "DevCycle PHP Example App",
     "require": {
         "php": "^8.0",
-        "devcycle/php-server-sdk": "1.*"
+        "devcycle/php-server-sdk": "2.*"
     }
 }
