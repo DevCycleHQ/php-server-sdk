@@ -4,7 +4,7 @@
       "sdkKey": "${DEVCYCLE_SDK_KEY}",
       "unixSocketPath": "/tmp/dvc_lb_proxy.sock",
       "unixSocketEnabled": true,
-      "unixSocketPermissions": 777,
+      "unixSocketPermissions": "0777",
       "httpEnabled": false
     }
   ]
