@@ -8,7 +8,7 @@ ENV DVC_LBP_PACKAGE_BUILD="deb"
 
 WORKDIR /var/www/html
 
-RUN apt-get update && apt-get install -y supervisor nginx
+RUN apt-get update && RUN apt-get install -y supervisor nginx
 
 COPY ./nginx.conf /etc/nginx/sites-available/default
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
