@@ -120,6 +120,10 @@ final class DevCycleClientTest extends TestCase
         self::assertTrue($boolValue);
         $resultValue = self::$client->variableValue(self::$user, 'php-sdk', false);
         self::assertTrue($resultValue);
+
+        $result = self::$client->variable(self::$user, 'php-sdk-default-invalid', true);
+        self::assertTrue($result->isDefaulted());
+        self::assertTrue((bool)$result->getValue());
     }
 
     /**

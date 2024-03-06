@@ -814,8 +814,8 @@ class DevCycleClient
         $options["curl"] = $this->dvcOptions->getUnixSocketPath() == "" ? [] : [
             CURLOPT_UNIX_SOCKET_PATH => $this->dvcOptions->getUnixSocketPath()
         ];
-
-        return $options;
+        $options['http_errors'] = false;
+        return array_merge($options, $this->dvcOptions->getHttpOptions());
     }
 
     /**
