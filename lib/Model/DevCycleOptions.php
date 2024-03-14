@@ -16,6 +16,8 @@ class DevCycleOptions
 
     protected ?string $unixSocketPath = null;
 
+    protected array $httpOptions = [];
+
     /**
      * Constructor
      *
@@ -23,13 +25,14 @@ class DevCycleOptions
      * @param string|null $bucketingApiHostname
      * @param string|null $unixSocketPath
      */
-    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = null, ?string $unixSocketPath = null)
+    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = null, ?string $unixSocketPath = null, array $httpOptions = [])
     {
         $this->enableEdgeDB = $enableEdgeDB;
         if ($bucketingApiHostname !== null) {
             $this->bucketingApiHostname = $bucketingApiHostname;
         }
         $this->unixSocketPath = $unixSocketPath;
+        $this->httpOptions = $httpOptions;
     }
 
     /**
@@ -58,5 +61,10 @@ class DevCycleOptions
     public function getUnixSocketPath(): ?string
     {
         return $this->unixSocketPath;
+    }
+
+    public function getHttpOptions(): array
+    {
+        return $this->httpOptions;
     }
 }
