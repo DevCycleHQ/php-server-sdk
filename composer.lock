@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "084487a0efd7603ad438094ceeae4485",
+    "content-hash": "9b16ecd478fb2025d5bd81284b9abc68",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -396,16 +396,16 @@
         },
         {
             "name": "open-feature/sdk",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/open-feature/php-sdk.git",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442"
+                "reference": "3ff3a594394e611347c1e44fa65815fae716060e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/a2de465332441b6511c6953cb12e6387be3db442",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442",
+                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/3ff3a594394e611347c1e44fa65815fae716060e",
+                "reference": "3ff3a594394e611347c1e44fa65815fae716060e",
                 "shasum": ""
             },
             "require": {
@@ -468,9 +468,9 @@
             ],
             "support": {
                 "issues": "https://github.com/open-feature/php-sdk/issues",
-                "source": "https://github.com/open-feature/php-sdk/tree/2.0.4"
+                "source": "https://github.com/open-feature/php-sdk/tree/2.0.5"
             },
-            "time": "2023-12-17T13:48:28+00:00"
+            "time": "2024-04-21T02:17:39+00:00"
         },
         {
             "name": "psr/http-client",
