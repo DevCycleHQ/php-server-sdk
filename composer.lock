@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "084487a0efd7603ad438094ceeae4485",
+    "content-hash": "9b16ecd478fb2025d5bd81284b9abc68",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -396,16 +396,16 @@
         },
         {
             "name": "open-feature/sdk",
-            "version": "2.0.4",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/open-feature/php-sdk.git",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442"
+                "reference": "4e25be68937dc4ec405366cb6ba726f66fc0e5c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/a2de465332441b6511c6953cb12e6387be3db442",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442",
+                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/4e25be68937dc4ec405366cb6ba726f66fc0e5c8",
+                "reference": "4e25be68937dc4ec405366cb6ba726f66fc0e5c8",
                 "shasum": ""
             },
             "require": {
@@ -428,13 +428,13 @@
                 "phpstan/phpstan-mockery": "^1.0",
                 "phpstan/phpstan-phpunit": "^1.1",
                 "psalm/plugin-mockery": "^1.0.0",
-                "psalm/plugin-phpunit": "^0.18.0",
+                "psalm/plugin-phpunit": "^0.19.0",
                 "ramsey/coding-standard": "^2.0.3",
                 "ramsey/composer-repl": "^1.4",
                 "ramsey/conventional-commits": "^1.3",
                 "roave/security-advisories": "dev-latest",
                 "spatie/phpunit-snapshot-assertions": "^4.2",
-                "vimeo/psalm": "~5.17.0"
+                "vimeo/psalm": "~5.24.0"
             },
             "type": "library",
             "extra": {
@@ -468,9 +468,9 @@
             ],
             "support": {
                 "issues": "https://github.com/open-feature/php-sdk/issues",
-                "source": "https://github.com/open-feature/php-sdk/tree/2.0.4"
+                "source": "https://github.com/open-feature/php-sdk/tree/2.0.7"
             },
-            "time": "2023-12-17T13:48:28+00:00"
+            "time": "2024-05-27T01:22:34+00:00"
         },
         {
             "name": "psr/http-client",
