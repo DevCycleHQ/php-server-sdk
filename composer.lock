@@ -396,16 +396,16 @@
         },
         {
             "name": "open-feature/sdk",
-            "version": "2.0.4",
+            "version": "2.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/open-feature/php-sdk.git",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442"
+                "reference": "c71bf429267f0a3cfd50348aaf8d091d68b1491b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/a2de465332441b6511c6953cb12e6387be3db442",
-                "reference": "a2de465332441b6511c6953cb12e6387be3db442",
+                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/c71bf429267f0a3cfd50348aaf8d091d68b1491b",
+                "reference": "c71bf429267f0a3cfd50348aaf8d091d68b1491b",
                 "shasum": ""
             },
             "require": {
@@ -424,17 +424,17 @@
                 "php-parallel-lint/php-console-highlighter": "^1.0",
                 "php-parallel-lint/php-parallel-lint": "^1.3",
                 "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "~1.10.0",
+                "phpstan/phpstan": "~1.12.0",
                 "phpstan/phpstan-mockery": "^1.0",
                 "phpstan/phpstan-phpunit": "^1.1",
                 "psalm/plugin-mockery": "^1.0.0",
-                "psalm/plugin-phpunit": "^0.18.0",
+                "psalm/plugin-phpunit": "^0.19.0",
                 "ramsey/coding-standard": "^2.0.3",
                 "ramsey/composer-repl": "^1.4",
                 "ramsey/conventional-commits": "^1.3",
                 "roave/security-advisories": "dev-latest",
                 "spatie/phpunit-snapshot-assertions": "^4.2",
-                "vimeo/psalm": "~5.17.0"
+                "vimeo/psalm": "~5.26.0"
             },
             "type": "library",
             "extra": {
@@ -468,9 +468,9 @@
             ],
             "support": {
                 "issues": "https://github.com/open-feature/php-sdk/issues",
-                "source": "https://github.com/open-feature/php-sdk/tree/2.0.4"
+                "source": "https://github.com/open-feature/php-sdk/tree/2.0.10"
             },
-            "time": "2023-12-17T13:48:28+00:00"
+            "time": "2024-10-28T14:22:10+00:00"
         },
         {
             "name": "psr/http-client",
@@ -634,16 +634,16 @@
         },
         {
             "name": "psr/log",
-            "version": "3.0.0",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001"
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe5ea303b0887d5caefd3d431c3e61ad47037001",
-                "reference": "fe5ea303b0887d5caefd3d431c3e61ad47037001",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
                 "shasum": ""
             },
             "require": {
@@ -678,9 +678,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/3.0.0"
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
-            "time": "2021-07-14T16:46:02+00:00"
+            "time": "2024-09-11T13:17:53+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
