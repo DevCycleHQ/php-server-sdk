@@ -186,7 +186,7 @@ class ObjectSerializer
      * @param null $httpHeaders HTTP headers
      * @return object|array|null a single or an array of $class instances
      */
-    public static function deserialize(mixed $data, string $class, ?$httpHeaders = null)
+    public static function deserialize(mixed $data, string $class, mixed $httpHeaders = null)
     {
         if (null === $data) {
             return null;
