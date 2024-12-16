@@ -71,9 +71,9 @@ class DevCycleClient
     public function __construct(
         string $sdkKey,
         DevCycleOptions   $dvcOptions,
-        HTTPConfiguration $config = null,
-        ClientInterface   $client = null,
-        HeaderSelector    $selector = null,
+        ?HTTPConfiguration $config = null,
+        ?ClientInterface   $client = null,
+        ?HeaderSelector    $selector = null,
     )
     {
         if ($sdkKey === '') {

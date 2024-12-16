@@ -18,7 +18,7 @@ class ObjectSerializer
      * @param string|null $format the format of the OpenAPITools type of the data
      *
      */
-    public static function sanitizeForSerialization(mixed $data, string $type = null, string $format = null): mixed
+    public static function sanitizeForSerialization(mixed $data, ?string $type = null, ?string $format = null): mixed
     {
         if (is_scalar($data) || null === $data) {
             return $data;
@@ -186,7 +186,7 @@ class ObjectSerializer
      * @param null $httpHeaders HTTP headers
      * @return object|array|null a single or an array of $class instances
      */
-    public static function deserialize(mixed $data, string $class, $httpHeaders = null)
+    public static function deserialize(mixed $data, string $class, mixed $httpHeaders = null)
     {
         if (null === $data) {
             return null;
