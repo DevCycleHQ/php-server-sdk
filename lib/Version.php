@@ -4,5 +4,5 @@ namespace DevCycle;
 
 class Version
 {
-    public static string $VERSION = '2.0.2';
+    public static string $VERSION = '2.1.0';
 }
