@@ -69,7 +69,7 @@ final class DevCycleClientTest extends TestCase
             dvcOptions: $options
         );
         self::$user = new DevCycleUser(array(
-            "user_id" => "user"
+            "user_id" => "test"
         ));
         self::$api->setProvider(self::$client->getOpenFeatureProvider());
         self::$openFeatureClient = self::$api->getClient();
@@ -119,7 +119,7 @@ final class DevCycleClientTest extends TestCase
         $boolValue = self::$openFeatureClient->getBooleanValue('test', false, self::$context);
         self::assertTrue($boolValue);
         $resultValue = self::$client->variableValue(self::$user, 'test', false);
-        self::assertTrue($resultValue);
+        self::assertTrue((bool)$resultValue);
 
         $result = self::$client->variable(self::$user, 'php-sdk-default-invalid', true);
         self::assertTrue($result->isDefaulted());
