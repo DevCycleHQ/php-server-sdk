@@ -25,7 +25,7 @@ class DevCycleOptions
      * @param string|null $bucketingApiHostname
      * @param string|null $unixSocketPath
      */
-    public function __construct(bool $enableEdgeDB = false, string $bucketingApiHostname = null, ?string $unixSocketPath = null, array $httpOptions = [])
+    public function __construct(bool $enableEdgeDB = false, ?string $bucketingApiHostname = null, ?string $unixSocketPath = null, array $httpOptions = [])
     {
         $this->enableEdgeDB = $enableEdgeDB;
         if ($bucketingApiHostname !== null) {
