@@ -9,7 +9,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     env:
-      DEVCYCLE_SERVER_SDK_KEY: ${{ secrets.DEVCYCLE_SERVER_SDK_KEY }}
+      DEVCYCLE_SERVER_SDK_KEY: 'dvc_server_token_hash'
     steps:
       - uses: actions/checkout@v4
       - uses: php-actions/composer@v6

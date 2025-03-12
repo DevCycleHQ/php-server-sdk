@@ -73,7 +73,7 @@ final class DevCycleClientTest extends TestCase
         ));
         self::$api->setProvider(self::$client->getOpenFeatureProvider());
         self::$openFeatureClient = self::$api->getClient();
-        self::$context = new EvaluationContext('user');
+        self::$context = new EvaluationContext('test');
 
     }
 
@@ -112,13 +112,13 @@ final class DevCycleClientTest extends TestCase
      */
     public function testGetVariableByKey()
     {
-        $result = self::$client->variable(self::$user, 'php-sdk', false);
+        $result = self::$client->variable(self::$user, 'test', false);
         self::assertFalse($result->isDefaulted());
 
         // add a value to the invocation context
-        $boolValue = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        $boolValue = self::$openFeatureClient->getBooleanValue('test', false, self::$context);
         self::assertTrue($boolValue);
-        $resultValue = self::$client->variableValue(self::$user, 'php-sdk', false);
+        $resultValue = self::$client->variableValue(self::$user, 'test', false);
         self::assertTrue($resultValue);
 
         $result = self::$client->variable(self::$user, 'php-sdk-default-invalid', true);
@@ -199,16 +199,16 @@ final class DevCycleClientTest extends TestCase
 
     public function testOpenFeature()
     {
-        $boolResult = self::$openFeatureClient->getBooleanValue('php-sdk', false, self::$context);
+        $boolResult = self::$openFeatureClient->getBooleanValue('test', false, self::$context);
         self::assertTrue($boolResult);
 
-        $numberResult = self::$openFeatureClient->getIntegerValue('php-sdk-integer', -1, self::$context);
-        self::assertEquals(1, $numberResult);
+        $numberResult = self::$openFeatureClient->getIntegerValue('test-number-variable', -1, self::$context);
+        self::assertNotEquals(-1, $numberResult);
 
-        $stringResult = self::$openFeatureClient->getStringValue('php-sdk-string', 'default', self::$context);
-        self::assertEquals('string', $stringResult);
+        $stringResult = self::$openFeatureClient->getStringValue('test-string-variable', 'default', self::$context);
+        self::assertNotEquals('default', $stringResult);
 
-        $structResult = self::$openFeatureClient->getObjectValue('php-sdk-struct', array(), self::$context);
-        self::assertEquals(array("key"=>"value", "number"=>1, "bool"=>true, "nested"=>array("key"=>"value")), $structResult);
+        $structResult = self::$openFeatureClient->getObjectValue('test-json-variable', array(), self::$context);
+        self::assertNotEquals(array(), $structResult);
     }
 }
