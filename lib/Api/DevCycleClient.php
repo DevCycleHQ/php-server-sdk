@@ -2,29 +2,26 @@
 
 namespace DevCycle\Api;
 
+use DevCycle\ApiException;
+use DevCycle\HeaderSelector;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleUserAndEventsBody;
 use DevCycle\Model\ErrorResponse;
-use DevCycle\Model\Feature;
 use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
+use DevCycle\ObjectSerializer;
 use DevCycle\OpenFeature\DevCycleProvider;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
-use DevCycle\ApiException;
-use DevCycle\HTTPConfiguration;
-use DevCycle\Model\DevCycleOptions;
-use DevCycle\HeaderSelector;
-use DevCycle\ObjectSerializer;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -60,6 +57,7 @@ class DevCycleClient
 
     protected DevCycleProvider $openFeatureProvider;
 
+    private bool $usingOpenFeature;
 
     /**
      * @param string $sdkKey
@@ -69,8 +67,8 @@ class DevCycleClient
      * @param HeaderSelector|null $selector
      */
     public function __construct(
-        string $sdkKey,
-        DevCycleOptions   $dvcOptions,
+        string             $sdkKey,
+        DevCycleOptions    $dvcOptions,
         ?HTTPConfiguration $config = null,
         ?ClientInterface   $client = null,
         ?HeaderSelector    $selector = null,
@@ -85,10 +83,12 @@ class DevCycleClient
         $this->headerSelector = $selector ?? new HeaderSelector();
         $this->dvcOptions = $dvcOptions;
         $this->openFeatureProvider = new DevCycleProvider($this);
+        $this->usingOpenFeature = false;
     }
 
     public function getOpenFeatureProvider(): DevCycleProvider
     {
+        $this->usingOpenFeature = true;
         return $this->openFeatureProvider;
     }
 
@@ -291,7 +291,7 @@ class DevCycleClient
         } catch (GuzzleException|ApiException $e) {
             if ($e->getCode() != 404) {
 
-                error_log("Failed to get variable value for key $key, ".$e->getMessage());
+                error_log("Failed to get variable value for key $key, " . $e->getMessage());
             }
             return new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
         }
@@ -498,6 +498,10 @@ class DevCycleClient
         } else {
             $httpBody = $user_data;
         }
+        if ($this->usingOpenFeature)
+        {
+            $headers['X-DevCycle-OpenFeature-SDK'] = 'php-of';
+        }
 
 
         // this endpoint requires API key authentication
@@ -662,7 +666,7 @@ class DevCycleClient
         try {
             $this->validateUserData($user_data);
             $this->validateEventData($event_data);
-        } catch(InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return new ErrorResponse(array("message" => $e->getMessage()));
         }
         $user_data_and_events_body = new DevCycleUserAndEventsBody(array(
@@ -954,6 +958,10 @@ class DevCycleClient
             $httpBody = json_encode(ObjectSerializer::sanitizeForSerialization($body));
         } else {
             $httpBody = $body;
+        }
+        if ($this->usingOpenFeature)
+        {
+            $headers['X-DevCycle-OpenFeature-SDK'] = 'php-of';
         }
         // this endpoint requires API key authentication
         return $this->buildAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
