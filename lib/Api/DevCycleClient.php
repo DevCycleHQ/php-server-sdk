@@ -959,6 +959,10 @@ class DevCycleClient
         } else {
             $httpBody = $body;
         }
+        if ($this->usingOpenFeature)
+        {
+            $headers['X-DevCycle-OpenFeature-SDK'] = 'php-of';
+        }
         // this endpoint requires API key authentication
         return $this->buildAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
     }
