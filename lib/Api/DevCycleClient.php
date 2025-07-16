@@ -2,29 +2,30 @@
 
 namespace DevCycle\Api;
 
+use DevCycle\ApiException;
+use DevCycle\HeaderSelector;
+use DevCycle\HTTPConfiguration;
 use DevCycle\Model\DevCycleEvent;
+use DevCycle\Model\DevCycleOptions;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleUserAndEventsBody;
 use DevCycle\Model\ErrorResponse;
-use DevCycle\Model\Feature;
 use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
+use DevCycle\Model\EvalHookRunner;
+use DevCycle\Model\HookContext;
+use DevCycle\Model\BeforeHookError;
+use DevCycle\Model\AfterHookError;
+use DevCycle\ObjectSerializer;
 use DevCycle\OpenFeature\DevCycleProvider;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Query;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\RequestOptions;
-use DevCycle\ApiException;
-use DevCycle\HTTPConfiguration;
-use DevCycle\Model\DevCycleOptions;
-use DevCycle\HeaderSelector;
-use DevCycle\ObjectSerializer;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -60,6 +61,9 @@ class DevCycleClient
 
     protected DevCycleProvider $openFeatureProvider;
 
+    private bool $usingOpenFeature;
+
+    protected EvalHookRunner $hookRunner;
 
     /**
      * @param string $sdkKey
@@ -69,8 +73,8 @@ class DevCycleClient
      * @param HeaderSelector|null $selector
      */
     public function __construct(
-        string $sdkKey,
-        DevCycleOptions   $dvcOptions,
+        string             $sdkKey,
+        DevCycleOptions    $dvcOptions,
         ?HTTPConfiguration $config = null,
         ?ClientInterface   $client = null,
         ?HeaderSelector    $selector = null,
@@ -85,10 +89,13 @@ class DevCycleClient
         $this->headerSelector = $selector ?? new HeaderSelector();
         $this->dvcOptions = $dvcOptions;
         $this->openFeatureProvider = new DevCycleProvider($this);
+        $this->usingOpenFeature = false;
+        $this->hookRunner = new EvalHookRunner($dvcOptions->getHooks());
     }
 
     public function getOpenFeatureProvider(): DevCycleProvider
     {
+        $this->usingOpenFeature = true;
         return $this->openFeatureProvider;
     }
 
@@ -285,15 +292,64 @@ class DevCycleClient
     {
         $this->validateUserData($user);
 
-        try {
-            list($response) = $this->variableWithHttpInfo($user, $key);
-            return $this->reformatVariable($key, $response, $default);
-        } catch (GuzzleException|ApiException $e) {
-            if ($e->getCode() != 404) {
+        // Create hook context
+        $context = new HookContext($user, $key, $default);
+        $hooks = $this->hookRunner->getHooks();
+        $reversedHooks = array_reverse($hooks); 
+        $beforeHookError = null;
+        $afterHookError = null;
+        $evaluationError = null;
+        $result = null;
 
-                error_log("Failed to get variable value for key $key, ".$e->getMessage());
+        try {
+            // Run before hooks
+            if (!empty($hooks)) {
+                try {
+                    $this->hookRunner->runBeforeHooks($hooks, $context);
+                } catch (BeforeHookError $e) {
+                    $beforeHookError = $e;
+                    error_log("Before hook error: " . $e->getMessage());
+                }
             }
-            return new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+
+            try {
+                list($response) = $this->variableWithHttpInfo($user, $key);
+                $result = $this->reformatVariable($key, $response, $default);
+                $context->setVariableDetails($result);
+            } catch (GuzzleException|ApiException $e) {
+                $evaluationError = $e;
+                if ($e->getCode() != 404) {
+                    error_log("Failed to get variable value for key $key, " . $e->getMessage());
+                }
+                $result = new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+                $context->setVariableDetails($result);
+            }
+
+            // Run after hooks if no before hook error
+            if (!empty($hooks)) {
+                try {
+                    $this->hookRunner->runAfterHooks($reversedHooks, $context);
+                } catch (AfterHookError $e) {
+                    $afterHookError = $e;
+                    error_log("After hook error: " . $e->getMessage());
+                }
+            }
+
+            return $result ?? new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+
+        } finally {
+            // Always run onFinally hooks
+            if (!empty($hooks)) {
+                $this->hookRunner->runOnFinallyHooks($reversedHooks, $context);
+            }
+
+            // Run error hooks if any error occurred
+            if (!empty($hooks) && ($beforeHookError !== null || $afterHookError !== null || $evaluationError !== null)) {
+                $error = $beforeHookError ?? $afterHookError ?? $evaluationError;
+                if ($error !== null) {
+                    $this->hookRunner->runErrorHooks($reversedHooks, $context, $error);
+                }
+            }
         }
     }
 
@@ -498,6 +554,10 @@ class DevCycleClient
         } else {
             $httpBody = $user_data;
         }
+        if ($this->usingOpenFeature)
+        {
+            $headers['X-DevCycle-OpenFeature-SDK'] = 'php-of';
+        }
 
 
         // this endpoint requires API key authentication
@@ -662,7 +722,7 @@ class DevCycleClient
         try {
             $this->validateUserData($user_data);
             $this->validateEventData($event_data);
-        } catch(InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return new ErrorResponse(array("message" => $e->getMessage()));
         }
         $user_data_and_events_body = new DevCycleUserAndEventsBody(array(
@@ -954,6 +1014,10 @@ class DevCycleClient
             $httpBody = json_encode(ObjectSerializer::sanitizeForSerialization($body));
         } else {
             $httpBody = $body;
+        }
+        if ($this->usingOpenFeature)
+        {
+            $headers['X-DevCycle-OpenFeature-SDK'] = 'php-of';
         }
         // this endpoint requires API key authentication
         return $this->buildAuthorizedRequest($headers, $headerParams, $queryParams, $resourcePath, $httpBody);
