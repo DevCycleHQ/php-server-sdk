@@ -12,6 +12,10 @@ use DevCycle\Model\DevCycleUserAndEventsBody;
 use DevCycle\Model\ErrorResponse;
 use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
+use DevCycle\Model\EvalHookRunner;
+use DevCycle\Model\HookContext;
+use DevCycle\Model\BeforeHookError;
+use DevCycle\Model\AfterHookError;
 use DevCycle\ObjectSerializer;
 use DevCycle\OpenFeature\DevCycleProvider;
 use Exception;
@@ -59,6 +63,8 @@ class DevCycleClient
 
     private bool $usingOpenFeature;
 
+    protected EvalHookRunner $hookRunner;
+
     /**
      * @param string $sdkKey
      * @param DevCycleOptions $dvcOptions
@@ -84,6 +90,7 @@ class DevCycleClient
         $this->dvcOptions = $dvcOptions;
         $this->openFeatureProvider = new DevCycleProvider($this);
         $this->usingOpenFeature = false;
+        $this->hookRunner = new EvalHookRunner($dvcOptions->getHooks());
     }
 
     public function getOpenFeatureProvider(): DevCycleProvider
@@ -285,15 +292,64 @@ class DevCycleClient
     {
         $this->validateUserData($user);
 
-        try {
-            list($response) = $this->variableWithHttpInfo($user, $key);
-            return $this->reformatVariable($key, $response, $default);
-        } catch (GuzzleException|ApiException $e) {
-            if ($e->getCode() != 404) {
+        // Create hook context
+        $context = new HookContext($user, $key, $default);
+        $hooks = $this->hookRunner->getHooks();
+        $reversedHooks = array_reverse($hooks); 
+        $beforeHookError = null;
+        $afterHookError = null;
+        $evaluationError = null;
+        $result = null;
 
-                error_log("Failed to get variable value for key $key, " . $e->getMessage());
+        try {
+            // Run before hooks
+            if (!empty($hooks)) {
+                try {
+                    $this->hookRunner->runBeforeHooks($hooks, $context);
+                } catch (BeforeHookError $e) {
+                    $beforeHookError = $e;
+                    error_log("Before hook error: " . $e->getMessage());
+                }
             }
-            return new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+
+            try {
+                list($response) = $this->variableWithHttpInfo($user, $key);
+                $result = $this->reformatVariable($key, $response, $default);
+                $context->setVariableDetails($result);
+            } catch (GuzzleException|ApiException $e) {
+                $evaluationError = $e;
+                if ($e->getCode() != 404) {
+                    error_log("Failed to get variable value for key $key, " . $e->getMessage());
+                }
+                $result = new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+                $context->setVariableDetails($result);
+            }
+
+            // Run after hooks if no before hook error
+            if (!empty($hooks)) {
+                try {
+                    $this->hookRunner->runAfterHooks($reversedHooks, $context);
+                } catch (AfterHookError $e) {
+                    $afterHookError = $e;
+                    error_log("After hook error: " . $e->getMessage());
+                }
+            }
+
+            return $result ?? new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+
+        } finally {
+            // Always run onFinally hooks
+            if (!empty($hooks)) {
+                $this->hookRunner->runOnFinallyHooks($reversedHooks, $context);
+            }
+
+            // Run error hooks if any error occurred
+            if (!empty($hooks) && ($beforeHookError !== null || $afterHookError !== null || $evaluationError !== null)) {
+                $error = $beforeHookError ?? $afterHookError ?? $evaluationError;
+                if ($error !== null) {
+                    $this->hookRunner->runErrorHooks($reversedHooks, $context, $error);
+                }
+            }
         }
     }
 
