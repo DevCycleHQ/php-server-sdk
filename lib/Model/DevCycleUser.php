@@ -713,18 +713,33 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
     public static function FromEvaluationContext(EvaluationContext $context): DevCycleUser
     {
         $user = new DevCycleUser();
-        if ($context->getTargetingKey() === null && $context->getAttributes()->get("user_id") === null) {
-            throw new \InvalidArgumentException('targetingKey or user_id is missing from EvaluationContext');
-        }
-        if ($context->getAttributes()->get("user_id") !== null) {
-            $userId = $context->getAttributes()->get("user_id");
-        } else {
+        
+        // Priority order: targetingKey -> user_id -> userId
+        $userId = null;
+        $usedUserIdSource = null;
+        
+        if ($context->getTargetingKey() !== null) {
             $userId = $context->getTargetingKey();
+            $usedUserIdSource = 'targetingKey';
+        } elseif ($context->getAttributes()->get("user_id") !== null) {
+            $userId = $context->getAttributes()->get("user_id");
+            $usedUserIdSource = 'user_id';
+        } elseif ($context->getAttributes()->get("userId") !== null) {
+            $userId = $context->getAttributes()->get("userId");
+            $usedUserIdSource = 'userId';
         }
+        
+        if ($userId === null) {
+            throw new \InvalidArgumentException('targetingKey, user_id, or userId is missing from EvaluationContext');
+        }
+        
         $user->setUserId($userId);
 
         foreach ($context->getAttributes()->toArray() as $key => $value) {
-            if ($key === 'user_id' || $key === 'targetingKey') {
+            // Skip the field that was used as the main user ID to avoid duplication in custom data
+            if ($key === 'targetingKey' || 
+                ($key === 'user_id' && $usedUserIdSource === 'user_id') ||
+                ($key === 'userId' && $usedUserIdSource === 'userId')) {
                 continue;
             }
             switch ($key) {

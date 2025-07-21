@@ -27,22 +27,97 @@ final class OpenFeatureTest extends TestCase
 
     public function testEvaluationContextTargetingKey()
     {
-
+        // Test targetingKey only
         $evalContextTK = new EvaluationContext(targetingKey: "test");
         $user = DevCycleUser::FromEvaluationContext($evalContextTK);
         self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
 
+        // Test user_id only
         $attributes = new Attributes(array("user_id" => "test"));
         $evaluationContext = new EvaluationContext(attributes: $attributes);
         $user = DevCycleUser::FromEvaluationContext($evaluationContext);
         self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
 
-        $attributes = new Attributes(array("user_id" => "test"));
-        $evaluationContext = new EvaluationContext(targetingKey: "test2", attributes: $attributes);
+        // Test userId only
+        $attributes = new Attributes(array("userId" => "test"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
         $user = DevCycleUser::FromEvaluationContext($evaluationContext);
         self::assertEquals("test", $user->getUserId(), 'User ID not properly passed through/set');
 
+        // Test priority: targetingKey should take precedence over user_id
+        $attributes = new Attributes(array("user_id" => "test"));
+        $evaluationContext = new EvaluationContext(targetingKey: "test2", attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test2", $user->getUserId(), 'targetingKey should take precedence over user_id');
+
+        // Test priority: targetingKey should take precedence over userId
+        $attributes = new Attributes(array("userId" => "test"));
+        $evaluationContext = new EvaluationContext(targetingKey: "test2", attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test2", $user->getUserId(), 'targetingKey should take precedence over userId');
+
+        // Test priority: user_id should take precedence over userId
+        $attributes = new Attributes(array("user_id" => "test", "userId" => "test2"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test", $user->getUserId(), 'user_id should take precedence over userId');
+
+        // Test all three present: targetingKey should win
+        $attributes = new Attributes(array("user_id" => "test", "userId" => "test2"));
+        $evaluationContext = new EvaluationContext(targetingKey: "test3", attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test3", $user->getUserId(), 'targetingKey should take precedence over all other user ID fields');
     }
+
+    public function testUserIdFieldsNotInCustomData()
+    {
+        // Test that when user_id is used as main user ID, it doesn't appear in custom data
+        $attributes = new Attributes(array("user_id" => "test-user", "other_field" => "value"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test-user", $user->getUserId(), 'user_id should be used as main user ID');
+        self::assertArrayNotHasKey("user_id", $user->getCustomData(), 'user_id should not appear in custom data when used as main user ID');
+        self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
+
+        // Test that when userId is used as main user ID, it doesn't appear in custom data
+        $attributes = new Attributes(array("userId" => "test-user", "other_field" => "value"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test-user", $user->getUserId(), 'userId should be used as main user ID');
+        self::assertArrayNotHasKey("userId", $user->getCustomData(), 'userId should not appear in custom data when used as main user ID');
+        self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
+
+        // Test that when targetingKey is used, both user_id and userId can appear in custom data
+        $attributes = new Attributes(array("user_id" => "test-user-id", "userId" => "test-userId", "other_field" => "value"));
+        $evaluationContext = new EvaluationContext(targetingKey: "targeting-key", attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("targeting-key", $user->getUserId(), 'targetingKey should be used as main user ID');
+        self::assertArrayHasKey("user_id", $user->getCustomData(), 'user_id should appear in custom data when not used as main user ID');
+        self::assertArrayHasKey("userId", $user->getCustomData(), 'userId should appear in custom data when not used as main user ID');
+        self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
+
+        // Test that when user_id is used as main user ID, unused userId can appear in custom data
+        $attributes = new Attributes(array("user_id" => "test-user-id", "userId" => "test-userId", "other_field" => "value"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
+        self::assertEquals("test-user-id", $user->getUserId(), 'user_id should be used as main user ID');
+        self::assertArrayNotHasKey("user_id", $user->getCustomData(), 'user_id should not appear in custom data when used as main user ID');
+        self::assertArrayHasKey("userId", $user->getCustomData(), 'userId should appear in custom data when not used as main user ID');
+        self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
+    }
+
+    public function testMissingUserIdThrowsException()
+    {
+        // Test that missing all user ID fields throws exception
+        $attributes = new Attributes(array("other_field" => "value"));
+        $evaluationContext = new EvaluationContext(attributes: $attributes);
+        
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('targetingKey, user_id, or userId is missing from EvaluationContext');
+        
+        DevCycleUser::FromEvaluationContext($evaluationContext);
+    }
+
     public function testEvaluationContext()
     {
         $attributes = new Attributes(array(
