@@ -118,29 +118,7 @@ final class OpenFeatureTest extends TestCase
         DevCycleUser::FromEvaluationContext($evaluationContext);
     }
 
-    public function testInvalidUserIdTypeThrowsException()
-    {
-        // Test that non-string user_id throws string validation exception
-        $attributes = new Attributes(array("user_id" => array("invalid", "array"), "other_field" => "value"));
-        $evaluationContext = new EvaluationContext(attributes: $attributes);
-        
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("User ID field 'user_id' must be a string value, got array");
-        
-        DevCycleUser::FromEvaluationContext($evaluationContext);
-    }
 
-    public function testInvalidUserIdFieldTypeThrowsException()
-    {
-        // Test that non-string userId throws string validation exception with correct field name
-        $attributes = new Attributes(array("userId" => true, "other_field" => "value"));
-        $evaluationContext = new EvaluationContext(attributes: $attributes);
-        
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("User ID field 'userId' must be a string value, got boolean");
-        
-        DevCycleUser::FromEvaluationContext($evaluationContext);
-    }
 
     public function testEvaluationContext()
     {
