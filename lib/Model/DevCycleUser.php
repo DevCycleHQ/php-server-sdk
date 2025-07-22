@@ -717,16 +717,20 @@ class DevCycleUser implements ModelInterface, ArrayAccess, \JsonSerializable
         // Priority order: targetingKey -> user_id -> userId
         $userId = null;
         
-        if ($context->getTargetingKey() !== null && ValueTypeValidator::isString($context->getTargetingKey())) {
+        if ($context->getTargetingKey() !== null) {
             $userId = $context->getTargetingKey();
-        } elseif ($context->getAttributes()->get("user_id") !== null && ValueTypeValidator::isString($context->getAttributes()->get("user_id"))) {
+        } elseif ($context->getAttributes()->get("user_id") !== null) {
             $userId = $context->getAttributes()->get("user_id");
-        } elseif ($context->getAttributes()->get("userId") !== null && ValueTypeValidator::isString($context->getAttributes()->get("userId"))) {
+        } elseif ($context->getAttributes()->get("userId") !== null) {
             $userId = $context->getAttributes()->get("userId");
         }
         
         if ($userId === null) {
-            throw new \InvalidArgumentException('targetingKey, user_id, or userId is missing from EvaluationContext or is not a valid string');
+            throw new \InvalidArgumentException('targetingKey, user_id, or userId is missing from EvaluationContext');
+        }
+        
+        if (!ValueTypeValidator::isString($userId)) {
+            throw new \InvalidArgumentException('User ID must be a string value');
         }
         
         $user->setUserId($userId);

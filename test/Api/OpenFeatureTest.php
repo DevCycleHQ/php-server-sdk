@@ -113,32 +113,21 @@ final class OpenFeatureTest extends TestCase
         $evaluationContext = new EvaluationContext(attributes: $attributes);
         
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('targetingKey, user_id, or userId is missing from EvaluationContext or is not a valid string');
+        $this->expectExceptionMessage('targetingKey, user_id, or userId is missing from EvaluationContext');
         
         DevCycleUser::FromEvaluationContext($evaluationContext);
     }
 
-    public function testInvalidUserIdTypesThrowException()
+    public function testInvalidUserIdTypeThrowsException()
     {
-        // Test that non-string user_id throws exception
-        $attributes = new Attributes(array("user_id" => 123, "other_field" => "value"));
+        // Test that non-string user_id throws string validation exception
+        $attributes = new Attributes(array("user_id" => array("invalid", "array"), "other_field" => "value"));
         $evaluationContext = new EvaluationContext(attributes: $attributes);
         
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('targetingKey, user_id, or userId is missing from EvaluationContext or is not a valid string');
+        $this->expectExceptionMessage('User ID must be a string value');
         
         DevCycleUser::FromEvaluationContext($evaluationContext);
-    }
-
-    public function testInvalidUserIdTypesSkippedInPriority()
-    {
-        // Test that invalid types are skipped and next valid type is used
-        $attributes = new Attributes(array("user_id" => 123, "userId" => "valid-user-id", "other_field" => "value"));
-        $evaluationContext = new EvaluationContext(attributes: $attributes);
-        $user = DevCycleUser::FromEvaluationContext($evaluationContext);
-        
-        self::assertEquals("valid-user-id", $user->getUserId(), 'userId should be used when user_id is invalid type');
-        self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
     }
 
     public function testEvaluationContext()
