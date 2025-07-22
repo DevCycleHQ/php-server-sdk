@@ -13,6 +13,7 @@ composer.phar
 
 # PHPUnit cache
 .phpunit.result.cache
+.phpunit.cache/
 .vscode/launch.json
 
 .idea/*
