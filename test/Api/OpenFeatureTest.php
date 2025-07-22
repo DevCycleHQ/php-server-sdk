@@ -87,22 +87,22 @@ final class OpenFeatureTest extends TestCase
         self::assertArrayNotHasKey("userId", $user->getCustomData(), 'userId should not appear in custom data when used as main user ID');
         self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
 
-        // Test that when targetingKey is used, both user_id and userId can appear in custom data
+        // Test that all user ID fields are always excluded from custom data
         $attributes = new Attributes(array("user_id" => "test-user-id", "userId" => "test-userId", "other_field" => "value"));
         $evaluationContext = new EvaluationContext(targetingKey: "targeting-key", attributes: $attributes);
         $user = DevCycleUser::FromEvaluationContext($evaluationContext);
         self::assertEquals("targeting-key", $user->getUserId(), 'targetingKey should be used as main user ID');
-        self::assertArrayHasKey("user_id", $user->getCustomData(), 'user_id should appear in custom data when not used as main user ID');
-        self::assertArrayHasKey("userId", $user->getCustomData(), 'userId should appear in custom data when not used as main user ID');
+        self::assertArrayNotHasKey("user_id", $user->getCustomData(), 'user_id should never appear in custom data');
+        self::assertArrayNotHasKey("userId", $user->getCustomData(), 'userId should never appear in custom data');
         self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
 
-        // Test that when user_id is used as main user ID, unused userId can appear in custom data
+        // Test that all user ID fields are excluded even when not used as main user ID
         $attributes = new Attributes(array("user_id" => "test-user-id", "userId" => "test-userId", "other_field" => "value"));
         $evaluationContext = new EvaluationContext(attributes: $attributes);
         $user = DevCycleUser::FromEvaluationContext($evaluationContext);
         self::assertEquals("test-user-id", $user->getUserId(), 'user_id should be used as main user ID');
-        self::assertArrayNotHasKey("user_id", $user->getCustomData(), 'user_id should not appear in custom data when used as main user ID');
-        self::assertArrayHasKey("userId", $user->getCustomData(), 'userId should appear in custom data when not used as main user ID');
+        self::assertArrayNotHasKey("user_id", $user->getCustomData(), 'user_id should never appear in custom data');
+        self::assertArrayNotHasKey("userId", $user->getCustomData(), 'userId should never appear in custom data');
         self::assertArrayHasKey("other_field", $user->getCustomData(), 'other fields should still appear in custom data');
     }
 
