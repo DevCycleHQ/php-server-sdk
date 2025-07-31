@@ -41,7 +41,9 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => 'string',
         'key' => 'string',
         'type' => 'string',
-        'value' => 'object'
+        'value' => 'object',
+        'isDefaulted' => 'bool',
+        'eval' => '\DevCycle\Model\EvalObject'
     ];
 
     /**
@@ -203,7 +205,19 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['type'] = $data['type'] ?? null;
         $this->container['value'] = $data['value'] ?? null;
         $this->container['isDefaulted'] = $data['isDefaulted'] ?? false;
-        $this->container['eval'] = $data['eval'] ?? null;
+        
+        // Handle eval property - if it's already an EvalObject, use it directly
+        // otherwise, deserialize it properly
+        if (isset($data['eval'])) {
+            if ($data['eval'] instanceof EvalObject) {
+                $this->container['eval'] = $data['eval'];
+            } else {
+                // Deserialize the eval data into an EvalObject
+                $this->container['eval'] = ObjectSerializer::deserialize($data['eval'], '\DevCycle\Model\EvalObject');
+            }
+        } else {
+            $this->container['eval'] = null;
+        }
     }
 
     /**
@@ -447,11 +461,11 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets eval
      *
-     * @param Eval $eval Eval context
+     * @param EvalObject|null $eval Eval context
      *
      * @return self
      */ 
-    public function setEval(EvalObject $evalObj): static
+    public function setEval(?EvalObject $evalObj): static
     {
         $this->container['eval'] = $evalObj;
 
@@ -476,7 +490,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(
             ObjectSerializer::sanitizeForSerialization($this),
@@ -489,7 +503,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
