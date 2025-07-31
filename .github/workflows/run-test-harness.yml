@@ -14,4 +14,4 @@ jobs:
         with:
           sdks-to-test: php
           sdk-github-sha: ${{github.event.pull_request.head.sha}}
-          sdk-capabilities: '{ "PHP": ["cloudProxy", "cloud", "cloudEvalReason"]}'
+          sdk-capabilities: '{ "PHP": ["cloudProxy", "cloudEvalReason"]}'
