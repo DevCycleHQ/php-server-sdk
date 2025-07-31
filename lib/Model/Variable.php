@@ -55,7 +55,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => null,
         'key' => null,
         'type' => null,
-        'value' => null
+        'value' => null,
+        'eval' => null
     ];
 
     /**
@@ -89,7 +90,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'key',
         'type' => 'type',
         'value' => 'value',
-        'isDefaulted' => 'isDefaulted'
+        'isDefaulted' => 'isDefaulted',
+        'eval' => 'eval'
     ];
 
     /**
@@ -102,7 +104,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'setKey',
         'type' => 'setType',
         'value' => 'setValue',
-        'isDefaulted' => 'setIsDefaulted'
+        'isDefaulted' => 'setIsDefaulted',
+        'eval' => 'setEval'
     ];
 
     /**
@@ -115,7 +118,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'getKey',
         'type' => 'getType',
         'value' => 'getValue',
-        'isDefaulted' => 'getIsDefaulted'
+        'isDefaulted' => 'getIsDefaulted',
+        'eval' => 'getEval'
     ];
 
     /**
@@ -428,6 +432,31 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         unset($this->container[$offset]);
     }
+
+    /**
+     * Gets eval
+     *
+     * @return mixed
+     */
+    public function getEval(): mixed
+    {
+        return $this->container['eval'];
+    }
+
+    /**
+     * Sets eval
+     *
+     * @param mixed $eval Eval context
+     *
+     * @return self
+     */ 
+    public function setEval(mixed $eval): static
+    {
+        $this->container['eval'] = $eval;
+
+        return $this;
+    }
+
 
     /**
      * Serializes the object to a value that can be serialized natively by json_encode().
