@@ -320,9 +320,10 @@ class DevCycleClient
                 $result = $this->reformatVariable($key, $response, $default);
                 $context->setVariableDetails($result);
             } catch (GuzzleException|ApiException $e) {
-                $eval = new EvalObject();
-                $eval->setReason(EvalReasons::DEFAULT);
-                $eval->setDetails(DefaultReasonDetails::ERROR);
+                $eval = (object) [
+                    'reason' => EvalReasons::DEFAULT,
+                    'details' => DefaultReasonDetails::ERROR
+                ];
                 $evaluationError = $e;
                 if ($e->getCode() != 404) {
                     error_log("Failed to get variable value for key $key, " . $e->getMessage());
@@ -376,9 +377,10 @@ class DevCycleClient
         }
 
         if (!$doTypesMatch) {
-            $eval = new EvalObject();
-            $eval->setReason(EvalReasons::DEFAULT);
-            $eval->setDetails(DefaultReasonDetails::TYPE_MISMATCH);
+            $eval = (object) [
+                'reason' => EvalReasons::DEFAULT,
+                'details' => DefaultReasonDetails::TYPE_MISMATCH
+            ];
             return new Variable(array("key" => $key, "value" => $default, "type" => $defaultType, "isDefaulted" => true, "eval" => $eval));
         } else {
             $eval = $response->getEval();
@@ -418,9 +420,10 @@ class DevCycleClient
         try {
             list($response, $statusCode) = $this->makeRequest($request);
 
-            $eval = new EvalObject();
-            $eval->setReason(EvalReasons::DEFAULT);
-            $eval->setDetails(DefaultReasonDetails::MISSING_CONFIG);
+            $eval = (object) [
+                'reason' => EvalReasons::DEFAULT,
+                'details' => DefaultReasonDetails::MISSING_CONFIG
+            ];
             
             switch ($statusCode) {
                 case 200:

@@ -43,7 +43,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'type' => 'string',
         'value' => 'object',
         'isDefaulted' => 'bool',
-        'eval' => '\DevCycle\Model\EvalObject'
+        'eval' => 'object'
     ];
 
     /**
@@ -206,18 +206,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['value'] = $data['value'] ?? null;
         $this->container['isDefaulted'] = $data['isDefaulted'] ?? false;
         
-        // Handle eval property - if it's already an EvalObject, use it directly
-        // otherwise, deserialize it properly
-        if (isset($data['eval'])) {
-            if ($data['eval'] instanceof EvalObject) {
-                $this->container['eval'] = $data['eval'];
-            } else {
-                // Deserialize the eval data into an EvalObject
-                $this->container['eval'] = ObjectSerializer::deserialize($data['eval'], '\DevCycle\Model\EvalObject');
-            }
-        } else {
-            $this->container['eval'] = null;
-        }
+        $this->container['eval'] = $data['eval'] ?? null;
     }
 
     /**
@@ -451,9 +440,9 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets eval
      *
-     * @return \Eval|null
+     * @return object|null
      */ 
-    public function getEval(): ?EvalObject
+    public function getEval(): ?object
     {
         return $this->container['eval'];
     }
@@ -461,13 +450,18 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets eval
      *
-     * @param EvalObject|null $eval Eval context
+     * @param object|array|null $eval Eval context
      *
      * @return self
      */ 
-    public function setEval(?EvalObject $evalObj): static
+    public function setEval($evalObj): static
     {
-        $this->container['eval'] = $evalObj;
+        // Convert array to object if needed
+        if (is_array($evalObj)) {
+            $this->container['eval'] = (object) $evalObj;
+        } else {
+            $this->container['eval'] = $evalObj;
+        }
 
         return $this;
     }

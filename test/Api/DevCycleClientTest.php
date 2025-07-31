@@ -134,8 +134,8 @@ final class DevCycleClientTest extends TestCase
         self::assertTrue($result->isDefaulted());
         self::assertTrue((bool)$result->getValue());
         $eval = $result->getEval();
-        self::assertEquals(EvalReasons::DEFAULT, $eval->getReason());
-        self::assertEquals(DefaultReasonDetails::ERROR, $eval->getDetails());
+        self::assertEquals(EvalReasons::DEFAULT, $eval->reason);
+        self::assertEquals(DefaultReasonDetails::ERROR, $eval->details);
     }
 
     /**
@@ -166,8 +166,8 @@ final class DevCycleClientTest extends TestCase
         $result = self::$client->variable(self::$user, 'test', 5);
         self::assertTrue($result->isDefaulted());
         self::assertEquals(5, $result->getValue());
-        self::assertEquals(EvalReasons::DEFAULT, $result->getEval()->getReason());
-        self::assertEquals(DefaultReasonDetails::TYPE_MISMATCH, $result->getEval()->getDetails());
+        self::assertEquals(EvalReasons::DEFAULT, $result->getEval()->reason);
+        self::assertEquals(DefaultReasonDetails::TYPE_MISMATCH, $result->getEval()->details);
     }
 
     public function testVariableDefaultedDoesNotThrow()
@@ -223,9 +223,9 @@ final class DevCycleClientTest extends TestCase
 
         // Verify the eval object
         $eval = $result->getEval();
-        self::assertEquals('TARGETING_MATCH', $eval->getReason());
-        self::assertEquals('Random Distribution | All Users', $eval->getDetails());
-        self::assertEquals('mock-target-id', $eval->getTargetId());
+        self::assertEquals('TARGETING_MATCH', $eval->reason);
+        self::assertEquals('Random Distribution | All Users', $eval->details);
+        self::assertEquals('mock-target-id', $eval->target_id);
     }
 
     /**
