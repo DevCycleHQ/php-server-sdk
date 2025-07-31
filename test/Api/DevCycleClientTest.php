@@ -23,6 +23,9 @@ use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\ErrorResponse;
+use DevCycle\Model\EvalObject;
+use DevCycle\Model\EvalReasons;
+use DevCycle\Model\DefaultReasonDetails;
 use Exception;
 use OpenFeature\implementation\flags\EvaluationContext;
 use OpenFeature\interfaces\flags\Client;
@@ -124,6 +127,9 @@ final class DevCycleClientTest extends TestCase
         $result = self::$client->variable(self::$user, 'php-sdk-default-invalid', true);
         self::assertTrue($result->isDefaulted());
         self::assertTrue((bool)$result->getValue());
+        $eval = $result->getEval();
+        self::assertEquals(EvalReasons::DEFAULT, $eval->getReason());
+        self::assertEquals(DefaultReasonDetails::ERROR, $eval->getDetails());
     }
 
     /**
@@ -147,6 +153,15 @@ final class DevCycleClientTest extends TestCase
         self::assertEquals(Reason::DEFAULT, $openFeatureResult->getReason());
         self::assertTrue($resultValue);
         self::assertTrue($openFeatureValue);
+    }
+
+    public function testVariableTypeMismatch()
+    {
+        $result = self::$client->variable(self::$user, 'test', 5);
+        self::assertTrue($result->isDefaulted());
+        self::assertEquals(5, $result->getValue());
+        self::assertEquals(EvalReasons::DEFAULT, $result->getEval()->getReason());
+        self::assertEquals(DefaultReasonDetails::TYPE_MISMATCH, $result->getEval()->getDetails());
     }
 
     public function testVariableDefaultedDoesNotThrow()

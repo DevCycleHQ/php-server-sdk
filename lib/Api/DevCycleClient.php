@@ -13,6 +13,9 @@ use DevCycle\Model\ErrorResponse;
 use DevCycle\Model\InlineResponse201;
 use DevCycle\Model\Variable;
 use DevCycle\Model\EvalHookRunner;
+use DevCycle\Model\EvalObject;
+use DevCycle\Model\EvalReasons;
+use DevCycle\Model\DefaultReasonDetails;
 use DevCycle\Model\HookContext;
 use DevCycle\Model\BeforeHookError;
 use DevCycle\Model\AfterHookError;
@@ -317,11 +320,12 @@ class DevCycleClient
                 $result = $this->reformatVariable($key, $response, $default);
                 $context->setVariableDetails($result);
             } catch (GuzzleException|ApiException $e) {
+                $eval = new EvalObject(EvalReasons::DEFAULT, DefaultReasonDetails::ERROR);
                 $evaluationError = $e;
                 if ($e->getCode() != 404) {
                     error_log("Failed to get variable value for key $key, " . $e->getMessage());
                 }
-                $result = new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true));
+                $result = new Variable(array("key" => $key, "value" => $default, "type" => gettype($default), "isDefaulted" => true, "eval" => $eval));
                 $context->setVariableDetails($result);
             }
 
@@ -370,13 +374,14 @@ class DevCycleClient
         }
 
         if (!$doTypesMatch) {
-            return new Variable(array("key" => $key, "value" => $default, "type" => $defaultType, "isDefaulted" => true));
+            $eval = new EvalObject(EvalReasons::DEFAULT, DefaultReasonDetails::TYPE_MISMATCH);
+            return new Variable(array("key" => $key, "value" => $default, "type" => $defaultType, "isDefaulted" => true, "eval" => $eval));
         } else {
             if ($responseType === 'array') {
                 $jsonValue = json_decode(json_encode($unwrappedValue), true);
                 $unwrappedValue = $jsonValue;
             }
-            return new Variable(array("key" => $key, "value" => $unwrappedValue, "type" => $responseType, "isDefaulted" => false));
+            return new Variable(array("key" => $key, "value" => $unwrappedValue, "type" => $responseType, "isDefaulted" => false, "eval" => $eval));
         }
     }
 
@@ -408,6 +413,8 @@ class DevCycleClient
         try {
             list($response, $statusCode) = $this->makeRequest($request);
 
+            $eval = new EvalObject(EvalReasons::DEFAULT, DefaultReasonDetails::MISSING_CONFIG);    
+            
             switch ($statusCode) {
                 case 200:
                     $content = (string)$response->getBody();

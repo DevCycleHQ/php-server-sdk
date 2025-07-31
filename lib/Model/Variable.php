@@ -203,6 +203,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['type'] = $data['type'] ?? null;
         $this->container['value'] = $data['value'] ?? null;
         $this->container['isDefaulted'] = $data['isDefaulted'] ?? false;
+        $this->container['eval'] = $data['eval'] ?? null;
     }
 
     /**
@@ -436,9 +437,9 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets eval
      *
-     * @return mixed
-     */
-    public function getEval(): mixed
+     * @return \Eval|null
+     */ 
+    public function getEval(): ?EvalObject
     {
         return $this->container['eval'];
     }
@@ -446,13 +447,13 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets eval
      *
-     * @param mixed $eval Eval context
+     * @param Eval $eval Eval context
      *
      * @return self
      */ 
-    public function setEval(mixed $eval): static
+    public function setEval(EvalObject $evalObj): static
     {
-        $this->container['eval'] = $eval;
+        $this->container['eval'] = $evalObj;
 
         return $this;
     }
