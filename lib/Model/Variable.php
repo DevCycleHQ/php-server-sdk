@@ -92,7 +92,6 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'key',
         'type' => 'type',
         'value' => 'value',
-        'isDefaulted' => 'isDefaulted',
         'eval' => 'eval'
     ];
 
@@ -106,7 +105,6 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'setKey',
         'type' => 'setType',
         'value' => 'setValue',
-        'isDefaulted' => 'setIsDefaulted',
         'eval' => 'setEval'
     ];
 
@@ -120,7 +118,6 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'getKey',
         'type' => 'getType',
         'value' => 'getValue',
-        'isDefaulted' => 'getIsDefaulted',
         'eval' => 'getEval'
     ];
 
