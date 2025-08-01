@@ -506,11 +506,16 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $resolution = new ResolutionDetails();
         $resolution->setValue($this->getValue());
-        $resolution->setReason(Reason::TARGETING_MATCH);
-        if ($this->isDefaulted()) {
-            $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
-            $resolution->setReason(Reason::DEFAULT);
+        if ($this->getEval() != null) {
+            $resolution->setReason($this->getEval()->reason);
+        } else {
+            $resolution->setReason(Reason::TARGETING_MATCH);
+            if ($this->isDefaulted()) {
+                $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
+                $resolution->setReason(Reason::DEFAULT);
+            }
         }
+
         return $resolution;
     }
 }
