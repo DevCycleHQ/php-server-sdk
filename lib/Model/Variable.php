@@ -41,7 +41,9 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => 'string',
         'key' => 'string',
         'type' => 'string',
-        'value' => 'object'
+        'value' => 'object',
+        'isDefaulted' => 'bool',
+        'eval' => 'object'
     ];
 
     /**
@@ -55,7 +57,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         '_id' => null,
         'key' => null,
         'type' => null,
-        'value' => null
+        'value' => null,
+        'eval' => null
     ];
 
     /**
@@ -89,7 +92,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'key',
         'type' => 'type',
         'value' => 'value',
-        'isDefaulted' => 'isDefaulted'
+        'eval' => 'eval'
     ];
 
     /**
@@ -102,7 +105,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'setKey',
         'type' => 'setType',
         'value' => 'setValue',
-        'isDefaulted' => 'setIsDefaulted'
+        'eval' => 'setEval'
     ];
 
     /**
@@ -115,7 +118,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         'key' => 'getKey',
         'type' => 'getType',
         'value' => 'getValue',
-        'isDefaulted' => 'getIsDefaulted'
+        'eval' => 'getEval'
     ];
 
     /**
@@ -199,6 +202,8 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->container['type'] = $data['type'] ?? null;
         $this->container['value'] = $data['value'] ?? null;
         $this->container['isDefaulted'] = $data['isDefaulted'] ?? false;
+        
+        $this->container['eval'] = $data['eval'] ?? null;
     }
 
     /**
@@ -430,6 +435,36 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Gets eval
+     *
+     * @return object|null
+     */ 
+    public function getEval(): ?object
+    {
+        return $this->container['eval'];
+    }
+
+    /**
+     * Sets eval
+     *
+     * @param object|array|null $eval Eval context
+     *
+     * @return self
+     */ 
+    public function setEval($evalObj): static
+    {
+        // Convert array to object if needed
+        if (is_array($evalObj)) {
+            $this->container['eval'] = (object) $evalObj;
+        } else {
+            $this->container['eval'] = $evalObj;
+        }
+
+        return $this;
+    }
+
+
+    /**
      * Serializes the object to a value that can be serialized natively by json_encode().
      * @link https://www.php.net/manual/en/jsonserializable.jsonserialize.php
      *
@@ -446,7 +481,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode(
             ObjectSerializer::sanitizeForSerialization($this),
@@ -459,7 +494,7 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         return json_encode(ObjectSerializer::sanitizeForSerialization($this));
     }
@@ -468,11 +503,16 @@ class Variable implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $resolution = new ResolutionDetails();
         $resolution->setValue($this->getValue());
-        $resolution->setReason(Reason::TARGETING_MATCH);
-        if ($this->isDefaulted()) {
-            $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
-            $resolution->setReason(Reason::DEFAULT);
+        if ($this->getEval() != null) {
+            $resolution->setReason($this->getEval()->reason);
+        } else {
+            $resolution->setReason(Reason::TARGETING_MATCH);
+            if ($this->isDefaulted()) {
+                $resolution->setError(new ResolutionError(ErrorCode::FLAG_NOT_FOUND(), "Defaulted"));
+                $resolution->setReason(Reason::DEFAULT);
+            }
         }
+
         return $resolution;
     }
 }

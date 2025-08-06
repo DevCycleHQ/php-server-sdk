@@ -23,6 +23,10 @@ use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 use DevCycle\Model\DevCycleEvent;
 use DevCycle\Model\ErrorResponse;
+use DevCycle\Model\EvalObject;
+use DevCycle\Model\EvalReasons;
+use DevCycle\Model\DefaultReasonDetails;
+use DevCycle\Model\Variable;
 use Exception;
 use OpenFeature\implementation\flags\EvaluationContext;
 use OpenFeature\interfaces\flags\Client;
@@ -30,6 +34,11 @@ use OpenFeature\interfaces\provider\Reason;
 use OpenFeature\OpenFeatureAPI;
 use OpenFeature\OpenFeatureClient;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Middleware;
 
 /**
  * DevCycleClientTest Class Doc Comment
@@ -118,12 +127,16 @@ final class DevCycleClientTest extends TestCase
         // add a value to the invocation context
         $boolValue = self::$openFeatureClient->getBooleanValue('test', false, self::$context);
         self::assertTrue($boolValue);
+        
         $resultValue = self::$client->variableValue(self::$user, 'test', false);
         self::assertTrue((bool)$resultValue);
 
         $result = self::$client->variable(self::$user, 'php-sdk-default-invalid', true);
         self::assertTrue($result->isDefaulted());
         self::assertTrue((bool)$result->getValue());
+        $eval = $result->getEval();
+        self::assertEquals(EvalReasons::DEFAULT, $eval->reason);
+        self::assertEquals(DefaultReasonDetails::ERROR, $eval->details);
     }
 
     /**
@@ -149,12 +162,133 @@ final class DevCycleClientTest extends TestCase
         self::assertTrue($openFeatureValue);
     }
 
+    public function testVariableTypeMismatch()
+    {
+        $result = self::$client->variable(self::$user, 'test', 5);
+        self::assertTrue($result->isDefaulted());
+        self::assertEquals(5, $result->getValue());
+        self::assertEquals(EvalReasons::DEFAULT, $result->getEval()->reason);
+        self::assertEquals(DefaultReasonDetails::TYPE_MISMATCH, $result->getEval()->details);
+    }
+
     public function testVariableDefaultedDoesNotThrow()
     {
         $result = self::$client->variable(self::$user, 'variable-does-not-exist', true);
         self::assertTrue($result->isDefaulted());
         self::assertTrue((bool)$result->getValue());
     }
+
+    /**
+     * Test case for mocking bucketing API response with evals
+     */
+    public function testVariableWithMockedEvalResponse()
+    {
+        // Create a mock response with eval data
+        $mockResponse = [
+            '_id' => 'mock-variable-id',
+            'key' => 'mock-variable-key',
+            'type' => 'Boolean',
+            'value' => true,
+            'isDefaulted' => false,
+            'eval' => [
+                'reason' => 'TARGETING_MATCH',
+                'details' => 'Random Distribution | All Users',
+                'target_id' => 'mock-target-id'
+            ]
+        ];
+
+        // Create mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode($mockResponse))
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+        $mockClient = new GuzzleClient(['handler' => $handlerStack]);
+
+        // Create client with mocked HTTP client
+        $options = new DevCycleOptions(true);
+        $mockedClient = new DevCycleClient(
+            sdkKey: 'server-sdk-key',
+            dvcOptions: $options,
+            client: $mockClient
+        );
+
+        $user = new DevCycleUser(array("user_id" => "mock-user"));
+        $result = $mockedClient->variable($user, 'mock-variable-key', false);
+
+        // Verify the response contains the eval object
+        self::assertInstanceOf(Variable::class, $result);
+        self::assertEquals('mock-variable-key', $result->getKey());
+        self::assertTrue($result->getValue());
+        self::assertFalse($result->isDefaulted());
+
+        // Verify the eval object
+        $eval = $result->getEval();
+        self::assertEquals('TARGETING_MATCH', $eval->reason);
+        self::assertEquals('Random Distribution | All Users', $eval->details);
+        self::assertEquals('mock-target-id', $eval->target_id);
+    }
+
+    /**
+     * Test case for mocking bucketing API response from SDK Proxy 
+     */
+    public function testVariableWithMockedEvalResponseFromSDKProxy()
+    {
+        // Create a mock response with eval data
+        $mockResponse = [
+            '_id' => 'mock-variable-id',
+            'key' => 'mock-variable-key',
+            'type' => 'Boolean',
+            'value' => true,
+            'isDefaulted' => false,
+            'eval' => [
+                'reason' => 'SPLIT'
+            ]
+        ];
+
+        // Create mock handler with multiple responses for multiple API calls
+        $mock = new MockHandler([
+            new Response(200, [], json_encode($mockResponse)),
+            new Response(200, [], json_encode($mockResponse))
+        ]);
+
+        $handlerStack = HandlerStack::create($mock);
+        $mockClient = new GuzzleClient(['handler' => $handlerStack]);
+
+        // Create client with mocked HTTP client
+        $options = new DevCycleOptions(true);
+        $mockedClient = new DevCycleClient(
+            sdkKey: 'server-sdk-key',
+            dvcOptions: $options,
+            client: $mockClient
+        );
+
+        $user = new DevCycleUser(array("user_id" => "mock-user"));
+        $result = $mockedClient->variable($user, 'mock-variable-key', false);
+
+        // Verify the response contains the eval object
+        self::assertInstanceOf(Variable::class, $result);
+        self::assertEquals('mock-variable-key', $result->getKey());
+        self::assertTrue($result->getValue());
+        self::assertFalse($result->isDefaulted());
+
+        // Verify the eval object
+        $eval = $result->getEval();
+        self::assertEquals('SPLIT', $eval->reason);
+        self::assertNull($eval->details);
+        self::assertNull($eval->target_id);
+
+        $mockedProvider = $mockedClient->getOpenFeatureProvider();
+        self::$api->setProvider($mockedProvider);
+        $mockedOpenFeatureClient = self::$api->getClient();
+
+        $boolDetails = $mockedOpenFeatureClient->getBooleanDetails('mock-variable-key', false, self::$context);
+        self::assertEquals(true, $boolDetails->getValue());
+        self::assertEquals('SPLIT', $boolDetails->getReason());
+
+        // set it back to the original provider
+        self::$api->setProvider(self::$client->getOpenFeatureProvider());
+    }   
 
     /**
      * Test case for getVariables
