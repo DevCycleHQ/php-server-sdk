@@ -18,3 +18,5 @@ jobs:
         with:
           configuration: "phpunit.xml"
           memory_limit: "256M"
+          version: "10"
+          php_version: "8.3"
