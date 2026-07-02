@@ -24,12 +24,12 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "guzzlehttp/guzzle": "^7.9.2",
-        "guzzlehttp/psr7": "^2.7.0",
+        "guzzlehttp/guzzle": "^7.12.1",
+        "guzzlehttp/psr7": "^2.12.1",
         "open-feature/sdk": "^2.0.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5.45",
+        "phpunit/phpunit": "^10.5.62",
         "friendsofphp/php-cs-fixer": "^v3.71.0"
     },
     "autoload": {
