@@ -24,7 +24,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "guzzlehttp/guzzle": "^7.15.1",
+        "guzzlehttp/guzzle": "^7.15.2",
         "guzzlehttp/psr7": "^2.12.1",
         "open-feature/sdk": "^2.0.10"
     },
