@@ -6,15 +6,21 @@ use DevCycle\Api\DevCycleClient;
 use DevCycle\Model\DevCycleUser;
 
 use OpenFeature\implementation\common\Metadata;
+use OpenFeature\interfaces\common\LoggerAwareTrait;
 use OpenFeature\interfaces\common\Metadata as IMetadata;
 use OpenFeature\interfaces\flags\EvaluationContext;
 use OpenFeature\interfaces\hooks\Hook;
 use OpenFeature\interfaces\provider\Provider;
 use OpenFeature\interfaces\provider\ResolutionDetails;
-use Psr\Log\LoggerInterface;
 
 class DevCycleProvider implements Provider
 {
+    /**
+     * Provides setLogger()/getLogger(), defaulting to a PSR NullLogger when
+     * the OpenFeature API has not injected one.
+     */
+    use LoggerAwareTrait;
+
     private DevCycleClient $apiClient;
     private Metadata $metadata;
 
@@ -37,15 +43,6 @@ class DevCycleProvider implements Provider
     public function setHooks(array $hooks): void
     {
         $this->hooks = $hooks;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger): void
-    {
-        // TODO: Implement setLogger() method.
     }
 
     /**

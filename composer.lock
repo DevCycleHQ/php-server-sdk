@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7d31b0a9b4294d9139c11f06af47d017",
+    "content-hash": "1d18b4bd5d5e27ae1708df900ad4a620",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -402,16 +402,16 @@
         },
         {
             "name": "open-feature/sdk",
-            "version": "2.0.10",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/open-feature/php-sdk.git",
-                "reference": "c71bf429267f0a3cfd50348aaf8d091d68b1491b"
+                "reference": "eacce4e1465e098223d46dd71029928d9a52f57e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/c71bf429267f0a3cfd50348aaf8d091d68b1491b",
-                "reference": "c71bf429267f0a3cfd50348aaf8d091d68b1491b",
+                "url": "https://api.github.com/repos/open-feature/php-sdk/zipball/eacce4e1465e098223d46dd71029928d9a52f57e",
+                "reference": "eacce4e1465e098223d46dd71029928d9a52f57e",
                 "shasum": ""
             },
             "require": {
@@ -423,6 +423,7 @@
                 "behat/behat": "^3.11",
                 "captainhook/captainhook": "^5.10",
                 "captainhook/plugin-composer": "^5.3",
+                "dg/bypass-finals": "^1.9",
                 "ergebnis/composer-normalize": "^2.25",
                 "hamcrest/hamcrest-php": "^2.0",
                 "mdwheele/zalgo": "^0.3.1",
@@ -474,9 +475,9 @@
             ],
             "support": {
                 "issues": "https://github.com/open-feature/php-sdk/issues",
-                "source": "https://github.com/open-feature/php-sdk/tree/2.0.10"
+                "source": "https://github.com/open-feature/php-sdk/tree/2.3.0"
             },
-            "time": "2024-10-28T14:22:10+00:00"
+            "time": "2026-07-26T03:45:46+00:00"
         },
         {
             "name": "psr/http-client",
