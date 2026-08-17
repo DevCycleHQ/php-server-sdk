@@ -11,7 +11,7 @@ jobs:
     env:
       DEVCYCLE_SERVER_SDK_KEY: 'dvc_server_token_hash'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: php-actions/composer@v6
       - name: PHPUnit tests
         uses: php-actions/phpunit@v3
