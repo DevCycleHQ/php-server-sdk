@@ -1,5 +1,5 @@
 {
-    "version": "2.2.2",
+    "version": "2.2.3",
     "description": "DevCycle PHP Server SDK",
     "keywords": [
         "openapitools",
@@ -33,9 +33,13 @@
         "friendsofphp/php-cs-fixer": "^v3.71.0"
     },
     "autoload": {
-        "psr-4": { "DevCycle\\" : "lib/" }
+        "psr-4": {
+            "DevCycle\\": "lib/"
+        }
     },
     "autoload-dev": {
-        "psr-4": { "DevCycle\\Test\\" : "test/" }
+        "psr-4": {
+            "DevCycle\\Test\\": "test/"
+        }
     }
 }
